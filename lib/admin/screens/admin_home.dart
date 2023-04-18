@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:thirdeyesmanagement/admin/screens/admin_business.dart';
@@ -21,11 +18,9 @@ class AdminHome extends StatefulWidget {
 }
 
 class _AdminHomeState extends State<AdminHome> {
+
+
   int _selectedIndex = 0;
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
-  String? mToken = '';
 
   final db = FirebaseFirestore.instance;
   void _onItemTapped(int index) {
@@ -33,10 +28,8 @@ class _AdminHomeState extends State<AdminHome> {
       _selectedIndex = index;
     });
   }
-  @pragma('vm:entry-point')
-  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    print('Handling a background message ${message.messageId}');
-  }
+
+
 
   static const List<Widget> _widgetOptions = <Widget>[
     AdminNavHomeScreen(),
@@ -46,99 +39,10 @@ class _AdminHomeState extends State<AdminHome> {
 
 @override
   void initState() {
-  FirebaseMessaging.instance.getInitialMessage();
-  FirebaseMessaging.onBackgroundMessage((message) => _firebaseMessagingBackgroundHandler(message));
-  requestPermission();
-  getToken();
-  saveToken();
-  initInfo();
+
+
   super.initState();
 }
-  initInfo() {
-    var androidInit =
-    const AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initSetting = InitializationSettings(android: androidInit);
-    flutterLocalNotificationsPlugin.initialize(
-      initSetting,
-      onDidReceiveBackgroundNotificationResponse: (details) {
-        if (details.payload!.isNotEmpty) {
-          print(details.payload);
-        }
-      },
-      onDidReceiveNotificationResponse: (details) {
-        print(details.payload);
-      },
-    );
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print("...............onMessage................");
-      print(
-          "onMessage: ${message.notification?.title}/ ${message.notification?.body}");
-
-      BigTextStyleInformation bigTextStyleInformation = BigTextStyleInformation(
-        message.notification!.body.toString(),
-        htmlFormatContentTitle: true,
-      );
-
-      AndroidNotificationDetails androidPlatformChannelSpecific =
-      AndroidNotificationDetails('Sale', 'Sales',
-          importance: Importance.max,
-          styleInformation: bigTextStyleInformation,
-          priority: Priority.max,
-          playSound: true);
-
-      NotificationDetails platformChannelSpecific =
-      NotificationDetails(android: androidPlatformChannelSpecific);
-      await flutterLocalNotificationsPlugin.show(0, message.notification?.title,
-          message.notification?.body, platformChannelSpecific,
-          payload: message.data['body']);
-    });
-  }
-
-  Future<void> getToken() async {
-    await FirebaseMessaging.instance.getToken().then((token) => {
-      setState(() {
-        mToken = token;
-
-      }),
-    });
-  }
-
-  saveToken() async {
-    await FirebaseFirestore.instance
-        .collection("accounts")
-        .doc(FirebaseAuth.instance.currentUser?.email)
-        .update({"token": mToken}).then((value) => {
-
-    });
-
-  }
-
-  Future<void> requestPermission() async {
-    FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-    NotificationSettings notificationSettings =
-    await firebaseMessaging.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true);
-
-    if (notificationSettings.authorizationStatus ==
-        AuthorizationStatus.authorized) {
-      getToken();
-    }
-    else if (notificationSettings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
-      getToken();
-    } else {
-      if (kDebugMode) {
-        print("permission denied");
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

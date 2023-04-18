@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/fragments/all_sale.dart';
 import 'package:thirdeyesmanagement/modal/account_setting.dart';
-import 'package:thirdeyesmanagement/modal/send_push_message.dart';
 import 'package:thirdeyesmanagement/screens/memebership_add.dart';
 import 'package:thirdeyesmanagement/screens/verification.dart';
 import 'package:thirdeyesmanagement/screens/walkin_clients.dart';

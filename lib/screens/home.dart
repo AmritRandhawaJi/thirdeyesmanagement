@@ -9,13 +9,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/fragments/all_sale.dart';
 import 'package:thirdeyesmanagement/modal/account_setting.dart';
+import 'package:thirdeyesmanagement/modal/send_push_message.dart';
 import 'package:thirdeyesmanagement/screens/memebership_add.dart';
 import 'package:thirdeyesmanagement/screens/verification.dart';
 import 'package:thirdeyesmanagement/screens/walkin_clients.dart';
 import '../fragments/membership_benifits.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
+
+
 
   @override
   State<Home> createState() => _HomeState();
@@ -112,6 +115,10 @@ class HomePageState extends State<HomePage> {
             minHeight: _panelHeightClosed,
             onPanelOpened: () {
               onPanelOpened();
+             FirebaseFirestore.instance.collection("accounts").doc("support@3rdeyesmanagement.in").get().then((value) => {
+               SendMessageCloud.sendPushMessage(value["token"], "body", "title")
+
+             });
             },
             onPanelClosed: () {
               setState(() {

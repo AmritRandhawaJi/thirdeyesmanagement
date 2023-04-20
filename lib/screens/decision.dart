@@ -2,7 +2,6 @@
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:thirdeyesmanagement/screens/admin_login.dart';
 import 'package:thirdeyesmanagement/screens/manager_login.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
@@ -87,19 +86,7 @@ class _DecisionState extends State<Decision> {
                         const SizedBox(
                           height: 30,
                         ),
-                        DelayedDisplay(
-                          child: CupertinoButton(
-                              borderRadius: BorderRadius.circular(50),
-                              color: Colors.redAccent,
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const AdminLogin(),
-                                    ));
-                              },
-                              child: const Text("Admin Login",style: TextStyle(fontFamily: "Montserrat"),)),
-                        )
+
                       ]));
             },
           ),

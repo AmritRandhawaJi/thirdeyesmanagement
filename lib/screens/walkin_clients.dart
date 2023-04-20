@@ -56,7 +56,7 @@ class _WalkinClientsState extends State<WalkinClients> {
     twilioFlutter = TwilioFlutter(
         accountSid: 'AC86f0b9d571e249e479c016fc892ce23f',
         // replace *** with Account SID
-        authToken: 'f621916925b7b744ea9fb50f0598c7ec',
+        authToken: '034ae49607e86df2d174f7930c7ba240',
         // replace xxx with Auth Token
         twilioNumber: '+15076688607' //... with Twilio Number
         );

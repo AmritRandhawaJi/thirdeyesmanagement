@@ -48,7 +48,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
   TextEditingController nameControl = TextEditingController();
   final GlobalKey<FormState> nameKey = GlobalKey<FormState>();
   final GlobalKey<FormState> therapistKey = GlobalKey<FormState>();
-
+  DateTime years = DateTime.now();
   int item = 0;
 
   bool listEmpty = false;
@@ -394,7 +394,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
 
     try {
       await db
-          .collection("sales")
+          .collection(years.year.toString())
           .doc(spaName)
           .collection(month)
           .doc("till Sale")
@@ -402,7 +402,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
         "Members": totalTake
       });
         await db
-            .collection("sales")
+            .collection(years.year.toString())
             .doc(spaName)
             .collection(month)
             .doc(currentDate)
@@ -425,7 +425,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
           ]),
         }, SetOptions(merge: true)).then((value) async => {
         await  db.collection("accounts").doc("support@3rdeyesmanagement.in").get().then((value) => {
-            SendMessageCloud.sendPushMessage(value["token"], "You got $totalTake visitor for massage in $spaName", "Member took therapy")
+            SendMessageCloud.sendPushMessage(value["token"], "You got $totalTake visitor for massage in $spaName", "Member Visit")
           })
 
         });

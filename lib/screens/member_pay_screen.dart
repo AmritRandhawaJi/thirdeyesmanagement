@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/book_session_membership.dart';
+import 'package:thirdeyesmanagement/modal/send_push_message.dart';
 import 'package:thirdeyesmanagement/screens/home.dart';
 
 class MemberPayScreen extends StatefulWidget {
@@ -48,7 +49,7 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
   double panelHeightClosed = 0;
   double panelHeightOpen = 0;
   late int valid = 0;
-
+  DateTime years = DateTime.now();
   bool applied = false;
 
   late Timer timer;
@@ -150,7 +151,7 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
     String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
     await db
-        .collection("sales")
+        .collection(years.year.toString())
         .doc(spaName)
         .collection(month)
         .doc("till Sale")
@@ -159,7 +160,7 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
     });
 
     await db
-        .collection("sales")
+        .collection(years.year.toString())
         .doc(spaName)
         .collection(month)
         .doc(currentDate)
@@ -180,7 +181,17 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
           "massages": widget.massages,
         }
       ]),
-    }, SetOptions(merge: true)).then((value) => {
+    }, SetOptions(merge: true)).then((value) async => {
+      await db
+          .collection("accounts")
+          .doc("support@3rdeyesmanagement.in")
+          .get()
+          .then((value) => {
+        SendMessageCloud.sendPushMessage(
+            value["token"],
+            "Membership Sold to ${widget.name} paid by $_result in $spaName",
+            "Membership Sold")
+      }),
               setState(() {
                 loading = false;
               }),

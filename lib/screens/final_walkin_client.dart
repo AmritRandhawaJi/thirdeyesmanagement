@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:thirdeyesmanagement/modal/send_push_message.dart';
 import 'package:thirdeyesmanagement/modal/walkin_client_cart_data.dart';
 import 'package:thirdeyesmanagement/screens/book_session.dart';
 import 'package:thirdeyesmanagement/screens/home.dart';
@@ -42,7 +43,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
   final offerController = TextEditingController();
   final GlobalKey<FormState> offerKey = GlobalKey<FormState>();
   bool logoLoad = false;
-
+  DateTime years = DateTime.now();
   String spaName = "";
 
   @override
@@ -54,7 +55,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
 
   @override
   void initState() {
-   setSpa();
+    setSpa();
     super.initState();
   }
 
@@ -358,20 +359,20 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
   Future<void> saleAddingToServer() async {
     String month = DateFormat.MMMM().format(DateTime.now());
     String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-
+    int totalTake = WalkinClientCartData.list.length;
     try {
       for (int i = 0; i < WalkinClientCartData.list.length; i++) {
-
         await db
-            .collection("sales")
+            .collection(years.year.toString())
             .doc(spaName)
             .collection(month)
             .doc("till Sale")
             .update({
-          "Walkin $_result": WalkinClientCartData.values[WalkinClientCartData.list[i]]["price"]
+          "Walkin $_result":
+              WalkinClientCartData.values[WalkinClientCartData.list[i]]["price"]
         });
         await db
-            .collection("sales")
+            .collection(years.year.toString())
             .doc(spaName)
             .collection(month)
             .doc(currentDate)
@@ -392,7 +393,18 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                   .values[WalkinClientCartData.list[i]]["price"],
             }
           ]),
-        }, SetOptions(merge: true)).then((value) => {});
+        }, SetOptions(merge: true)).then((value) async => {
+                  await db
+                      .collection("accounts")
+                      .doc("support@3rdeyesmanagement.in")
+                      .get()
+                      .then((value) => {
+                            SendMessageCloud.sendPushMessage(
+                                value["token"],
+                                "You got $totalTake Walk-in Clients for massage in $spaName paid by $_result",
+                                "Walk-in Clients")
+                          })
+                });
       }
     } catch (e) {
       error();
@@ -434,6 +446,6 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
   Future<void> setSpa() async {
     final prefs = await SharedPreferences.getInstance();
 
-   spaName = prefs.getString("spaName").toString();
+    spaName = prefs.getString("spaName").toString();
   }
 }

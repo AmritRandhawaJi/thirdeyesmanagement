@@ -62,7 +62,7 @@ class _MembershipAddState extends State<MembershipAdd> {
     twilioFlutter = TwilioFlutter(
         accountSid: 'AC86f0b9d571e249e479c016fc892ce23f',
         // replace *** with Account SID
-        authToken: 'f621916925b7b744ea9fb50f0598c7ec',
+        authToken: 'b65377bebe0a0cef1a587b92d4d94a2a',
         // replace xxx with Auth Token
         twilioNumber: '+15076688607' // .... with Twilio Number
         );

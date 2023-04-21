@@ -10,6 +10,7 @@ import 'package:thirdeyesmanagement/modal/account_setting.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/screens/memebership_add.dart';
 import 'package:thirdeyesmanagement/screens/verification.dart';
+import 'package:thirdeyesmanagement/screens/walkin_clients.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -155,21 +156,20 @@ class HomePageState extends State<HomePage> {
                   child: SizedBox(
                       height: MediaQuery.of(context).size.width / 8,
                       width: MediaQuery.of(context).size.width / 3,
-                      child:  Center(
+                      child: Center(
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                             Padding(
-                               padding: EdgeInsets.all(8.0),
-                               child: Icon(Icons.menu_book,color: Colors.green),
-                             ),
-                              Text(
-
-                        "Menu",
-                        style: TextStyle(fontFamily: "Montserrat"),
-                      ),
-                            ],
-                          ))),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(Icons.menu_book, color: Colors.green),
+                          ),
+                          Text(
+                            "Menu",
+                            style: TextStyle(fontFamily: "Montserrat"),
+                          ),
+                        ],
+                      ))),
                 ),
               )),
         ],
@@ -540,7 +540,6 @@ class HomePageState extends State<HomePage> {
               fontFamily: "Montserrat",
               fontWeight: FontWeight.bold),
         ),
-
         Padding(
           padding: const EdgeInsets.only(top: 10, left: 10),
           child: Row(
@@ -650,40 +649,59 @@ class HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               DelayedDisplay(
-                  child: Card(
-                color: Colors.green[200],
-                child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 2.5,
-                    height: MediaQuery.of(context).size.width / 2.5,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: const [
-                        Icon(Icons.card_giftcard, color: Colors.white),
-                        Text("Add Membership",
-                            style: TextStyle(
-                                fontFamily: "Montserrat",
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
-                        Icon(Icons.add, color: Colors.white),
-                      ],
-                    )),
+                  child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MembershipAdd(),
+                      ));
+                },
+                child: Card(
+                  color: Colors.green[200],
+                  child: SizedBox(
+                      width: MediaQuery.of(context).size.width / 2.5,
+                      height: MediaQuery.of(context).size.width / 2.5,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: const [
+                          Icon(Icons.card_giftcard, color: Colors.white),
+                          Text("Add Membership",
+                              style: TextStyle(
+                                  fontFamily: "Montserrat",
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold)),
+                          Icon(Icons.add, color: Colors.white),
+                        ],
+                      )),
+                ),
               )),
               DelayedDisplay(
-                  child: Card(
-                color: Colors.purple[100],
-                child: SizedBox(
-                    width: MediaQuery.of(context).size.width / 2.5,
-                    height: MediaQuery.of(context).size.width / 2.5,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: const [
-                        Icon(Icons.directions_walk, color: Colors.white),
-                        Text("Add Walk-In",
-                            style: TextStyle(
-                                fontFamily: "Montserrat", color: Colors.white)),
-                        Icon(Icons.add, color: Colors.white),
-                      ],
-                    )),
+                  child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WalkinClients(),
+                      ));
+                },
+                child: Card(
+                  color: Colors.purple[100],
+                  child: SizedBox(
+                      width: MediaQuery.of(context).size.width / 2.5,
+                      height: MediaQuery.of(context).size.width / 2.5,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: const [
+                          Icon(Icons.directions_walk, color: Colors.white),
+                          Text("Add Walk-In",
+                              style: TextStyle(
+                                  fontFamily: "Montserrat",
+                                  color: Colors.white)),
+                          Icon(Icons.add, color: Colors.white),
+                        ],
+                      )),
+                ),
               )),
             ],
           ),

@@ -6,8 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/book_session_membership.dart';
 import 'package:thirdeyesmanagement/modal/send_push_message.dart';
 import 'package:thirdeyesmanagement/screens/home.dart';
@@ -56,25 +56,12 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
 
   bool logoLoad = false;
 
-  String spaName= "";
-
   @override
   void dispose() {
     db.terminate();
     super.dispose();
   }
-  @override
-  void initState() {
-    setSpa();
-    super.initState();
-  }
 
-
-  Future<void> setSpa() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    spaName = prefs.getString("spaName").toString();
-  }
   @override
   Widget build(BuildContext context) {
     double panelHeightClosed = MediaQuery.of(context).size.height / 4.5;
@@ -130,6 +117,7 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
           "phone": widget.number,
           "registration": DateFormat.yMMMd().add_jm().format(today),
           "package": widget.package,
+          "notify": false,
           "paymentMode": _result,
           "paid": widget.amount,
           "validity": widget.validity,
@@ -152,16 +140,14 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
 
     await db
         .collection(years.year.toString())
-        .doc(spaName)
+        .doc(Spa.getSpaName)
         .collection(month)
         .doc("till Sale")
-        .update({
-      "Membership $_result": widget.amount
-    });
+        .update({"Membership $_result": widget.amount});
 
     await db
         .collection(years.year.toString())
-        .doc(spaName)
+        .doc(Spa.getSpaName)
         .collection(month)
         .doc(currentDate)
         .collection("today")
@@ -182,16 +168,16 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
         }
       ]),
     }, SetOptions(merge: true)).then((value) async => {
-      await db
-          .collection("accounts")
-          .doc("support@3rdeyesmanagement.in")
-          .get()
-          .then((value) => {
-        SendMessageCloud.sendPushMessage(
-            value["token"],
-            "Membership Sold to ${widget.name} paid by $_result in $spaName",
-            "Membership Sold")
-      }),
+              await db
+                  .collection("accounts")
+                  .doc("support@3rdeyesmanagement.in")
+                  .get()
+                  .then((value) => {
+                SendMessageCloud.sendPushMessage(
+                    value["token"],
+                    "Membership Sold to ${widget.name} paid by $_result in ${Spa.getSpaName}",
+                    "Membership Sold")
+                      }),
               setState(() {
                 loading = false;
               }),
@@ -537,7 +523,10 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
                           ),
                           (route) => false);
                     },
-                    child: const Text("Book Session",style: TextStyle(color: Colors.green),)),
+                    child: const Text(
+                      "Book Session",
+                      style: TextStyle(color: Colors.green),
+                    )),
                 TextButton(
                     onPressed: () {
                       Navigator.pop(ctx);

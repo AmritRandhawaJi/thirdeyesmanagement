@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/walkin_client_cart_data.dart';
 import 'package:thirdeyesmanagement/screens/final_walkin_client.dart';
 
@@ -35,8 +35,6 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
   late int selectedIndex = 100;
   bool panelReady = false;
 
-  String spaName = "";
-
   @override
   void dispose() {
     _server.terminate();
@@ -45,15 +43,11 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
 
   @override
   void initState() {
-    setSpa();
+    getValuesServices();
     super.initState();
   }
 
-  Future<void> setSpa() async {
-    final prefs = await SharedPreferences.getInstance();
-    spaName = prefs.getString("spaName").toString();
-    getValuesServices();
-  }
+
 
   bool loading = false;
   double panelHeightClosed = 0;
@@ -100,7 +94,7 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
                   ? Column(
                       children: [
                         Text(
-                          spaName,
+                          Spa.getSpaName,
                           style: const TextStyle(
                               fontFamily: "Montserrat",
                               fontSize: 18,
@@ -401,7 +395,7 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
   getValuesServices() async {
     await _server
         .collection("spa")
-        .doc(spaName)
+        .doc(Spa.getSpaName)
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       values = documentSnapshot.get("services");

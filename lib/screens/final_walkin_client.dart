@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/send_push_message.dart';
 import 'package:thirdeyesmanagement/modal/walkin_client_cart_data.dart';
 import 'package:thirdeyesmanagement/screens/book_session.dart';
@@ -44,19 +44,12 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
   final GlobalKey<FormState> offerKey = GlobalKey<FormState>();
   bool logoLoad = false;
   DateTime years = DateTime.now();
-  String spaName = "";
 
   @override
   void dispose() {
     db.terminate();
     offerController.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    setSpa();
-    super.initState();
   }
 
   @override
@@ -104,7 +97,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                spaName,
+                Spa.getSpaName,
                 style: const TextStyle(
                   fontFamily: "Dosis",
                   fontSize: 22,
@@ -356,15 +349,16 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
     });
   }
 
+  int totalTake = WalkinClientCartData.list.length;
+
   Future<void> saleAddingToServer() async {
     String month = DateFormat.MMMM().format(DateTime.now());
     String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-    int totalTake = WalkinClientCartData.list.length;
     try {
       for (int i = 0; i < WalkinClientCartData.list.length; i++) {
         await db
             .collection(years.year.toString())
-            .doc(spaName)
+            .doc(Spa.getSpaName)
             .collection(month)
             .doc("till Sale")
             .update({
@@ -373,7 +367,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
         });
         await db
             .collection(years.year.toString())
-            .doc(spaName)
+            .doc(Spa.getSpaName)
             .collection(month)
             .doc(currentDate)
             .collection("today")
@@ -393,18 +387,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                   .values[WalkinClientCartData.list[i]]["price"],
             }
           ]),
-        }, SetOptions(merge: true)).then((value) async => {
-                  await db
-                      .collection("accounts")
-                      .doc("support@3rdeyesmanagement.in")
-                      .get()
-                      .then((value) => {
-                            SendMessageCloud.sendPushMessage(
-                                value["token"],
-                                "You got $totalTake Walk-in Clients for massage in $spaName paid by $_result",
-                                "Walk-in Clients")
-                          })
-                });
+        }, SetOptions(merge: true));
       }
     } catch (e) {
       error();
@@ -413,21 +396,33 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
   }
 
   Future<void> moveForBooking() async {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => Future.delayed(const Duration(seconds: 2), () {
-              if (mounted) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BookSession(
-                        name: widget.name,
-                        phoneNumber: widget.number.toString(),
-                        modeOfPayment: _result,
-                      ),
-                    ),
-                    (route) => false);
-              }
-            }));
+    await db
+        .collection("accounts")
+        .doc("support@3rdeyesmanagement.in")
+        .get()
+        .then((value) => {
+              SendMessageCloud.sendPushMessage(
+                  value["token"],
+                  "You got $totalTake Walk-in Clients for massage in ${Spa.getSpaName} paid by $_result",
+                  "Walk-in Clients")
+            })
+        .whenComplete(() => {
+              WidgetsBinding.instance.addPostFrameCallback(
+                  (_) => Future.delayed(const Duration(seconds: 2), () {
+                        if (mounted) {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BookSession(
+                                  name: widget.name,
+                                  phoneNumber: widget.number.toString(),
+                                  modeOfPayment: _result,
+                                ),
+                              ),
+                              (route) => false);
+                        }
+                      })),
+            });
   }
 
   void error() {
@@ -441,11 +436,5 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
         MaterialPageRoute(
           builder: (context) => const Home(),
         ));
-  }
-
-  Future<void> setSpa() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    spaName = prefs.getString("spaName").toString();
   }
 }

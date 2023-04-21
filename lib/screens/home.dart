@@ -1,15 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/fragments/all_sale.dart';
 import 'package:thirdeyesmanagement/modal/account_setting.dart';
-import 'package:thirdeyesmanagement/modal/send_push_message.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/screens/memebership_add.dart';
 import 'package:thirdeyesmanagement/screens/verification.dart';
 import 'package:thirdeyesmanagement/screens/walkin_clients.dart';
@@ -17,7 +15,6 @@ import '../fragments/membership_benifits.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
-
 
   @override
   State<Home> createState() => _HomeState();
@@ -47,7 +44,6 @@ class HomePageState extends State<HomePage> {
   final searchController = TextEditingController();
   final GlobalKey<FormState> searchKey = GlobalKey<FormState>();
   final db = FirebaseFirestore.instance;
-  final db2 = FirebaseFirestore.instance;
   bool loading = false;
   late DocumentSnapshot databaseData;
   String paymentType = "Cash";
@@ -58,8 +54,6 @@ class HomePageState extends State<HomePage> {
   List<dynamic> listed = [];
   List<dynamic> panelData = [];
   String month = DateFormat.MMMM().format(DateTime.now());
-
-  bool calculated = false;
 
   bool panelLoad = false;
 
@@ -74,12 +68,11 @@ class HomePageState extends State<HomePage> {
   int memberShipWallet = 0;
   int members = 0;
 
-  String spaName = "";
+
 
   @override
   void initState() {
     _fabHeight = _initFabHeight;
-check();
     super.initState();
   }
 
@@ -90,7 +83,6 @@ check();
   @override
   void dispose() {
     db.terminate();
-    db2.terminate();
     _pageController.dispose();
     super.dispose();
   }
@@ -104,14 +96,8 @@ check();
   @override
   Widget build(BuildContext context) {
 
-    WidgetsBinding.instance.addPostFrameCallback(
-            (_) => Future.delayed(const Duration(seconds: 2), () {
-        getValues();
-        }));
-    _panelHeightOpen = MediaQuery
-        .of(context)
-        .size
-        .height / 1.5;
+
+    _panelHeightOpen = MediaQuery.of(context).size.height / 1.5;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -121,21 +107,18 @@ check();
           SlidingUpPanel(
             maxHeight: _panelHeightOpen,
             minHeight: _panelHeightClosed,
-            onPanelOpened: () async {
-              onPanelOpened();
-           await db.collection("accounts").doc("support@3rdeyesmanagement.in").get().then((value) => {
-              SendMessageCloud.sendPushMessage(value["token"], "Hello", "title")
-            });
-            },
-            onPanelClosed: () {
-              setState(() {
-                panelLoad = false;
-                panelLoading = false;
-              });
-            },
             parallaxEnabled: true,
             parallaxOffset: .5,
             body: _body(),
+            onPanelOpened: (){
+              onPanelOpened();
+            },
+            onPanelClosed: (){
+              setState(() {
+              panelLoad = false;
+
+              });
+            },
             collapsed: Container(
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(30)),
@@ -148,7 +131,7 @@ check();
                       Text(
                         "Total Sale",
                         style:
-                        TextStyle(fontSize: 18, fontFamily: "Montserrat"),
+                            TextStyle(fontSize: 18, fontFamily: "Montserrat"),
                       ),
                     ],
                   ),
@@ -159,11 +142,10 @@ check();
             borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(18.0),
                 topRight: Radius.circular(18.0)),
-            onPanelSlide: (double pos) =>
-                setState(() {
-                  _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
-                      _initFabHeight;
-                }),
+            onPanelSlide: (double pos) => setState(() {
+              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
+                  _initFabHeight;
+            }),
           ),
 
           // the fab
@@ -195,29 +177,39 @@ check();
       panelLoading = true;
     });
 
-    await db
-        .collection(years.year.toString())
-        .doc("Azon Spa")
-        .collection(month)
-        .doc("till Sale")
-        .get()
-        .then((DocumentSnapshot documentSnapshot) async {
-      if (documentSnapshot.exists) {
-        walkinCash = documentSnapshot.get("Walkin Cash");
-        walkinCard = documentSnapshot.get("Walkin Card");
-        walkinUPI = documentSnapshot.get("Walkin UPI");
-        walkinWallet = documentSnapshot.get("Walkin Wallet");
-        membershipCash = documentSnapshot.get("Membership Cash");
-        memberShipCard = documentSnapshot.get("Membership Card");
-        memberShipUPI = documentSnapshot.get("Membership UPI");
-        memberShipWallet = documentSnapshot.get("Membership Wallet");
-        members = documentSnapshot.get("Members");
-        setState(() {
-          panelLoad = true;
-          panelLoading = false;
-        });
-      }
-    });
+    try{
+      await db
+          .collection(years.year.toString())
+          .doc("Azon Spa")
+          .collection(month)
+          .doc("till Sale")
+          .get()
+          .then((DocumentSnapshot documentSnapshot) async {
+        if (documentSnapshot.exists) {
+
+          walkinCash = documentSnapshot.get("Walkin Cash");
+          walkinCard = documentSnapshot.get("Walkin Card");
+          walkinUPI = documentSnapshot.get("Walkin UPI");
+          walkinWallet = documentSnapshot.get("Walkin Wallet");
+          membershipCash = documentSnapshot.get("Membership Cash");
+          memberShipCard = documentSnapshot.get("Membership Card");
+          memberShipUPI = documentSnapshot.get("Membership UPI");
+          memberShipWallet = documentSnapshot.get("Membership Wallet");
+          members = documentSnapshot.get("Members");
+          setState(() {
+            panelLoad = true;
+            panelLoading = false;
+          });
+        }
+      });
+    }catch(e){
+      setState(() {
+        panelLoad = false;
+        panelLoading = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Not found")));
+    }
+
   }
 
   Widget _panel(ScrollController sc) {
@@ -240,7 +232,7 @@ check();
                   decoration: BoxDecoration(
                       color: Colors.grey[300],
                       borderRadius:
-                      const BorderRadius.all(Radius.circular(12.0))),
+                          const BorderRadius.all(Radius.circular(12.0))),
                 ),
               ],
             ),
@@ -265,231 +257,231 @@ check();
               children: [
                 panelLoad
                     ? DelayedDisplay(
-                  child: Column(
-                    children: [
-                      Card(
                         child: Column(
                           children: [
-                            Row(
-                              children: const [
-                                Text(
-                                  "Walkin Clients",
-                                  style: TextStyle(
-                                      fontFamily: "Montserrat",
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
-                                ),
-                                Icon(
-                                  Icons.show_chart,
-                                  color: Colors.green,
-                                )
-                              ],
+                            Card(
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: const [
+                                      Text(
+                                        "Walkin Clients",
+                                        style: TextStyle(
+                                            fontFamily: "Montserrat",
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18),
+                                      ),
+                                      Icon(
+                                        Icons.show_chart,
+                                        color: Colors.green,
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Text("Cash- Rs.",
+                                                style: TextStyle(
+                                                    color: Colors.black54)),
+                                            Text(walkinCash.toString(),
+                                                style: const TextStyle(
+                                                    fontFamily: "Montserrat",
+                                                    fontSize: 22)),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text("Card- Rs.",
+                                                style: TextStyle(
+                                                    color: Colors.black54)),
+                                            Text(walkinCard.toString(),
+                                                style: const TextStyle(
+                                                    fontFamily: "Montserrat",
+                                                    fontSize: 22)),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Text("UPI- Rs.",
+                                                style: TextStyle(
+                                                    color: Colors.black54)),
+                                            Text(walkinUPI.toString(),
+                                                style: const TextStyle(
+                                                    fontFamily: "Montserrat",
+                                                    fontSize: 22)),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text("Wallet- Rs.",
+                                                style: TextStyle(
+                                                    color: Colors.black54)),
+                                            Text(walkinWallet.toString(),
+                                                style: const TextStyle(
+                                                    fontFamily: "Montserrat",
+                                                    fontSize: 22)),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Card(
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: const [
+                                      Text(
+                                        "Membership Sold",
+                                        style: TextStyle(
+                                            fontFamily: "Montserrat",
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18),
+                                      ),
+                                      Icon(
+                                        Icons.graphic_eq,
+                                        color: Colors.orange,
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Text("Cash- Rs.",
+                                                style: TextStyle(
+                                                    color: Colors.black54)),
+                                            Text(membershipCash.toString(),
+                                                style: const TextStyle(
+                                                    fontFamily: "Montserrat",
+                                                    fontSize: 22)),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text("Card- Rs.",
+                                                style: TextStyle(
+                                                    color: Colors.black54)),
+                                            Text(memberShipCard.toString(),
+                                                style: const TextStyle(
+                                                    fontFamily: "Montserrat",
+                                                    fontSize: 22)),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Text("UPI- Rs.",
+                                                style: TextStyle(
+                                                    color: Colors.black54)),
+                                            Text(memberShipUPI.toString(),
+                                                style: const TextStyle(
+                                                    fontFamily: "Montserrat",
+                                                    fontSize: 22)),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Text("Wallet- Rs.",
+                                                style: TextStyle(
+                                                    color: Colors.black54)),
+                                            Text(memberShipWallet.toString(),
+                                                style: const TextStyle(
+                                                    fontFamily: "Montserrat",
+                                                    fontSize: 22)),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                             const SizedBox(
-                              height: 15,
+                              height: 10,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                            Card(
+                              child: Column(
                                 children: [
                                   Row(
-                                    children: [
-                                      const Text("Cash- Rs.",
-                                          style: TextStyle(
-                                              color: Colors.black54)),
-                                      Text(walkinCash.toString(),
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat",
-                                              fontSize: 22)),
+                                    children: const [
+                                      Text(
+                                        "Members Visit",
+                                        style: TextStyle(
+                                            fontFamily: "Montserrat",
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18),
+                                      ),
+                                      Icon(
+                                        Icons.directions_walk,
+                                        color: Colors.blue,
+                                      )
                                     ],
                                   ),
-                                  Row(
-                                    children: [
-                                      const Text("Card- Rs.",
-                                          style: TextStyle(
-                                              color: Colors.black54)),
-                                      Text(walkinCard.toString(),
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat",
-                                              fontSize: 22)),
-                                    ],
+                                  const SizedBox(
+                                    height: 15,
                                   ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Text("UPI- Rs.",
-                                          style: TextStyle(
-                                              color: Colors.black54)),
-                                      Text(walkinUPI.toString(),
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat",
-                                              fontSize: 22)),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Text("Wallet- Rs.",
-                                          style: TextStyle(
-                                              color: Colors.black54)),
-                                      Text(walkinWallet.toString(),
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat",
-                                              fontSize: 22)),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Card(
-                        child: Column(
-                          children: [
-                            Row(
-                              children: const [
-                                Text(
-                                  "Membership Sold",
-                                  style: TextStyle(
-                                      fontFamily: "Montserrat",
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
-                                ),
-                                Icon(
-                                  Icons.graphic_eq,
-                                  color: Colors.orange,
-                                )
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Text("Cash- Rs.",
-                                          style: TextStyle(
-                                              color: Colors.black54)),
-                                      Text(membershipCash.toString(),
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat",
-                                              fontSize: 22)),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Text("Card- Rs.",
-                                          style: TextStyle(
-                                              color: Colors.black54)),
-                                      Text(memberShipCard.toString(),
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat",
-                                              fontSize: 22)),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Text("UPI- Rs.",
-                                          style: TextStyle(
-                                              color: Colors.black54)),
-                                      Text(memberShipUPI.toString(),
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat",
-                                              fontSize: 22)),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Text("Wallet- Rs.",
-                                          style: TextStyle(
-                                              color: Colors.black54)),
-                                      Text(memberShipWallet.toString(),
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat",
-                                              fontSize: 22)),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Card(
-                        child: Column(
-                          children: [
-                            Row(
-                              children: const [
-                                Text(
-                                  "Members Visit",
-                                  style: TextStyle(
-                                      fontFamily: "Montserrat",
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
-                                ),
-                                Icon(
-                                  Icons.directions_walk,
-                                  color: Colors.blue,
-                                )
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Text("Count.",
-                                          style: TextStyle(
-                                              color: Colors.black54)),
-                                      Text(members.toString(),
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat",
-                                              fontSize: 22)),
-                                    ],
-                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Text("Count.",
+                                                style: TextStyle(
+                                                    color: Colors.black54)),
+                                            Text(members.toString(),
+                                                style: const TextStyle(
+                                                    fontFamily: "Montserrat",
+                                                    fontSize: 22)),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
                                 ],
                               ),
                             )
                           ],
                         ),
                       )
-                    ],
-                  ),
-                )
                     : Container(),
                 panelLoading ? const CircularProgressIndicator() : Container()
               ],
@@ -500,286 +492,224 @@ check();
 
   Widget _body() {
     return SafeArea(
-        child: Column(children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AccountSetting(),
-                        ));
-                  },
-                  child: const CircleAvatar(
-                    backgroundColor: Colors.green,
-                    child: Icon(
-                        Icons.account_circle_outlined, color: Colors.white),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AllSale(),
-                        ));
-                  },
-                  child: const CircleAvatar(
-                    backgroundColor: Colors.black,
-                    child: Icon(Icons.business, color: Colors.white),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Text(
-            spaName,
-            style: const TextStyle(
-                fontSize: 22,
-                fontFamily: "Montserrat",
-                fontWeight: FontWeight.bold),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10, left: 10),
-            child: Row(
-              children: const [
-                DelayedDisplay(
-                  child: Text("Hey!",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Montserrat",
-                          color: Colors.black87,
-                          fontSize: 24)),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10, top: 10),
-            child: Row(
-              children: const [
-                DelayedDisplay(
-                  child: Text("How you feeling\nToday?",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontFamily: "Montserrat",
-                          color: Colors.black54,
-                          fontSize: 16)),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          DelayedDisplay(
-            child: Form(
-              key: searchKey,
-              child: Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: TextFormField(
-                  showCursor: false,
-                  maxLength: 10,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  controller: searchController,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "Enter number";
-                    } else if (value.length < 10) {
-                      return "Enter 10 digits";
-                    } else {
-                      return null;
-                    }
-                  },
-                  decoration: InputDecoration(
-                      suffixIcon: loading
-                          ? const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(
-                            color: Colors.black, strokeWidth: 1),
-                      )
-                          : null,
-                      counterText: "",
-                      filled: true,
-                      hintText: "Search Registered Clients",
-                      prefixIcon:
-                      const Icon(Icons.search, color: Colors.black54, size: 20),
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40),
-                        borderSide: BorderSide.none,
-                      )),
-                ),
-              ),
-            ),
-          ),
-          DelayedDisplay(
-            child: Center(
-              child: CupertinoButton(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(40),
-                  onPressed: () {
-                    if (searchKey.currentState!.validate()) {
-                      setState(() {
-                        loading = true;
-                      });
-                      WidgetsBinding.instance.addPostFrameCallback(
-                              (_) =>
-                              Future.delayed(const Duration(seconds: 1), () {
-                                setState(() {
-                                  loading = false;
-                                });
-                                Navigator.push(context, MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                      return Verification(
-                                        number: searchController.value.text
-                                            .toString(),
-                                      );
-                                    }));
-                              }));
-                    }
-                  },
-                  child: const Text("Search")),
-            ),
-          ),
-          const SizedBox(
-            height: 80,
-          ),
-          Column(
+        child: SingleChildScrollView(
+          child: Column(children: [
+      Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DelayedDisplay(
-                  child: CupertinoButton(
-                      color: Colors.black,
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const MembershipBenifits(),
-                            ));
-                      },
-                      child: Row(
-                        children: const [
-                          Icon(Icons.add_business_rounded),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text("Membership Benefits"),
-                        ],
-                      )),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AccountSetting(),
+                      ));
+                },
+                child: const CircleAvatar(
+                  backgroundColor: Colors.green,
+                  child: Icon(Icons.account_circle_outlined, color: Colors.white),
                 ),
               ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AllSale(),
+                      ));
+                },
+                child: const CircleAvatar(
+                  backgroundColor: Colors.black,
+                  child: Icon(Icons.business, color: Colors.white),
+                ),
+              )
+            ],
+          ),
+      ),
+      Text(
+          Spa.getSpaName,
+          style: const TextStyle(
+              fontSize: 22,
+              fontFamily: "Montserrat",
+              fontWeight: FontWeight.bold),
+      ),
+      CupertinoButton(child: const Text("check"), onPressed: (){
+
+        FirebaseFirestore.instance
+            .collection('clients')
+            .where('pendingMassage', isGreaterThanOrEqualTo: 2).get().then((value) => {
+              for(int i = 0; i < value.size; i++ ){
+                if(!value.docs[i]["notify"]){
+
+                }
+              },
+
+        });
+      }),
+      Padding(
+          padding: const EdgeInsets.only(top: 10, left: 10),
+          child: Row(
+            children: const [
               DelayedDisplay(
-                child: CupertinoButton(
-                    color: Colors.deepPurple,
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const WalkinClients()),
-                      );
-                    },
-                    child: SizedBox(
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width / 2,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              Icons.directions_walk,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              "Walk-in Client",
-                              style: TextStyle(color: Colors.white),
-                            )
-                          ]),
-                    )),
+                child: Text("Hey!",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Montserrat",
+                        color: Colors.black87,
+                        fontSize: 24)),
               ),
             ],
           ),
-        ]));
-  }
-
-  setValues() async {
-    String month = DateFormat.MMMM().format(DateTime.now());
-    await db2
-        .collection(years.year.toString())
-        .doc(spaName)
-        .collection(month)
-        .doc("till Sale")
-        .get()
-        .then((value) =>
-    {
-      if (value.exists)
-        {
-
-        }
-      else
-        {
-          db2
-              .collection(years.year.toString())
-              .doc(spaName)
-              .collection(month)
-              .doc("till Sale")
-              .set({
-            "Walkin Cash": 0,
-            "Walkin Card": 0,
-            "Walkin UPI": 0,
-            "Walkin Wallet": 0,
-            "Membership Cash": 0,
-            "Membership Card": 0,
-            "Membership UPI": 0,
-            "Membership Wallet": 0,
-            "Members": 0,
-          }, SetOptions(merge: true)).then((value) => {}),
-        }
-    });
-  }
-
-  Future<void> getValues() async {
-    final prefs = await SharedPreferences.getInstance();
-    try {
-
-      await db
-          .collection("accounts")
-          .doc(FirebaseAuth.instance.currentUser!.email)
-          .get()
-          .then((DocumentSnapshot documentSnapshot) async {
-        if (documentSnapshot.exists) {
-          prefs.setString("spaName", documentSnapshot.get("assignedSpa"));
-          setState(() {
-            spaName = prefs.getString("spaName").toString();
-            calculated = true;
-            setValues();
-          });
-        }
-      });
-    } catch (e) {
-
-      if (mounted) {
-        error();
-      }
-    }
-  }
-
-  error() {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text("Coming Soon")));
-  }
-
-  Future<void> check() async {
-   await getValues();
+      ),
+      Padding(
+          padding: const EdgeInsets.only(left: 10, top: 10),
+          child: Row(
+            children: const [
+              DelayedDisplay(
+                child: Text("How you feeling\nToday?",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontFamily: "Montserrat",
+                        color: Colors.black54,
+                        fontSize: 16)),
+              ),
+            ],
+          ),
+      ),
+      const SizedBox(
+          height: 10,
+      ),
+      DelayedDisplay(
+          child: Form(
+            key: searchKey,
+            child: Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: TextFormField(
+                showCursor: false,
+                maxLength: 10,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                controller: searchController,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Enter number";
+                  } else if (value.length < 10) {
+                    return "Enter 10 digits";
+                  } else {
+                    return null;
+                  }
+                },
+                decoration: InputDecoration(
+                    suffixIcon: loading
+                        ? const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: CircularProgressIndicator(
+                                color: Colors.black, strokeWidth: 1),
+                          )
+                        : null,
+                    counterText: "",
+                    filled: true,
+                    hintText: "Search Registered Clients",
+                    prefixIcon:
+                        const Icon(Icons.search, color: Colors.black54, size: 20),
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(40),
+                      borderSide: BorderSide.none,
+                    )),
+              ),
+            ),
+          ),
+      ),
+      DelayedDisplay(
+          child: Center(
+            child: CupertinoButton(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(40),
+                onPressed: () {
+                  if (searchKey.currentState!.validate()) {
+                    setState(() {
+                      loading = true;
+                    });
+                    WidgetsBinding.instance.addPostFrameCallback(
+                        (_) => Future.delayed(const Duration(seconds: 1), () {
+                              setState(() {
+                                loading = false;
+                              });
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                return Verification(
+                                  number: searchController.value.text.toString(),
+                                );
+                              }));
+                            }));
+                  }
+                },
+                child: const Text("Search")),
+          ),
+      ),
+      const SizedBox(
+          height: 80,
+      ),
+      Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: DelayedDisplay(
+                child: CupertinoButton(
+                    color: Colors.black,
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MembershipBenifits(),
+                          ));
+                    },
+                    child: Row(
+                      children: const [
+                        Icon(Icons.add_business_rounded),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text("Membership Benefits"),
+                      ],
+                    )),
+              ),
+            ),
+            DelayedDisplay(
+              child: CupertinoButton(
+                  color: Colors.deepPurple,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const WalkinClients()),
+                    );
+                  },
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width / 2,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(
+                            Icons.directions_walk,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "Walk-in Client",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        ]),
+                  )),
+            ),
+          ],
+      ),
+    ]),
+        ));
   }
 }

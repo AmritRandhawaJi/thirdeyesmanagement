@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 import 'member_pay_screen.dart';
 
@@ -27,14 +27,7 @@ class _MembershipAddState extends State<MembershipAdd> {
   final GlobalKey<FormState> nameKey = GlobalKey<FormState>();
   final GlobalKey<FormState> numberKey = GlobalKey<FormState>();
 
-  String spaName ="";
 
-
-  Future<void> setSpa() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    spaName = prefs.getString("spaName").toString();
-  }
   late int index;
   int colorIndex = 2;
   late int paid;
@@ -66,7 +59,6 @@ class _MembershipAddState extends State<MembershipAdd> {
         // replace xxx with Auth Token
         twilioNumber: '+15076688607' // .... with Twilio Number
         );
-    setSpa();
     super.initState();
   }
 
@@ -121,7 +113,7 @@ class _MembershipAddState extends State<MembershipAdd> {
         barrierDismissible: false,
         context: context,
         builder: (ctx) => AlertDialog(
-              icon: const Icon(Icons.warning, color: Colors.yellow),
+              icon: const Icon(Icons.warning, color: Colors.red),
               title: const Text(
                 "Already Registered",
                 style: TextStyle(color: Colors.green),
@@ -170,7 +162,7 @@ class _MembershipAddState extends State<MembershipAdd> {
   Future<void> sendOtp() async {
     await db
         .collection("spa")
-        .doc(spaName)
+        .doc(Spa.getSpaName)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
@@ -204,7 +196,7 @@ void sendMessage(){
   twilioFlutter.sendSMS(
       toNumber: "+91${numberController.value.text.toString()}",
       messageBody:
-      "Welcome to  $spaName, Your one time password is $otp");
+      "Welcome to  ${Spa.getSpaName}, Your one time password is $otp");
 }
   void error() {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

@@ -4,8 +4,6 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/book_session_membership.dart';
 
 class MemberDetailsPage extends StatefulWidget {
-
-
   const MemberDetailsPage({
     Key? key,
     required this.name,
@@ -82,173 +80,168 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
   }
 
   Widget _panel(ScrollController sc) {
-
     return MediaQuery.removePadding(
         context: context,
         removeTop: true,
         child: widget.pastServices.isEmpty
             ? Column(
-          children: [
-
-
-            const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  width: 30,
-                  height: 5,
-                  decoration: const BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(12.0))),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text("You haven't taken any service yet",
-                style: TextStyle(fontSize: 16, fontFamily: "Montserrat")),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Image.asset("assets/clientSlider.png"),
-            ),
-          ],
-        )
-            : SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 15),
-              Container(
-                width: 30,
-                height: 5,
-                decoration: const BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(12.0))),
-              ),
-              ListView.builder(
-                itemCount: widget.pastServices.length,
-                itemBuilder: (BuildContext context, int index) {
-                  int sNo = index + 1;
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                          children: [
-                            Row(children: [
-                              Text("$sNo. "),
-                              Text(
-                                  widget.pastServices[index]
-                                  ["spaName"],
-                                  style: const TextStyle(
-                                      fontFamily: "Montserrat",
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold)),
-                            ],),
-
-                            Text(widget.pastServices[index]["date"],
-                                style: const TextStyle(
-                                    fontFamily: "Montserrat",
-                                    fontWeight: FontWeight.bold)),
-                          ],),
-
+                children: [
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: 30,
+                        height: 5,
+                        decoration: const BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(12.0))),
                       ),
-                      const SizedBox(width: 5),
-
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Text("Paid : "),
-                                Text(
-                                    widget.pastServices[index]
-                                    ["modeOfPayment"],
-                                    softWrap: true,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: "Montserrat")),
-                              ],
-                            ),
-
-                            Row(
-                              children: [
-                                const Text("Time : "),
-                                Text(
-                                    widget.pastServices[index]
-                                    ["time"],
-                                    softWrap: true,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: "Montserrat")),
-                              ],
-                            ),
-                          ],),
-
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            const Text("Massage : "),
-                            Text(
-                                widget.pastServices[index]
-                                ["massageName"],
-                                softWrap: true,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: "Montserrat")),
-                          ],
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Text("Client : "),
-                                Text(
-                                    widget.pastServices[index]
-                                    ["clientName"],
-                                    softWrap: true,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: "Montserrat")),
-                              ],
-                            ),
-
-                            Row(
-                              children: [
-                                const Text("Therapist : "),
-                                Text(
-                                    widget.pastServices[index]
-                                    ["therapist"],
-                                    softWrap: true,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: "Montserrat")),
-                              ],
-                            ),
-                          ],),
-                      ),
-                      const Divider(thickness: 2,)
                     ],
-                  );
-                },
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-              ),
-            ],
-          ),
-        ));
+                  ),
+                  const SizedBox(height: 20),
+                  const Text("You haven't taken any service yet",
+                      style: TextStyle(fontSize: 16, fontFamily: "Montserrat")),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Image.asset("assets/clientSlider.png"),
+                  ),
+                ],
+              )
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 15),
+                    Container(
+                      width: 30,
+                      height: 5,
+                      decoration: const BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(12.0))),
+                    ),
+                    ListView.builder(
+                      itemCount: widget.pastServices.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        int sNo = index + 1;
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text("$sNo. "),
+                                      Text(
+                                          widget.pastServices[index]["spaName"],
+                                          style: const TextStyle(
+                                              fontFamily: "Montserrat",
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                  Text(widget.pastServices[index]["date"],
+                                      style: const TextStyle(
+                                          fontFamily: "Montserrat",
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Text("Paid : "),
+                                      Text(
+                                          widget.pastServices[index]
+                                              ["modeOfPayment"],
+                                          softWrap: true,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: "Montserrat")),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Text("Time : "),
+                                      Text(widget.pastServices[index]["time"],
+                                          softWrap: true,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: "Montserrat")),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  const Text("Massage : "),
+                                  Text(
+                                      widget.pastServices[index]["massageName"],
+                                      softWrap: true,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: "Montserrat")),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Text("Client : "),
+                                      Text(
+                                          widget.pastServices[index]
+                                              ["clientName"],
+                                          softWrap: true,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: "Montserrat")),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Text("Therapist : "),
+                                      Text(
+                                          widget.pastServices[index]
+                                              ["therapist"],
+                                          softWrap: true,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: "Montserrat")),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Divider(
+                              thickness: 2,
+                            )
+                          ],
+                        );
+                      },
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                    ),
+                  ],
+                ),
+              ));
   }
 
   Widget _body() {
@@ -288,6 +281,9 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
               ],
             ),
           ),
+          CupertinoButton(onPressed: () {
+
+          }, child: const Text("Renew")),
           Container(
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(30)),
@@ -413,12 +409,11 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
                                     ],
                                   ));
                         } else {
-
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    BookSessionMembership(package: widget.package,
+                                builder: (context) => BookSessionMembership(
+                                  package: widget.package,
                                   member: widget.member,
                                   paymentMode: widget.paymentType,
                                   totalMassages: widget.massages,

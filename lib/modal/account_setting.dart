@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:thirdeyesmanagement/screens/decision.dart';
 import 'package:thirdeyesmanagement/screens/password_reset.dart';
 
@@ -93,17 +93,13 @@ class _AccountSettingState extends State<AccountSetting> {
   }
 
   Future<void> _logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('spaName');
-    navigate();
-  }
-
-  navigate() {
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => const Decision(),
         ),
         (route) => false);
+
   }
+
 }

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/book_session_membership_final.dart';
 import 'package:thirdeyesmanagement/modal/walkin_client_cart_data.dart';
 
@@ -42,8 +42,6 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
   bool selectMassage = false;
   late int selectedIndex = 100;
   bool panelReady = false;
-
-  String spaName = "";
 
   @override
   void dispose() {
@@ -106,7 +104,7 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
                             ? const CircularProgressIndicator()
                             : Container(),
                         Text(
-                          spaName,
+                          Spa.getSpaName,
                           style: const TextStyle(
                               fontFamily: "Montserrat",
                               fontSize: 18,
@@ -481,11 +479,9 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
   }
 
   getValuesServices() async {
-    final prefs = await SharedPreferences.getInstance();
-    spaName = prefs.getString("spaName").toString();
     await _server
         .collection("spa")
-        .doc(spaName)
+        .doc(Spa.getSpaName)
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       values = documentSnapshot.get("services");

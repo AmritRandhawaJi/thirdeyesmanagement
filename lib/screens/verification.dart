@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/member_details_page.dart';
 import 'package:thirdeyesmanagement/screens/walking_details_page.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
@@ -26,8 +26,6 @@ class _VerificationState extends State<Verification> {
   late int randomNumber;
   late TwilioFlutter twilioFlutter;
 
-  String spaName = '';
-
   @override
   void dispose() {
     db.terminate();
@@ -43,15 +41,9 @@ class _VerificationState extends State<Verification> {
         // replace xxx with Auth Token
         twilioNumber: '+15076688607' // replace .... with Twilio Number
         );
-    setSpa();
-
     super.initState();
   }
-  Future<void> setSpa() async {
-    final prefs = await SharedPreferences.getInstance();
-    spaName = prefs.getString("spaName").toString();
-    sendMessage();
-  }
+
   void sendMessage() {
     Random random = Random();
     int number = random.nextInt(999);
@@ -62,7 +54,7 @@ class _VerificationState extends State<Verification> {
       twilioFlutter.sendSMS(
           toNumber: "+91${widget.number}",
           messageBody:
-              "Welcome to  $spaName, Your one time password is $otp");
+              "Welcome to  ${Spa.getSpaName}, Your one time password is $otp");
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));

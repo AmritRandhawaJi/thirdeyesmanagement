@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/screens/decision.dart';
 import 'package:thirdeyesmanagement/screens/getting_started_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -20,8 +22,6 @@ Future<void> main() async {
   });
 }
 
-
-
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -30,25 +30,77 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-
   List<dynamic> list = [];
-  final db = FirebaseFirestore.instance;
-
+  final db2 = FirebaseFirestore.instance;
+  DateTime years = DateTime.now();
 
   @override
   void dispose() {
-    db.terminate();
+    db2.terminate();
     super.dispose();
   }
 
+  setValues() async {
+    String month = DateFormat.MMMM().format(DateTime.now());
+    await db2
+        .collection(years.year.toString())
+        .doc(Spa.getSpaName)
+        .collection(month)
+        .doc("till Sale")
+        .get()
+        .then((value) => {
+              if (value.exists)
+                {userState()}
+              else
+                {
+                  db2
+                      .collection(years.year.toString())
+                      .doc(Spa.getSpaName)
+                      .collection(month)
+                      .doc("till Sale")
+                      .set({
+                    "Walkin Cash": 0,
+                    "Walkin Card": 0,
+                    "Walkin UPI": 0,
+                    "Walkin Wallet": 0,
+                    "Membership Cash": 0,
+                    "Membership Card": 0,
+                    "Membership UPI": 0,
+                    "Membership Wallet": 0,
+                    "Members": 0,
+                  }, SetOptions(merge: true)).then((value) => {userState()}),
+                }
+            });
+  }
+
+  Future<void> getValues() async {
+    try {
+      await db2
+          .collection("accounts")
+          .doc(FirebaseAuth.instance.currentUser!.email)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) async {
+        if (documentSnapshot.exists) {
+          Spa.setSpaName = await documentSnapshot.get("assignedSpa");
+          setState(() {
+            setValues();
+          });
+        }
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Something went wrong")));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback(
-            (_) => Future.delayed(const Duration(seconds: 2), () {
-          userState();
-
-        }));
+        (_) => Future.delayed(const Duration(seconds: 2), () async {
+              getValues();
+            }));
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -84,9 +136,9 @@ class MyAppState extends State<MyApp> {
     try {
       await FirebaseAuth.instance.currentUser?.reload();
       if (FirebaseAuth.instance.currentUser != null) {
-       if(mounted){
-        goManagerHome();
-       }
+        if (mounted) {
+          goManagerHome();
+        }
       } else {
         await userStateSave();
       }
@@ -95,22 +147,22 @@ class MyAppState extends State<MyApp> {
         showDialog(
             context: context,
             builder: (ctx) => AlertDialog(
-              title: const Text("Account is disabled",
-                  style: TextStyle(color: Colors.red)),
-              content: const Text(
-                  "Your account is disabled by admin or something went wrong?",
-                  style: TextStyle(fontFamily: "Montserrat")),
-              actions: <Widget>[
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                    },
-                    child: const Text(
-                      "Try again",
-                      style: TextStyle(color: Colors.green),
-                    ))
-              ],
-            ));
+                  title: const Text("Account is disabled",
+                      style: TextStyle(color: Colors.red)),
+                  content: const Text(
+                      "Your account is disabled by admin or something went wrong?",
+                      style: TextStyle(fontFamily: "Montserrat")),
+                  actions: <Widget>[
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                        },
+                        child: const Text(
+                          "Try again",
+                          style: TextStyle(color: Colors.green),
+                        ))
+                  ],
+                ));
       }
     }
   }
@@ -144,8 +196,6 @@ class MyAppState extends State<MyApp> {
         MaterialPageRoute(
           builder: (context) => const Home(),
         ),
-            (route) => false);
+        (route) => false);
   }
-
-
 }

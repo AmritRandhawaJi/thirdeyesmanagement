@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 
 class MembershipCash extends StatefulWidget {
   const MembershipCash({Key? key}) : super(key: key);
@@ -233,12 +233,12 @@ class _MembershipCashState extends State<MembershipCash> {
   Future<void> todayCash() async {
     String month = DateFormat.MMMM().format(DateTime.now());
     String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-    final prefs = await SharedPreferences.getInstance();
+
 
 
     await db
         .collection("sales")
-        .doc( prefs.getString("spaName").toString())
+        .doc(Spa.getSpaName)
         .collection(month)
         .doc(currentDate).collection("today").doc("Membership Sold")
         .get()

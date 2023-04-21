@@ -6,8 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/screens/walkin_clients_add.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 
@@ -41,8 +41,6 @@ class _WalkinClientsState extends State<WalkinClients> {
 
   bool indicator = false;
 
-  String spaName = '';
-
   @override
   void dispose() {
     _server.terminate();
@@ -58,15 +56,10 @@ class _WalkinClientsState extends State<WalkinClients> {
         authToken: 'b65377bebe0a0cef1a587b92d4d94a2a',
         twilioNumber: '+15076688607' //... with Twilio Number
         );
-    setSpa();
+
     super.initState();
   }
 
-  Future<void> setSpa() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    spaName = prefs.getString("spaName").toString();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +141,7 @@ class _WalkinClientsState extends State<WalkinClients> {
     try {
       twilioFlutter.sendSMS(
           toNumber: "+91${numberController.value.text.toString()}",
-          messageBody: "Welcome to  $spaName, Your one time password is $otp");
+          messageBody: "Welcome to  ${Spa.getSpaName}, Your one time password is $otp");
       panelHeightClosed = MediaQuery.of(context).size.height / 2;
       panelHeightOpen = MediaQuery.of(context).size.height - 50;
       serverResponded = true;
@@ -181,7 +174,7 @@ class _WalkinClientsState extends State<WalkinClients> {
           DelayedDisplay(
             child: Padding(
               padding: const EdgeInsets.only(top: 10),
-              child: Text(spaName,
+              child: Text(Spa.getSpaName,
                   style:
                       const TextStyle(fontFamily: "Montserrat", fontSize: 18)),
             ),

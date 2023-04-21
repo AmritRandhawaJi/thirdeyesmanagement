@@ -5,8 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/send_push_message.dart';
 import 'package:thirdeyesmanagement/modal/walkin_client_cart_data.dart';
 import 'package:thirdeyesmanagement/screens/home.dart';
@@ -32,7 +32,6 @@ class BookMembershipFinal extends StatefulWidget {
 class _BookMembershipFinalState extends State<BookMembershipFinal> {
   late List<dynamic> values;
   List<dynamic> finalize = [];
-  String spaName = "";
   String manager = FirebaseAuth.instance.currentUser!.email.toString();
   final db = FirebaseFirestore.instance;
 
@@ -111,7 +110,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
                       fontFamily: "Montserrat",
                       color: Colors.black38,
                     )),
-                Text(spaName,
+                Text(Spa.getSpaName,
                     style: const TextStyle(
                       fontSize: 24,
                       fontFamily: "Montserrat",
@@ -225,7 +224,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
       db.collection("clients").doc(widget.phoneNumber).set({
         "pastServices": FieldValue.arrayUnion([
           {
-            "spaName": spaName,
+            "spaName": Spa.getSpaName,
             "date": DateFormat('dd-MM-yyyy').format(DateTime.now()),
             "time": DateFormat.jm().format(DateTime.now()),
             "clientName": nameControl.value.text,
@@ -395,7 +394,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
     try {
       await db
           .collection(years.year.toString())
-          .doc(spaName)
+          .doc(Spa.getSpaName)
           .collection(month)
           .doc("till Sale")
           .update({
@@ -403,7 +402,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
       });
         await db
             .collection(years.year.toString())
-            .doc(spaName)
+            .doc(Spa.getSpaName)
             .collection(month)
             .doc(currentDate)
             .collection("today")
@@ -425,7 +424,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
           ]),
         }, SetOptions(merge: true)).then((value) async => {
         await  db.collection("accounts").doc("support@3rdeyesmanagement.in").get().then((value) => {
-            SendMessageCloud.sendPushMessage(value["token"], "You got $totalTake visitor for massage in $spaName", "Member Visit")
+            SendMessageCloud.sendPushMessage(value["token"], "You got $totalTake visitor for massage in ${Spa.getSpaName}", "Member Visit")
           })
 
         });
@@ -436,8 +435,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
   }
 
   Future<void> setSpa() async {
-    final prefs = await SharedPreferences.getInstance();
-   spaName = prefs.getString("spaName").toString();
+
   }
 }
 

@@ -100,6 +100,7 @@ class MyAppState extends State<MyApp> {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => Future.delayed(const Duration(seconds: 2), () async {
               getValues();
+
             }));
     return Scaffold(
       body: Column(

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/book_session_membership.dart';
+import 'package:thirdeyesmanagement/modal/renew.dart';
 
 class MemberDetailsPage extends StatefulWidget {
   const MemberDetailsPage({
@@ -246,191 +247,219 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
 
   Widget _body() {
     return SafeArea(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                    backgroundColor: Colors.white,
-                    maxRadius: 30,
-                    child: Icon(
-                      Icons.account_circle,
-                      size: 60,
-                    )),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("Welcome,",
-                        style: TextStyle(fontSize: 16, color: Colors.white60)),
-                    Row(
-                      children: [
-                        Text(widget.name,
-                            style: const TextStyle(
-                                fontSize: 22,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: "Montserrat")),
-                        const SizedBox(width: 10),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          CupertinoButton(onPressed: () {
-
-          }, child: const Text("Renew")),
-          Container(
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(30)),
-              height: 30,
-              width: MediaQuery.of(context).size.width / 2,
-              child: Center(
-                  child: Text(widget.phoneNumber,
-                      style: const TextStyle(
-                          color: Colors.blue,
-                          fontSize: 18,
-                          fontFamily: "Montserrat")))),
-          const SizedBox(height: 20),
-          const Text("Registration",
-              style: TextStyle(
-                  fontSize: 16, color: Colors.white60, fontFamily: "Dosis")),
-          const SizedBox(height: 5),
-          Text(
-            widget.registration,
-            style: const TextStyle(color: Colors.white),
-          ),
-          const SizedBox(height: 30),
-          Column(
-            children: [
-              const Text("Validity", style: TextStyle(color: Colors.white)),
-              Text(widget.validity,
-                  style: const TextStyle(color: Colors.white, fontSize: 18)),
-              const SizedBox(
-                height: 10,
-              )
-            ],
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Membership",
-                  style: TextStyle(fontSize: 18, color: Colors.white)),
-              const SizedBox(
-                height: 5,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                      backgroundColor: Colors.white,
+                      maxRadius: 30,
+                      child: Icon(
+                        Icons.account_circle,
+                        size: 60,
+                      )),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Welcome,",
+                          style:
+                              TextStyle(fontSize: 16, color: Colors.white60)),
+                      Row(
+                        children: [
+                          Text(widget.name,
+                              style: const TextStyle(
+                                  fontSize: 22,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: "Montserrat")),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              Container(
-                  height: 30,
-                  width: MediaQuery.of(context).size.width / 4,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: Colors.white),
-                  child: Center(
-                    child: widget.pendingMassage == 0
-                        ? const Text("Inactive",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, color: Colors.red))
-                        : const Text("Active",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green)),
-                  )),
-              Padding(
-                padding: const EdgeInsets.only(top: 25),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Paid ",
-                        style: TextStyle(color: Colors.white60)),
-                    Text(widget.paid.toString(),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 18)),
-                  ],
-                ),
-              )
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Package:",
-                        style: TextStyle(color: Colors.white)),
-                    Text(widget.package.toString(),
+            ),
+            Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30)),
+                height: 30,
+                width: MediaQuery.of(context).size.width / 2,
+                child: Center(
+                    child: Text(widget.phoneNumber,
                         style: const TextStyle(
-                          fontSize: 22,
-                          color: Colors.white,
-                        )),
-                    const Text("Massages:",
-                        style: TextStyle(color: Colors.white)),
-                    Text(widget.massages.toString(),
-                        style:
-                            const TextStyle(fontSize: 22, color: Colors.white)),
-                  ],
-                ),
+                            color: Colors.blue,
+                            fontSize: 18,
+                            fontFamily: "Montserrat")))),
+            const SizedBox(height: 20),
+            const Text("Registration",
+                style: TextStyle(
+                    fontSize: 16, color: Colors.white60, fontFamily: "Dosis")),
+            const SizedBox(height: 5),
+            Text(
+              widget.registration,
+              style: const TextStyle(color: Colors.white),
+            ),
+            const SizedBox(height: 30),
+            Column(
+              children: [
+                const Text("Validity", style: TextStyle(color: Colors.white)),
+                Text(widget.validity,
+                    style: const TextStyle(color: Colors.white, fontSize: 18)),
                 const SizedBox(
-                  height: 20,
-                ),
-                Column(
-                  children: [
-                    const Text("Massages Left: ",
-                        style: TextStyle(color: Colors.white)),
-                    Text(widget.pendingMassage.toString(),
-                        style:
-                            const TextStyle(fontSize: 22, color: Colors.white)),
-                    const SizedBox(height: 20),
-                    CupertinoButton(
-                      color: CupertinoColors.systemGreen,
-                      onPressed: () {
-                        if (widget.pendingMassage == 0) {
-                          showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                    title: const Text("Membership Expired",
-                                        style: TextStyle(color: Colors.red)),
-                                    content: const Text(
-                                      "Please pay at reception to continue enjoy our services",
-                                      style:
-                                          TextStyle(fontFamily: "Montserrat"),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(ctx);
-                                          },
-                                          child: const Text("OK")),
-                                    ],
-                                  ));
-                        } else {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BookSessionMembership(
-                                  package: widget.package,
-                                  member: widget.member,
-                                  paymentMode: widget.paymentType,
-                                  totalMassages: widget.massages,
-                                  pendingMassages: widget.pendingMassage,
-                                  number: widget.phoneNumber,
-                                ),
-                              ));
-                        }
-                      },
-                      child: const Text("Book Session"),
-                    ),
-                  ],
-                ),
+                  height: 10,
+                )
               ],
             ),
-          ),
-        ],
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Membership",
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                        height: 30,
+                        width: MediaQuery.of(context).size.width / 4,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: Colors.white),
+                        child: Center(
+                          child: widget.pendingMassage == 0
+                              ? const Text("Inactive",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red))
+                              : const Text("Active",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green)),
+                        )),
+                    Container(
+                        height: 30,
+                        width: MediaQuery.of(context).size.width / 4,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: Colors.white),
+                        child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RenewClient(
+                                      pendingMassage: widget.pendingMassage,
+                                      number: widget.phoneNumber, name: widget.name,
+                                    ),
+                                  ));
+                            },
+                            child: const Text(
+                              "Renew",
+                              style: TextStyle(color: Colors.green),
+                            ))),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Paid ",
+                          style: TextStyle(color: Colors.white60)),
+                      Text(widget.paid.toString(),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 18)),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text("Package:",
+                          style: TextStyle(color: Colors.white)),
+                      Text(widget.package.toString(),
+                          style: const TextStyle(
+                            fontSize: 22,
+                            color: Colors.white,
+                          )),
+                      const Text("Massages:",
+                          style: TextStyle(color: Colors.white)),
+                      Text(widget.massages.toString(),
+                          style: const TextStyle(
+                              fontSize: 22, color: Colors.white)),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Column(
+                    children: [
+                      const Text("Massages Left: ",
+                          style: TextStyle(color: Colors.white)),
+                      Text(widget.pendingMassage.toString(),
+                          style: const TextStyle(
+                              fontSize: 22, color: Colors.white)),
+                      const SizedBox(height: 20),
+                      CupertinoButton(
+                        color: CupertinoColors.systemGreen,
+                        onPressed: () {
+                          if (widget.pendingMassage == 0) {
+                            showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                      title: const Text("Membership Expired",
+                                          style: TextStyle(color: Colors.red)),
+                                      content: const Text(
+                                        "Please pay at reception to continue enjoy our services",
+                                        style:
+                                            TextStyle(fontFamily: "Montserrat"),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(ctx);
+                                            },
+                                            child: const Text("OK")),
+                                      ],
+                                    ));
+                          } else {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BookSessionMembership(
+                                    package: widget.package,
+                                    member: widget.member,
+                                    paymentMode: widget.paymentType,
+                                    totalMassages: widget.massages,
+                                    pendingMassages: widget.pendingMassage,
+                                    number: widget.phoneNumber,
+                                  ),
+                                ));
+                          }
+                        },
+                        child: const Text("Book Session"),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

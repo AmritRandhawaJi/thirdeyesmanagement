@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
+import 'package:thirdeyesmanagement/modal/twilio.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 import 'member_pay_screen.dart';
 
@@ -53,12 +54,10 @@ class _MembershipAddState extends State<MembershipAdd> {
   @override
   void initState() {
     twilioFlutter = TwilioFlutter(
-        accountSid: 'AC86f0b9d571e249e479c016fc892ce23f',
-        // replace *** with Account SID
-        authToken: 'b65377bebe0a0cef1a587b92d4d94a2a',
-        // replace xxx with Auth Token
-        twilioNumber: '+15076688607' // .... with Twilio Number
-        );
+        accountSid: Twilio.accountSID,
+        authToken: Twilio.authToken,
+        twilioNumber: Twilio.number
+    );
     super.initState();
   }
 

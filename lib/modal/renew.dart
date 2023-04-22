@@ -552,39 +552,8 @@ class _RenewClientState extends State<RenewClient> {
         physics: const BouncingScrollPhysics(),
         child: SafeArea(
           child: Column(children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: const [
-                  Text(
-                    "Welcome,",
-                    style: TextStyle(
-                        color: Colors.black45,
-                        fontSize: 14,
-                        fontFamily: "Montserrat",
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "Membership",
-                    style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 22,
-                        fontFamily: "Montserrat",
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
 
-            const Text("Booking Manager", style: TextStyle(fontSize: 18)),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(manager,
-                  style: const TextStyle(
-                    fontFamily: "Montserrat",
-                    fontWeight: FontWeight.w500,
-                  )),
-            ),
+
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(children: [
@@ -593,7 +562,7 @@ class _RenewClientState extends State<RenewClient> {
                   "Choose Membership",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
+                      fontSize: 22,
                       fontFamily: "Montserrat"),
                 ),
                 Row(
@@ -714,6 +683,15 @@ class _RenewClientState extends State<RenewClient> {
                     )),
               ]),
             ),
+            const Padding(
+              padding: EdgeInsets.only(top: 25),
+              child: Text("Booking Manager", style: TextStyle(fontSize: 18)),
+            ),
+            Text(manager,
+                style: const TextStyle(
+                  fontFamily: "Montserrat",
+                  fontWeight: FontWeight.w500,
+                )),
           ]),
         ),
       )

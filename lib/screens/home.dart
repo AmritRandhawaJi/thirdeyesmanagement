@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/fragments/all_sale.dart';
+import 'package:thirdeyesmanagement/fragments/membership_benifits.dart';
 import 'package:thirdeyesmanagement/modal/account_setting.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/screens/memebership_add.dart';
@@ -123,7 +124,7 @@ class HomePageState extends State<HomePage> {
                     children: const [
                       Icon(Icons.bar_chart, color: Colors.green),
                       Text(
-                        "Total Sale",
+                        "Month Sale",
                         style:
                             TextStyle(fontSize: 18, fontFamily: "Montserrat"),
                       ),
@@ -149,10 +150,14 @@ class HomePageState extends State<HomePage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MembershipAdd(),
+                        builder: (context) => const MembershipBenifits(),
                       ));
                 },
                 child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80),
+                    //set border radius more than 50% of height and width to make circle
+                  ),
                   child: SizedBox(
                       height: MediaQuery.of(context).size.width / 8,
                       width: MediaQuery.of(context).size.width / 3,
@@ -166,6 +171,42 @@ class HomePageState extends State<HomePage> {
                           ),
                           Text(
                             "Menu",
+                            style: TextStyle(fontFamily: "Montserrat"),
+                          ),
+                        ],
+                      ))),
+                ),
+              )),
+          Positioned(
+              left: 20.0,
+              bottom: _fabHeight - 10,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AllSale(),
+                      ));
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80),
+                    //set border radius more than 50% of height and width to make circle
+                  ),
+                  child: SizedBox(
+                      height: MediaQuery.of(context).size.width / 8,
+                      width: MediaQuery.of(context).size.width / 3,
+                      child: Center(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child:
+                                Icon(Icons.attach_money, color: Colors.green),
+                          ),
+                          Text(
+                            "Today's",
                             style: TextStyle(fontFamily: "Montserrat"),
                           ),
                         ],
@@ -495,14 +536,24 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _body() {
+    double cardHeight = MediaQuery.of(context).size.width / 2.5;
+    double cardWidth = MediaQuery.of(context).size.width / 2.5;
     return SafeArea(
         child: SingleChildScrollView(
       child: Column(children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(right: 10.0,left: 10.0,top: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+
+              Text(
+                Spa.getSpaName,
+                style: const TextStyle(
+                    fontSize: 22,
+                    fontFamily: "Montserrat",
+                    fontWeight: FontWeight.bold),
+              ),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -511,34 +562,15 @@ class HomePageState extends State<HomePage> {
                         builder: (context) => const AccountSetting(),
                       ));
                 },
-                child: const CircleAvatar(
-                  backgroundColor: Colors.green,
+                child:  CircleAvatar(
+                  maxRadius: MediaQuery.of(context).size.width/18,
+                  backgroundColor: Colors.black54,
                   child:
-                      Icon(Icons.account_circle_outlined, color: Colors.white),
+                      const Icon(Icons.settings, color: Colors.white,),
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AllSale(),
-                      ));
-                },
-                child: const CircleAvatar(
-                  backgroundColor: Colors.black,
-                  child: Icon(Icons.business, color: Colors.white),
-                ),
-              )
             ],
           ),
-        ),
-        Text(
-          Spa.getSpaName,
-          style: const TextStyle(
-              fontSize: 22,
-              fontFamily: "Montserrat",
-              fontWeight: FontWeight.bold),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 10, left: 10),
@@ -644,7 +676,7 @@ class HomePageState extends State<HomePage> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(15),
+          padding:  EdgeInsets.only(top: MediaQuery.of(context).size.height/12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -660,8 +692,8 @@ class HomePageState extends State<HomePage> {
                 child: Card(
                   color: Colors.green[200],
                   child: SizedBox(
-                      width: MediaQuery.of(context).size.width / 2.5,
-                      height: MediaQuery.of(context).size.width / 2.5,
+                      width: cardWidth,
+                      height: cardHeight,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: const [
@@ -688,8 +720,8 @@ class HomePageState extends State<HomePage> {
                 child: Card(
                   color: Colors.purple[100],
                   child: SizedBox(
-                      width: MediaQuery.of(context).size.width / 2.5,
-                      height: MediaQuery.of(context).size.width / 2.5,
+                      width: cardWidth,
+                      height: cardHeight,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: const [
@@ -697,7 +729,8 @@ class HomePageState extends State<HomePage> {
                           Text("Add Walk-In",
                               style: TextStyle(
                                   fontFamily: "Montserrat",
-                                  color: Colors.white)),
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold)),
                           Icon(Icons.add, color: Colors.white),
                         ],
                       )),

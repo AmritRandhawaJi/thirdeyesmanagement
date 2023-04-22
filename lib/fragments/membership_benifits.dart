@@ -23,7 +23,7 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
   String address = "";
   String number = "";
   String description = "";
-
+  bool loadPanel = false;
   var arr = [];
   var arr2 = [];
   var arr3 = [];
@@ -40,7 +40,7 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
         .doc(FirebaseAuth.instance.currentUser?.email.toString())
         .get()
         .then((value) async => {
-            await valuesGet(value.get("assignedSpa")),
+              await valuesGet(value.get("assignedSpa")),
               await goldFacility(),
               await goldNotes(),
               await platinumFacility(),
@@ -79,7 +79,6 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
   }
 
   Future<void> valuesGet(String spaType) async {
-
     try {
       await db
           .collection("spa")
@@ -328,9 +327,7 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                               ),
                               CupertinoButton(
                                   color: Colors.white,
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                   child: const Text(
                                     "Massages Include",
                                     style: TextStyle(color: Colors.black),
@@ -342,7 +339,7 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                           ),
                         ),
                         Card(
-                          color:  const Color(0xfff7edff),
+                          color: const Color(0xfff7edff),
                           margin: const EdgeInsets.all(10),
                           child: Column(
                             children: [
@@ -469,10 +466,12 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                               CupertinoButton(
                                   color: Colors.white,
                                   onPressed: () async {
+                                    setState(() {
+                                      loadPanel = true;
+                                    });
                                     _panelHeightOpen =
                                         MediaQuery.of(context).size.height - 80;
                                     pc.open();
-
                                   },
                                   child: const Text(
                                     "Massages Include",
@@ -494,50 +493,77 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
   }
 
   _panel(ScrollController sc) {
-
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+    return loadPanel
+        ? SingleChildScrollView(
+            child: Column(
               children: [
-                TextButton(
-                    onPressed: () {
-                      pc.close();
-                    },
-                    child: Row(
-                      children: const [
-                        Icon(Icons.close, color: Colors.redAccent),
-                        Text("Close", style: TextStyle(color: Colors.red)),
-                      ],
-                    ))
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            pc.close();
+                          },
+                          child: Row(
+                            children: const [
+                              Icon(Icons.close, color: Colors.redAccent),
+                              Text("Close",
+                                  style: TextStyle(color: Colors.red)),
+                            ],
+                          ))
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 15),
+                const Text(
+                  "We offer",
+                  style: TextStyle(fontFamily: "Montserrat", fontSize: 22),
+                ),
+                const SizedBox(height: 15),
+                ListView.builder(
+                  itemCount: panelValues.length - 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(panelValues[index]["massageName"],
+                                  style: const TextStyle(
+                                      fontFamily: "Montserrat",
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("Rs.${panelValues[index]["price"]}",
+                                  style: const TextStyle(
+                                      fontFamily: "Montserrat", fontSize: 16)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "Room Type: ${panelValues[index]["roomType"]}",
+                                  style: const TextStyle(
+                                      fontFamily: "Montserrat", fontSize: 16)),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 15),
-          const Text(
-            "We offer",
-            style: TextStyle(fontFamily: "Montserrat", fontSize: 22),
-          ),
-          const SizedBox(height: 15),
-          ListView.builder(
-            itemCount: panelValues.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(panelValues[index]["massageName"],style: const TextStyle(fontFamily: "Montserrat",fontSize: 16)),
-                ],
-              );
-            },
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
-          ),
-        ],
-      ),
-    );
+          )
+        : Container();
   }
-
 }

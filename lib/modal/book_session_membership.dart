@@ -82,7 +82,6 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
   }
 
   Widget _body() {
-
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
@@ -126,7 +125,7 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
                         ),
                         ListView.builder(
                           physics: const BouncingScrollPhysics(),
-                          itemCount: values.length,
+                          itemCount: values.length - 1,
                           itemBuilder: (BuildContext context, int index) {
                             return GestureDetector(
                               onTap: () {
@@ -300,7 +299,8 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
                                         TextButton(
                                             onPressed: () {
                                               setState(() {
-                                                WalkinClientCartData.list.removeAt(index);
+                                                WalkinClientCartData.list
+                                                    .removeAt(index);
                                               });
                                               Navigator.pop(ctx);
                                             },
@@ -383,16 +383,13 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
   }
 
   Future<void> calculate() async {
-
     setState(() {
       loading = false;
     });
     if (WalkinClientCartData.list.isEmpty) {
-
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Cart is empty")));
     } else if (widget.pendingMassages < WalkinClientCartData.list.length) {
-
       showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -417,7 +414,6 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
                 ],
               ));
     } else if (widget.package == "Gold") {
-
       if (WalkinClientCartData.list.length > 2) {
         showDialog(
             context: context,
@@ -442,11 +438,9 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
                         )),
                   ],
                 ));
-      }
-      else{
+      } else {
         moveNext();
       }
-
     } else if (widget.package == "Platinum") {
       if (WalkinClientCartData.list.length > 4) {
         showDialog(
@@ -473,7 +467,7 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
                   ],
                 ));
       } else {
-      moveNext();
+        moveNext();
       }
     }
   }

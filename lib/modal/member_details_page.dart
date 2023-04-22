@@ -47,7 +47,7 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
   Widget build(BuildContext context) {
     final double panelHeightClosed = MediaQuery.of(context).size.height / 4.5;
 
-    var panelHeightOpen = MediaQuery.of(context).size.height;
+    var panelHeightOpen = MediaQuery.of(context).size.height/1.3;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xff2b6747),
@@ -306,77 +306,88 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
               style: const TextStyle(color: Colors.white),
             ),
             const SizedBox(height: 30),
+
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: const [
+                      Text("Membership",
+                          style: TextStyle(fontSize: 18, color: Colors.white,fontFamily: "Montserrat")),
+                    ],
+                  ),
+                ),
                 const Text("Validity", style: TextStyle(color: Colors.white)),
                 Text(widget.validity,
                     style: const TextStyle(color: Colors.white, fontSize: 18)),
                 const SizedBox(
                   height: 10,
-                )
-              ],
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("Membership",
-                    style: TextStyle(fontSize: 18, color: Colors.white)),
-                const SizedBox(
-                  height: 5,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Container(
-                        height: 30,
-                        width: MediaQuery.of(context).size.width / 4,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.white),
-                        child: Center(
-                          child: widget.pendingMassage == 0
-                              ? const Text("Inactive",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red))
-                              : const Text("Active",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green)),
-                        )),
-                    Container(
-                        height: 30,
-                        width: MediaQuery.of(context).size.width / 4,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.white),
-                        child: TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => RenewClient(
-                                      pendingMassage: widget.pendingMassage,
-                                      number: widget.phoneNumber, name: widget.name,
-                                    ),
-                                  ));
-                            },
-                            child: const Text(
-                              "Renew",
-                              style: TextStyle(color: Colors.green),
-                            ))),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                          height: 30,
+                          width: MediaQuery.of(context).size.width / 4,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: Colors.white),
+                          child: Center(
+                            child: widget.pendingMassage == 0
+                                ? const Text("Inactive",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red))
+                                : const Text("Active",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green)),
+                          )),
+                      Container(
+                          height: 30,
+                          width: MediaQuery.of(context).size.width / 4,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: Colors.white),
+                          child: TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => RenewClient(
+                                        pendingMassage: widget.pendingMassage,
+                                        number: widget.phoneNumber, name: widget.name,
+                                      ),
+                                    ));
+                              },
+                              child: const Text(
+                                "Renew",
+                                style: TextStyle(color: Colors.green),
+                              ))),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 25),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      const Text("Paid ",
-                          style: TextStyle(color: Colors.white60)),
-                      Text(widget.paid.toString(),
+                      const Text("Paid : ",
+                          style: TextStyle(color: Colors.white)),
+                      Text("${widget.paid}/-",
                           style: const TextStyle(
                               color: Colors.white, fontSize: 18)),
+
+                      const Text("Massages:",
+                          style: TextStyle(color: Colors.white)),
+                      Text(widget.massages.toString(),
+                          style: const TextStyle(
+                              fontSize: 22, color: Colors.white)),
+
                     ],
                   ),
                 )
@@ -396,64 +407,55 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
                             fontSize: 22,
                             color: Colors.white,
                           )),
-                      const Text("Massages:",
-                          style: TextStyle(color: Colors.white)),
-                      Text(widget.massages.toString(),
-                          style: const TextStyle(
-                              fontSize: 22, color: Colors.white)),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Column(
-                    children: [
+
                       const Text("Massages Left: ",
                           style: TextStyle(color: Colors.white)),
                       Text(widget.pendingMassage.toString(),
                           style: const TextStyle(
                               fontSize: 22, color: Colors.white)),
-                      const SizedBox(height: 20),
-                      CupertinoButton(
-                        color: CupertinoColors.systemGreen,
-                        onPressed: () {
-                          if (widget.pendingMassage == 0) {
-                            showDialog(
-                                context: context,
-                                builder: (ctx) => AlertDialog(
-                                      title: const Text("Membership Expired",
-                                          style: TextStyle(color: Colors.red)),
-                                      content: const Text(
-                                        "Please pay at reception to continue enjoy our services",
-                                        style:
-                                            TextStyle(fontFamily: "Montserrat"),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(ctx);
-                                            },
-                                            child: const Text("OK")),
-                                      ],
-                                    ));
-                          } else {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => BookSessionMembership(
-                                    package: widget.package,
-                                    member: widget.member,
-                                    paymentMode: widget.paymentType,
-                                    totalMassages: widget.massages,
-                                    pendingMassages: widget.pendingMassage,
-                                    number: widget.phoneNumber,
-                                  ),
-                                ));
-                          }
-                        },
-                        child: const Text("Book Session"),
-                      ),
                     ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 25),
+                    child: CupertinoButton(
+                      color: CupertinoColors.systemGreen,
+                      onPressed: () {
+                        if (widget.pendingMassage == 0) {
+                          showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                    title: const Text("Membership Expired",
+                                        style: TextStyle(color: Colors.red)),
+                                    content: const Text(
+                                      "Please pay at reception to continue enjoy our services",
+                                      style:
+                                          TextStyle(fontFamily: "Montserrat"),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(ctx);
+                                          },
+                                          child: const Text("OK")),
+                                    ],
+                                  ));
+                        } else {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BookSessionMembership(
+                                  package: widget.package,
+                                  member: widget.member,
+                                  paymentMode: widget.paymentType,
+                                  totalMassages: widget.massages,
+                                  pendingMassages: widget.pendingMassage,
+                                  number: widget.phoneNumber,
+                                ),
+                              ));
+                        }
+                      },
+                      child: const Text("Book Session"),
+                    ),
                   ),
                 ],
               ),

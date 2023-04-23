@@ -47,6 +47,7 @@ class HomePageState extends State<HomePage> {
   bool loading = false;
   late DocumentSnapshot databaseData;
   String paymentType = "Cash";
+  String spaName = "";
   bool walkin = false;
   bool membership = false;
   bool member = false;
@@ -73,6 +74,8 @@ class HomePageState extends State<HomePage> {
     _fabHeight = _initFabHeight;
     super.initState();
   }
+
+
 
   int currentPage = 0;
   final PageController _pageController = PageController(initialPage: 0);
@@ -226,7 +229,7 @@ class HomePageState extends State<HomePage> {
     try {
       await db
           .collection(years.year.toString())
-          .doc("Azon Spa")
+          .doc(Spa.getSpaName)
           .collection(month)
           .doc("till Sale")
           .get()
@@ -252,6 +255,7 @@ class HomePageState extends State<HomePage> {
         panelLoad = false;
         panelLoading = true;
       });
+
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Not found")));
     }
@@ -265,37 +269,45 @@ class HomePageState extends State<HomePage> {
         child: ListView(
           controller: sc,
           children: <Widget>[
-            const SizedBox(
-              height: 12.0,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  width: 30,
-                  height: 5,
-                  decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(12.0))),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 18.0,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  month,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontFamily: "Montserrat",
-                    fontSize: 24.0,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    width: 30,
+                    height: 5,
+                    decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(12.0))),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8, right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    Spa.getSpaName,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontFamily: "Montserrat",
+                      fontSize: 24.0,
+                    ),
+                  ),
+                  Text(
+                    month,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontFamily: "Montserrat",
+                      fontSize: 24.0,
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             Column(
@@ -542,11 +554,10 @@ class HomePageState extends State<HomePage> {
         child: SingleChildScrollView(
       child: Column(children: [
         Padding(
-          padding: const EdgeInsets.only(right: 10.0,left: 10.0,top: 10),
+          padding: const EdgeInsets.only(right: 10.0, left: 10.0, top: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
               Text(
                 Spa.getSpaName,
                 style: const TextStyle(
@@ -562,11 +573,13 @@ class HomePageState extends State<HomePage> {
                         builder: (context) => const AccountSetting(),
                       ));
                 },
-                child:  CircleAvatar(
-                  maxRadius: MediaQuery.of(context).size.width/18,
+                child: CircleAvatar(
+                  maxRadius: MediaQuery.of(context).size.width / 18,
                   backgroundColor: Colors.black54,
-                  child:
-                      const Icon(Icons.settings, color: Colors.white,),
+                  child: const Icon(
+                    Icons.settings,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
@@ -676,7 +689,8 @@ class HomePageState extends State<HomePage> {
           ),
         ),
         Padding(
-          padding:  EdgeInsets.only(top: MediaQuery.of(context).size.height/12),
+          padding:
+              EdgeInsets.only(top: MediaQuery.of(context).size.height / 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [

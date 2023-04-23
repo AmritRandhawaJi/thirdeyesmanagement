@@ -40,39 +40,6 @@ class MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  setValues() async {
-    String month = DateFormat.MMMM().format(DateTime.now());
-    await db2
-        .collection(years.year.toString())
-        .doc(Spa.getSpaName)
-        .collection(month)
-        .doc("till Sale")
-        .get()
-        .then((value) => {
-              if (value.exists)
-                {userState()}
-              else
-                {
-                  db2
-                      .collection(years.year.toString())
-                      .doc(Spa.getSpaName)
-                      .collection(month)
-                      .doc("till Sale")
-                      .set({
-                    "Walkin Cash": 0,
-                    "Walkin Card": 0,
-                    "Walkin UPI": 0,
-                    "Walkin Wallet": 0,
-                    "Membership Cash": 0,
-                    "Membership Card": 0,
-                    "Membership UPI": 0,
-                    "Membership Wallet": 0,
-                    "Members": 0,
-                  }, SetOptions(merge: true)).then((value) => {userState()}),
-                }
-            });
-  }
-
   Future<void> getValues() async {
     try {
       await db2
@@ -95,12 +62,65 @@ class MyAppState extends State<MyApp> {
     }
   }
 
+  setValues() async {
+    String month = DateFormat.MMMM().format(DateTime.now());
+
+    try {
+      db2
+          .collection(years.year.toString())
+          .doc(Spa.getSpaName)
+          .collection(month)
+          .doc("till Sale")
+          .get()
+          .then((value) => {
+                if (value.exists)
+                  {}
+                else
+                  {
+                    db2
+                        .collection(years.year.toString())
+                        .doc(Spa.getSpaName)
+                        .collection(month)
+                        .doc("till Sale")
+                        .set({
+                      "Walkin Cash": 0,
+                      "Walkin Card": 0,
+                      "Walkin UPI": 0,
+                      "Walkin Wallet": 0,
+                      "Membership Cash": 0,
+                      "Membership Card": 0,
+                      "Membership UPI": 0,
+                      "Membership Wallet": 0,
+                      "Members": 0,
+                    }, SetOptions(merge: true)).then((value) => {}),
+                  }
+              });
+    } catch (e) {
+      db2
+          .collection(years.year.toString())
+          .doc(Spa.getSpaName)
+          .collection(month)
+          .doc("till Sale")
+          .set({
+        "Walkin Cash": 0,
+        "Walkin Card": 0,
+        "Walkin UPI": 0,
+        "Walkin Wallet": 0,
+        "Membership Cash": 0,
+        "Membership Card": 0,
+        "Membership UPI": 0,
+        "Membership Wallet": 0,
+        "Members": 0,
+      }, SetOptions(merge: true)).then((value) => {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => Future.delayed(const Duration(seconds: 2), () async {
-              getValues();
-
+              await getValues();
+              userState();
             }));
     return Scaffold(
       body: Column(
@@ -168,7 +188,7 @@ class MyAppState extends State<MyApp> {
     }
   }
 
-  moveToDecision() {
+  moveToDecision() async {
     if (mounted) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const Decision(),
@@ -191,7 +211,7 @@ class MyAppState extends State<MyApp> {
     }
   }
 
-  void goManagerHome() {
+  Future<void> goManagerHome() async {
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(

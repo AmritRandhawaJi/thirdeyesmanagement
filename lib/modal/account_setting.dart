@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:thirdeyesmanagement/main.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 
 import 'package:thirdeyesmanagement/screens/decision.dart';
 import 'package:thirdeyesmanagement/screens/password_reset.dart';
@@ -96,7 +98,7 @@ class _AccountSettingState extends State<AccountSetting> {
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-          builder: (context) => const Decision(),
+          builder: (context) => const MyApp(),
         ),
         (route) => false);
 

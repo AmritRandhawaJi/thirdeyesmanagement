@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:thirdeyesmanagement/fragments/membership_services.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 
 class MembershipBenifits extends StatefulWidget {
   const MembershipBenifits({
@@ -16,10 +17,8 @@ class MembershipBenifits extends StatefulWidget {
 class _MembershipBenifitsState extends State<MembershipBenifits> {
   bool loaded = false;
   List<dynamic> values = [];
-  List<dynamic> panelValues = [];
 
   final db = FirebaseFirestore.instance;
-  String spaName = "";
   String address = "";
   String number = "";
   String description = "";
@@ -28,9 +27,7 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
   var arr2 = [];
   var arr3 = [];
   var arr4 = [];
-  PanelController pc = PanelController();
-  final _panelHeightClosed = 0.0;
-  var _panelHeightOpen = 0.0;
+
 
   late String assignedSpa;
 
@@ -40,7 +37,7 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
         .doc(FirebaseAuth.instance.currentUser?.email.toString())
         .get()
         .then((value) async => {
-              await valuesGet(value.get("assignedSpa")),
+              await valuesGet(),
               await goldFacility(),
               await goldNotes(),
               await platinumFacility(),
@@ -57,40 +54,348 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        alignment: Alignment.topCenter,
-        children: <Widget>[
-          SlidingUpPanel(
-            maxHeight: _panelHeightOpen,
-            minHeight: _panelHeightClosed,
-            parallaxEnabled: true,
-            parallaxOffset: .5,
-            body: _body(),
-            controller: pc,
-            panelBuilder: (sc) => _panel(sc),
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(18.0),
-                topRight: Radius.circular(18.0)),
-            onPanelSlide: (double pos) => setState(() {}),
-          ),
-        ],
-      ),
+      body: loaded
+          ? SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: SafeArea(
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(Spa.getSpaName,
+                        style: const TextStyle(
+                            fontSize: 22,
+                            fontFamily: "Montserrat",
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(description,
+                        style: const TextStyle(
+                            fontFamily: "Montserrat",
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                        textAlign: TextAlign.center,
+                        address,
+                        style: const TextStyle(
+                            fontFamily: "Montserrat",
+                            fontWeight: FontWeight.w400)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(number,
+                        style: const TextStyle(
+                            fontFamily: "Montserrat",
+                            fontWeight: FontWeight.w400)),
+                  ),
+                ]),
+                Card(
+                  color: const Color(0xfffcfbe8),
+                  margin: const EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      ListView.builder(
+                        itemCount: 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            children: [
+                              Text(
+                                values[0]["type"],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Montserrat",
+                                    fontSize: 22),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceAround,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Text("Rs."),
+                                      Text(
+                                          values[0]["amount"]
+                                              .toString(),
+                                          style:
+                                          const TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontFamily:
+                                              "Montserrat",
+                                              fontSize: 22)),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Text("Massages: "),
+                                      Text(
+                                          values[0]["massages"]
+                                              .toString(),
+                                          style: const TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontFamily: "Montserrat",
+                                              fontSize: 22)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: const [
+                            Text("Facility",
+                                style: TextStyle(
+                                    fontFamily: "Montserrat",
+                                    fontSize: 18)),
+                          ],
+                        ),
+                      ),
+                      ListView.builder(
+                        itemCount: arr.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  arr[index],
+                                  style: const TextStyle(
+                                      fontFamily: "Montserrat"),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: const [
+                            Text(
+                              "Note :",
+                              style: TextStyle(
+                                  fontFamily: "Montserrat",
+                                  fontSize: 18,
+                                  color: Colors.red),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ListView.builder(
+                        itemCount: arr2.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  arr2[index],
+                                  style: const TextStyle(
+                                      fontFamily: "Montserrat"),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                      ),
+                      CupertinoButton(
+                          color: Colors.white,
+                          onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const MembershipServices(),));
+                            },
+                          child: const Text(
+                            "Massages Include",
+                            style: TextStyle(color: Colors.black),
+                          )),
+                      const SizedBox(
+                        height: 15,
+                      )
+                    ],
+                  ),
+                ),
+                Card(
+                  color: const Color(0xfff7edff),
+                  margin: const EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      ListView.builder(
+                        itemCount: 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            children: [
+                              Text(
+                                values[1]["type"],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Montserrat",
+                                    fontSize: 22),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceAround,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Text("Rs."),
+                                      Text(
+                                          values[1]["amount"]
+                                              .toString(),
+                                          style:
+                                          const TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontFamily:
+                                              "Montserrat",
+                                              fontSize: 22)),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Text("Massages: "),
+                                      Text(
+                                          values[1]["massages"]
+                                              .toString(),
+                                          style: const TextStyle(
+                                              fontWeight:
+                                              FontWeight.bold,
+                                              fontFamily: "Montserrat",
+                                              fontSize: 22)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: const [
+                            Text("Facility",
+                                style: TextStyle(
+                                    fontFamily: "Montserrat",
+                                    fontSize: 18)),
+                          ],
+                        ),
+                      ),
+                      ListView.builder(
+                        itemCount: arr3.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  arr3[index],
+                                  style: const TextStyle(
+                                      fontFamily: "Montserrat"),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: const [
+                            Text(
+                              "Note :",
+                              style: TextStyle(
+                                  fontFamily: "Montserrat",
+                                  fontSize: 18,
+                                  color: Colors.red),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ListView.builder(
+                        itemCount: arr4.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  arr4[index],
+                                  style: const TextStyle(
+                                      fontFamily: "Montserrat"),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                      ),
+                      CupertinoButton(
+                          color: Colors.white,
+                          onPressed: () async {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const MembershipServices(),));
+
+                          },
+                          child: const Text(
+                            "Massages Include",
+                            style: TextStyle(color: Colors.black),
+                          )),
+                      const SizedBox(
+                        height: 10,
+                      )
+                    ],
+                  ),
+                ),
+              ]),
+        ),
+      )
+          : const Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+          ))
     );
   }
 
-  Future<void> valuesGet(String spaType) async {
+  Future<void> valuesGet() async {
     try {
       await db
           .collection("spa")
-          .doc(spaType)
+          .doc(Spa.getSpaName)
           .get()
           .then((DocumentSnapshot documentSnapshot) {
         if (documentSnapshot.exists) {
           values = documentSnapshot.get("membership");
           address = documentSnapshot.get("address");
-          panelValues = documentSnapshot.get("services");
           number = documentSnapshot.get("phoneNumber");
-          spaName = documentSnapshot.get("spaName");
           description = documentSnapshot.get("description");
         }
       });
@@ -158,412 +463,4 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
     });
   }
 
-  _body() {
-    return Scaffold(
-        body: loaded
-            ? SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: SafeArea(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Column(children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(spaName,
-                                style: const TextStyle(
-                                    fontSize: 22,
-                                    fontFamily: "Montserrat",
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(description,
-                                style: const TextStyle(
-                                    fontFamily: "Montserrat",
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                                textAlign: TextAlign.center,
-                                address,
-                                style: const TextStyle(
-                                    fontFamily: "Montserrat",
-                                    fontWeight: FontWeight.w400)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(number,
-                                style: const TextStyle(
-                                    fontFamily: "Montserrat",
-                                    fontWeight: FontWeight.w400)),
-                          ),
-                        ]),
-                        Card(
-                          color: const Color(0xfffcfbe8),
-                          margin: const EdgeInsets.all(10),
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 10),
-                              ListView.builder(
-                                itemCount: 1,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Column(
-                                    children: [
-                                      Text(
-                                        values[0]["type"],
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: "Montserrat",
-                                            fontSize: 22),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              const Text("Rs."),
-                                              Text(
-                                                  values[0]["amount"]
-                                                      .toString(),
-                                                  style:
-                                                      const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontFamily:
-                                                              "Montserrat",
-                                                          fontSize: 22)),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              const Text("Massages: "),
-                                              Text(
-                                                  values[0]["massages"]
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontFamily: "Montserrat",
-                                                      fontSize: 22)),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  );
-                                },
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: const [
-                                    Text("Facility",
-                                        style: TextStyle(
-                                            fontFamily: "Montserrat",
-                                            fontSize: 18)),
-                                  ],
-                                ),
-                              ),
-                              ListView.builder(
-                                itemCount: arr.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          arr[index],
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat"),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: const [
-                                    Text(
-                                      "Note :",
-                                      style: TextStyle(
-                                          fontFamily: "Montserrat",
-                                          fontSize: 18,
-                                          color: Colors.red),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              ListView.builder(
-                                itemCount: arr2.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          arr2[index],
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat"),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                              ),
-                              CupertinoButton(
-                                  color: Colors.white,
-                                  onPressed: () {},
-                                  child: const Text(
-                                    "Massages Include",
-                                    style: TextStyle(color: Colors.black),
-                                  )),
-                              const SizedBox(
-                                height: 15,
-                              )
-                            ],
-                          ),
-                        ),
-                        Card(
-                          color: const Color(0xfff7edff),
-                          margin: const EdgeInsets.all(10),
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 10),
-                              ListView.builder(
-                                itemCount: 1,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Column(
-                                    children: [
-                                      Text(
-                                        values[1]["type"],
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: "Montserrat",
-                                            fontSize: 22),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              const Text("Rs."),
-                                              Text(
-                                                  values[1]["amount"]
-                                                      .toString(),
-                                                  style:
-                                                      const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontFamily:
-                                                              "Montserrat",
-                                                          fontSize: 22)),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              const Text("Massages: "),
-                                              Text(
-                                                  values[1]["massages"]
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontFamily: "Montserrat",
-                                                      fontSize: 22)),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  );
-                                },
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: const [
-                                    Text("Facility",
-                                        style: TextStyle(
-                                            fontFamily: "Montserrat",
-                                            fontSize: 18)),
-                                  ],
-                                ),
-                              ),
-                              ListView.builder(
-                                itemCount: arr3.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          arr3[index],
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat"),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: const [
-                                    Text(
-                                      "Note :",
-                                      style: TextStyle(
-                                          fontFamily: "Montserrat",
-                                          fontSize: 18,
-                                          color: Colors.red),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              ListView.builder(
-                                itemCount: arr4.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          arr4[index],
-                                          style: const TextStyle(
-                                              fontFamily: "Montserrat"),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                              ),
-                              CupertinoButton(
-                                  color: Colors.white,
-                                  onPressed: () async {
-                                    setState(() {
-                                      loadPanel = true;
-                                    });
-                                    _panelHeightOpen =
-                                        MediaQuery.of(context).size.height - 80;
-                                    pc.open();
-                                  },
-                                  child: const Text(
-                                    "Massages Include",
-                                    style: TextStyle(color: Colors.black),
-                                  )),
-                              const SizedBox(
-                                height: 10,
-                              )
-                            ],
-                          ),
-                        ),
-                      ]),
-                ),
-              )
-            : const Center(
-                child: CircularProgressIndicator(
-                strokeWidth: 2,
-              )));
-  }
-
-  _panel(ScrollController sc) {
-    return loadPanel
-        ? SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                          onPressed: () {
-                            pc.close();
-                          },
-                          child: Row(
-                            children: const [
-                              Icon(Icons.close, color: Colors.redAccent),
-                              Text("Close",
-                                  style: TextStyle(color: Colors.red)),
-                            ],
-                          ))
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 15),
-                const Text(
-                  "We offer",
-                  style: TextStyle(fontFamily: "Montserrat", fontSize: 22),
-                ),
-                const SizedBox(height: 15),
-                ListView.builder(
-                  itemCount: panelValues.length - 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(panelValues[index]["massageName"],
-                                  style: const TextStyle(
-                                      fontFamily: "Montserrat",
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text("Rs.${panelValues[index]["price"]}",
-                                  style: const TextStyle(
-                                      fontFamily: "Montserrat", fontSize: 16)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                  "Room Type: ${panelValues[index]["roomType"]}",
-                                  style: const TextStyle(
-                                      fontFamily: "Montserrat", fontSize: 16)),
-                            ),
-
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                ),
-              ],
-            ),
-          )
-        : Container();
-  }
 }

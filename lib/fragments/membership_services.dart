@@ -55,11 +55,20 @@ class _MembershipServicesState extends State<MembershipServices> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              "We offer",
-                              style: TextStyle(
-                                  fontFamily: "Montserrat", fontSize: 22),
+                            Row(
+                              children: const [
+                                Text(
+                                  "We offer",
+                                  style: TextStyle(
+                                      fontFamily: "Montserrat", fontSize: 22),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Icon(Icons.local_offer,color: Colors.green,),
+                                )
+                              ],
                             ),
+
                             TextButton(
                                 onPressed: () {
                                   Navigator.pop(context);
@@ -111,22 +120,20 @@ class _MembershipServicesState extends State<MembershipServices> {
                                       itemBuilder: (context, index) {
                                         return Column(
                                           children: [
-                                            Row(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      const Text("• "),
-                                                      Text(array[index],
-                                                          style: const TextStyle(
-                                                              fontFamily:
-                                                                  "Montserrat")),
-                                                    ],
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                children: [
+                                                  const Text("• "),
+                                                  Expanded(
+                                                    child: Text(array[index],
+                                                        style: const TextStyle(
+                                                            fontFamily:
+                                                                "Montserrat",)),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             )
                                           ],
                                         );

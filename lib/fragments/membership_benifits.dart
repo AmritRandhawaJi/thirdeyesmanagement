@@ -172,10 +172,17 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  arr[index],
-                                  style: const TextStyle(
-                                      fontFamily: "Montserrat"),
+                                child: Row(
+                                  children: [
+                                    const Text("• "),
+                                    Expanded(
+                                      child: Text(
+                                        arr[index],
+                                        style: const TextStyle(
+                                            fontFamily: "Montserrat"),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -312,10 +319,18 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  arr3[index],
-                                  style: const TextStyle(
-                                      fontFamily: "Montserrat"),
+                                child: Row(
+                                  children: [
+                                    const Text("• "),
+
+                                    Expanded(
+                                      child: Text(
+                                        arr3[index],
+                                        style: const TextStyle(
+                                            fontFamily: "Montserrat"),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],

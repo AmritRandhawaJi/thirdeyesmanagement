@@ -29,26 +29,23 @@ class _AccountSettingState extends State<AccountSetting> {
       backgroundColor: const Color(0xfffcf0ff),
       body: SafeArea(
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                children: [
-                  const SizedBox(height: 30),
-                  const Text(
-                    "Welcome",
-                    style: TextStyle(
-                      fontFamily: "Montserrat",
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    FirebaseAuth.instance.currentUser!.email.toString(),
-                    style:
-                        const TextStyle(fontFamily: "Montserrat", fontSize: 18),
-                  )
-                ],
+              const SizedBox(height: 30),
+              const Text(
+                "Welcome",
+                style: TextStyle(
+                  fontFamily: "Montserrat",
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: Text(
+                  FirebaseAuth.instance.currentUser!.email.toString(),
+                  style:
+                      const TextStyle(fontFamily: "Montserrat"),
+                ),
               ),
               Row(
                 children: [
@@ -61,34 +58,30 @@ class _AccountSettingState extends State<AccountSetting> {
                   ),
                 ],
               ),
-              Column(
-                children: [
-                  CupertinoButton(
-                      color: Colors.purple[300],
-                      onPressed: () async {
-                        try {
-                          await FirebaseAuth.instance.signOut();
-                          _logout();
-                        } on FirebaseAuthException catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.code.toString())));
-                        }
-                      },
-                      child: const Text("Sign-Out")),
-                  const SizedBox(height: 30),
-                  CupertinoButton(
-                      color: Colors.redAccent[200],
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const PasswordReset(),
-                            ));
-                      },
-                      child: const Text("Change Password")),
-                  const SizedBox(height: 30),
-                ],
-              ),
+              CupertinoButton(
+                  color: Colors.purple[300],
+                  onPressed: () async {
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      _logout();
+                    } on FirebaseAuthException catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.code.toString())));
+                    }
+                  },
+                  child: const Text("Sign-Out")),
+              const SizedBox(height: 30),
+              CupertinoButton(
+                  color: Colors.redAccent[200],
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PasswordReset(),
+                        ));
+                  },
+                  child: const Text("Change Password")),
+              const SizedBox(height: 30),
             ]),
       ),
     );

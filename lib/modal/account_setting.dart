@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:thirdeyesmanagement/main.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
-
 import 'package:thirdeyesmanagement/screens/decision.dart';
 import 'package:thirdeyesmanagement/screens/password_reset.dart';
 
@@ -18,10 +17,6 @@ class AccountSetting extends StatefulWidget {
 class _AccountSettingState extends State<AccountSetting> {
   final db = FirebaseFirestore.instance;
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

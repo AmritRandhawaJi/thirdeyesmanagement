@@ -19,6 +19,7 @@ class _UPIState extends State<UPI> {
   int total = 0;
 
   bool loading = true;
+  DateTime years = DateTime.now();
 
   bool indicator = false;
 
@@ -135,44 +136,7 @@ class _UPIState extends State<UPI> {
                           ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              "Offer Applied: ",
-                              style: TextStyle(),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: Text(
-                              upiListed[index]["offerApplied"]
-                                  ? "Yes"
-                                  : "Not Applied",
-                              style: const TextStyle(),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              "Offer Amount: ",
-                              style: TextStyle(),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: Text(
-                              upiListed[index]["offerAmount"].toString(),
-                              style: const TextStyle(color: Colors.green),
-                            ),
-                          )
-                        ],
-                      ),
+
                       Row(
                         children: [
                           const Padding(
@@ -237,7 +201,7 @@ class _UPIState extends State<UPI> {
     String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
     await db
-        .collection("sales")
+        .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
         .doc(currentDate).collection("today").doc("Walkin Clients")

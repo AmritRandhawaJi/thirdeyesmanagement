@@ -1,5 +1,5 @@
 class Spa{
- static late String spaName;
+ static String spaName = "";
 
   static String get getSpaName {
     return spaName;

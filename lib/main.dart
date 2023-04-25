@@ -40,86 +40,12 @@ class MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  Future<void> getValues() async {
-    try {
-      await db2
-          .collection("accounts")
-          .doc(FirebaseAuth.instance.currentUser!.email)
-          .get()
-          .then((DocumentSnapshot documentSnapshot) async {
-        if (documentSnapshot.exists) {
-          Spa.setSpaName = await documentSnapshot.get("assignedSpa");
-          setState(() {
-            setValues();
-          });
-        }
-      });
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Something went wrong")));
-      }
-    }
-  }
-
-  setValues() async {
-    String month = DateFormat.MMMM().format(DateTime.now());
-
-    try {
-      db2
-          .collection(years.year.toString())
-          .doc(Spa.getSpaName)
-          .collection(month)
-          .doc("till Sale")
-          .get()
-          .then((value) => {
-                if (value.exists)
-                  {}
-                else
-                  {
-                    db2
-                        .collection(years.year.toString())
-                        .doc(Spa.getSpaName)
-                        .collection(month)
-                        .doc("till Sale")
-                        .set({
-                      "Walkin Cash": 0,
-                      "Walkin Card": 0,
-                      "Walkin UPI": 0,
-                      "Walkin Wallet": 0,
-                      "Membership Cash": 0,
-                      "Membership Card": 0,
-                      "Membership UPI": 0,
-                      "Membership Wallet": 0,
-                      "Members": 0,
-                    }, SetOptions(merge: true)).then((value) => {}),
-                  }
-              });
-    } catch (e) {
-      db2
-          .collection(years.year.toString())
-          .doc(Spa.getSpaName)
-          .collection(month)
-          .doc("till Sale")
-          .set({
-        "Walkin Cash": 0,
-        "Walkin Card": 0,
-        "Walkin UPI": 0,
-        "Walkin Wallet": 0,
-        "Membership Cash": 0,
-        "Membership Card": 0,
-        "Membership UPI": 0,
-        "Membership Wallet": 0,
-        "Members": 0,
-      }, SetOptions(merge: true)).then((value) => {});
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => Future.delayed(const Duration(seconds: 2), () async {
-              await getValues();
+
               userState();
             }));
     return Scaffold(

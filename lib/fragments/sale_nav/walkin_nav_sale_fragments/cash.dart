@@ -19,7 +19,7 @@ class _CashState extends State<Cash> {
   bool loading = true;
 
   bool indicator = false;
-
+  DateTime years = DateTime.now();
   bool image = false;
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<dynamic> cashListed = [];
@@ -204,7 +204,7 @@ class _CashState extends State<Cash> {
     String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
     await db
-        .collection("sales")
+        .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
         .doc(currentDate)

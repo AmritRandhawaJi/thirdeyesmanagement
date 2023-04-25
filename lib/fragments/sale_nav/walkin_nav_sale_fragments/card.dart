@@ -16,6 +16,7 @@ class _CardState extends State<CardSale> {
   int total = 0;
 
   bool loading = true;
+  DateTime years = DateTime.now();
 
   bool indicator = false;
 
@@ -132,44 +133,7 @@ class _CardState extends State<CardSale> {
                           ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              "Offer Applied: ",
-                              style: TextStyle(),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: Text(
-                              cardListed[index]["offerApplied"]
-                                  ? "Yes"
-                                  : "Not Applied",
-                              style: const TextStyle(),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              "Offer Amount: ",
-                              style: TextStyle(),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: Text(
-                              cardListed[index]["offerAmount"].toString(),
-                              style: const TextStyle(color: Colors.green),
-                            ),
-                          )
-                        ],
-                      ),
+
                       Row(
                         children: [
                           const Padding(
@@ -233,7 +197,7 @@ class _CardState extends State<CardSale> {
     String month = DateFormat.MMMM().format(DateTime.now());
     String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     await db
-        .collection("sales")
+        .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
         .doc(currentDate).collection("today").doc("Walkin Clients")

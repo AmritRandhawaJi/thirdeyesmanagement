@@ -220,9 +220,10 @@ class _WalkinNavSaleState extends State<MembersNavSale> {
 
     String month = DateFormat.MMMM().format(DateTime.now());
     String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    DateTime years = DateTime.now();
 
     await db
-        .collection("sales")
+        .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
         .doc(currentDate)

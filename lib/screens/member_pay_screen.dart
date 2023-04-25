@@ -10,7 +10,9 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/book_session_membership.dart';
 import 'package:thirdeyesmanagement/modal/send_push_message.dart';
+import 'package:thirdeyesmanagement/modal/twilio.dart';
 import 'package:thirdeyesmanagement/screens/home.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 
 class MemberPayScreen extends StatefulWidget {
   final String name;
@@ -53,6 +55,7 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
   bool applied = false;
 
   late Timer timer;
+  late TwilioFlutter twilioFlutter;
 
   bool logoLoad = false;
 
@@ -60,6 +63,15 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
   void dispose() {
     db.terminate();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    twilioFlutter = TwilioFlutter(
+        accountSid: Twilio.accountSID,
+        authToken: Twilio.authToken,
+        twilioNumber: Twilio.number);
+    super.initState();
   }
 
   @override
@@ -173,10 +185,10 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
                   .doc("support@3rdeyesmanagement.in")
                   .get()
                   .then((value) => {
-                SendMessageCloud.sendPushMessage(
-                    value["token"],
-                    "Membership Sold to ${widget.name} paid by $_result in ${Spa.getSpaName}",
-                    "Membership Sold")
+                        SendMessageCloud.sendPushMessage(
+                            value["token"],
+                            "Membership Sold to ${widget.name} paid by $_result in ${Spa.getSpaName}",
+                            "Membership Sold"),
                       }),
               setState(() {
                 loading = false;

@@ -235,9 +235,10 @@ class _MembershipWalletState extends State<MembershipWallet> {
   Future<void> todayWallet() async {
     String month = DateFormat.MMMM().format(DateTime.now());
     String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    DateTime years = DateTime.now();
 
     await db
-        .collection("sales")
+        .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
         .doc(currentDate).collection("today").doc("Membership Sold")

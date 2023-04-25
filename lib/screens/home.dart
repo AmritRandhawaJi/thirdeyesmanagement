@@ -1,5 +1,7 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,6 +71,7 @@ class HomePageState extends State<HomePage> {
   int memberShipWallet = 0;
   int members = 0;
 
+
   @override
   void initState() {
     _fabHeight = _initFabHeight;
@@ -93,11 +96,89 @@ class HomePageState extends State<HomePage> {
       currentPage = index;
     });
   }
+  Future<void> getValues() async {
+    try {
+      await db
+          .collection("accounts")
+          .doc(FirebaseAuth.instance.currentUser!.email)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) async {
+        if (documentSnapshot.exists) {
+          Spa.setSpaName = await documentSnapshot.get("assignedSpa");
+          setState(() {
+        
+            setValues();
+          });
+        }
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Something went wrong")));
+      }
+    }
+  }
+
+  setValues() async {
+    String month = DateFormat.MMMM().format(DateTime.now());
+
+    try {
+      db
+          .collection(years.year.toString())
+          .doc(Spa.getSpaName)
+          .collection(month)
+          .doc("till Sale")
+          .get()
+          .then((value) => {
+        if (value.exists)
+          {}
+        else
+          {
+            db
+                .collection(years.year.toString())
+                .doc(Spa.getSpaName)
+                .collection(month)
+                .doc("till Sale")
+                .set({
+              "Walkin Cash": 0,
+              "Walkin Card": 0,
+              "Walkin UPI": 0,
+              "Walkin Wallet": 0,
+              "Membership Cash": 0,
+              "Membership Card": 0,
+              "Membership UPI": 0,
+              "Membership Wallet": 0,
+              "Members": 0,
+            }, SetOptions(merge: true)).then((value) => {}),
+          }
+      });
+    } catch (e) {
+      db
+          .collection(years.year.toString())
+          .doc(Spa.getSpaName)
+          .collection(month)
+          .doc("till Sale")
+          .set({
+        "Walkin Cash": 0,
+        "Walkin Card": 0,
+        "Walkin UPI": 0,
+        "Walkin Wallet": 0,
+        "Membership Cash": 0,
+        "Membership Card": 0,
+        "Membership UPI": 0,
+        "Membership Wallet": 0,
+        "Members": 0,
+      }, SetOptions(merge: true)).then((value) => {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     _panelHeightOpen = MediaQuery.of(context).size.height / 1.5;
-
+    WidgetsBinding.instance.addPostFrameCallback(
+            (_) => Future.delayed(const Duration(seconds: 1), () async {
+          getValues();
+        }));
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFFe6f0f9),
@@ -285,30 +366,38 @@ class HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            Padding(
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  month,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.normal,
+                    fontFamily: "Montserrat",
+                    fontSize: 24.0,
+                  ),
+                ),
+              ),
+            ),
+              Padding(
               padding: const EdgeInsets.only(left: 8, right: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    Spa.getSpaName,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontFamily: "Montserrat",
-                      fontSize: 24.0,
-                    ),
-                  ),
-                  Text(
-                    month,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontFamily: "Montserrat",
-                      fontSize: 24.0,
-                    ),
-                  ),
+                  Expanded(
+                    child: Text(
+                       Spa.getSpaName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontFamily: "Montserrat",
+                        fontSize: 24.0,
+                      ),
+                    )
+                  ) ,
+
                 ],
               ),
-            ),
+            ) ,
             const SizedBox(height: 20),
             Column(
               children: [
@@ -558,13 +647,7 @@ class HomePageState extends State<HomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                Spa.getSpaName,
-                style: const TextStyle(
-                    fontSize: 22,
-                    fontFamily: "Montserrat",
-                    fontWeight: FontWeight.bold),
-              ),
+             Text(Spa.getSpaName,style: const TextStyle(fontSize: 18,fontFamily: "Montserrat")),
               GestureDetector(
                 onTap: () {
                   Navigator.push(

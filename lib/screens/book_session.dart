@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
+import 'package:thirdeyesmanagement/modal/twilio.dart';
 
 import 'package:thirdeyesmanagement/modal/walkin_client_cart_data.dart';
 import 'package:thirdeyesmanagement/screens/home.dart';
+import 'package:twilio_flutter/twilio_flutter.dart';
 
 class BookSession extends StatefulWidget {
   final String phoneNumber;
@@ -54,11 +56,7 @@ class _BookSessionState extends State<BookSession> {
   bool allSet = false;
 
   bool loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  late TwilioFlutter twilioFlutter;
 
   @override
   void dispose() {
@@ -66,6 +64,27 @@ class _BookSessionState extends State<BookSession> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    twilioFlutter = TwilioFlutter(
+        accountSid: Twilio.accountSID,
+        authToken: Twilio.authToken,
+        twilioNumber: Twilio.number);
+    sendMessage();
+    super.initState();
+  }
+  void sendMessage() {
+
+    try {
+      twilioFlutter.sendSMS(
+          toNumber: "+91${widget.phoneNumber}",
+          messageBody:
+          "Welcome to  ${Spa.getSpaName}, Thanks for choosing our services");
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

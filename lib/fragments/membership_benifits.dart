@@ -179,7 +179,7 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                                       child: Text(
                                         arr[index],
                                         style: const TextStyle(
-                                            fontFamily: "Montserrat"),
+                                            fontFamily: "Montserrat",fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ],
@@ -306,7 +306,7 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                             Text("Facility",
                                 style: TextStyle(
                                     fontFamily: "Montserrat",
-                                    fontSize: 18)),
+                                    fontSize: 18,)),
                           ],
                         ),
                       ),
@@ -327,7 +327,7 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                                       child: Text(
                                         arr3[index],
                                         style: const TextStyle(
-                                            fontFamily: "Montserrat"),
+                                            fontFamily: "Montserrat",fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ],

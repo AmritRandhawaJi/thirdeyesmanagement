@@ -404,6 +404,7 @@ late TwilioFlutter twilioFlutter;
   }
 
   int totalTake = WalkinClientCartData.list.length;
+  int tillMembers = 0;
 
   Future<void> saleAddMember(int index) async {
     String month = DateFormat.MMMM().format(DateTime.now());
@@ -414,10 +415,20 @@ late TwilioFlutter twilioFlutter;
           .collection(years.year.toString())
           .doc(Spa.getSpaName)
           .collection(month)
+          .doc("till Sale").get().then((value) => {
+        tillMembers = value["Members"],
+        print(tillMembers)
+      }).whenComplete(() async => {
+      await db
+          .collection(years.year.toString())
+          .doc(Spa.getSpaName)
+          .collection(month)
           .doc("till Sale")
           .update({
-        "Members": totalTake
+      "Members": tillMembers + totalTake
+      })
       });
+
         await db
             .collection(years.year.toString())
             .doc(Spa.getSpaName)

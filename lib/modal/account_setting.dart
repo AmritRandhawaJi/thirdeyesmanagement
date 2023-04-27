@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:thirdeyesmanagement/main.dart';
-import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
-import 'package:thirdeyesmanagement/screens/decision.dart';
 import 'package:thirdeyesmanagement/screens/password_reset.dart';
 
 class AccountSetting extends StatefulWidget {
@@ -24,6 +22,7 @@ class _AccountSettingState extends State<AccountSetting> {
       backgroundColor: const Color(0xfffcf0ff),
       body: SafeArea(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(height: 30),
               const Text(
@@ -35,13 +34,33 @@ class _AccountSettingState extends State<AccountSetting> {
                 ),
               ),
               const SizedBox(height: 10),
-              Expanded(
-                child: Text(
-                  FirebaseAuth.instance.currentUser!.email.toString(),
-                  style:
-                      const TextStyle(fontFamily: "Montserrat"),
-                ),
+              Text(
+                FirebaseAuth.instance.currentUser!.email.toString(),
+                style:
+                    const TextStyle(fontFamily: "Montserrat"),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.width/2.5,
+                  width: MediaQuery.of(context).size.width/2.5,
+                  child: Card(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: const [
+                        Padding(
+                          padding: EdgeInsets.all(15.0),
+                          child: Text("Add Offers",style:
+                              TextStyle(fontFamily: "Montserrat",fontWeight: FontWeight.bold,color: Colors.green)),
+                        ),
+                        Icon(Icons.local_offer,color: Colors.green
+                        ),
+                        Icon(Icons.arrow_forward_ios,color: Colors.green)
+                      ],)),
+                ),
+              ],),
+
               Row(
                 children: [
                   Expanded(

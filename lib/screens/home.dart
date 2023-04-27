@@ -1,17 +1,15 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/fragments/all_sale.dart';
-import 'package:thirdeyesmanagement/fragments/membership_benifits.dart';
 import 'package:thirdeyesmanagement/modal/account_setting.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/screens/memebership_add.dart';
+import 'package:thirdeyesmanagement/screens/test.dart';
 import 'package:thirdeyesmanagement/screens/verification.dart';
 import 'package:thirdeyesmanagement/screens/walkin_clients.dart';
 
@@ -46,7 +44,7 @@ class HomePageState extends State<HomePage> {
   final searchController = TextEditingController();
   final GlobalKey<FormState> searchKey = GlobalKey<FormState>();
   final db = FirebaseFirestore.instance;
-  bool loading = false;
+
   late DocumentSnapshot databaseData;
   String paymentType = "Cash";
   String spaName = "";
@@ -71,6 +69,7 @@ class HomePageState extends State<HomePage> {
   int memberShipWallet = 0;
   int members = 0;
 
+  bool loading = false;
 
   @override
   void initState() {
@@ -78,14 +77,13 @@ class HomePageState extends State<HomePage> {
     super.initState();
   }
 
-
-
   int currentPage = 0;
   final PageController _pageController = PageController(initialPage: 0);
   DateTime years = DateTime.now();
 
   @override
   void dispose() {
+    db.clearPersistence();
     db.terminate();
     _pageController.dispose();
     super.dispose();
@@ -96,9 +94,10 @@ class HomePageState extends State<HomePage> {
       currentPage = index;
     });
   }
+
   Future<void> getValues() async {
-    try {
-      await db
+
+      FirebaseFirestore.instance
           .collection("accounts")
           .doc(FirebaseAuth.instance.currentUser!.email)
           .get()
@@ -106,52 +105,48 @@ class HomePageState extends State<HomePage> {
         if (documentSnapshot.exists) {
           Spa.setSpaName = await documentSnapshot.get("assignedSpa");
           setState(() {
-        
+            if(mounted){
             setValues();
+
+            }
           });
         }
       });
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Something went wrong")));
-      }
-    }
   }
 
   setValues() async {
     String month = DateFormat.MMMM().format(DateTime.now());
 
     try {
-      db
+      FirebaseFirestore.instance
           .collection(years.year.toString())
           .doc(Spa.getSpaName)
           .collection(month)
           .doc("till Sale")
           .get()
           .then((value) => {
-        if (value.exists)
-          {}
-        else
-          {
-            db
-                .collection(years.year.toString())
-                .doc(Spa.getSpaName)
-                .collection(month)
-                .doc("till Sale")
-                .set({
-              "Walkin Cash": 0,
-              "Walkin Card": 0,
-              "Walkin UPI": 0,
-              "Walkin Wallet": 0,
-              "Membership Cash": 0,
-              "Membership Card": 0,
-              "Membership UPI": 0,
-              "Membership Wallet": 0,
-              "Members": 0,
-            }, SetOptions(merge: true)).then((value) => {}),
-          }
-      });
+                if (value.exists)
+                  {}
+                else
+                  {
+                    db
+                        .collection(years.year.toString())
+                        .doc(Spa.getSpaName)
+                        .collection(month)
+                        .doc("till Sale")
+                        .set({
+                      "Walkin Cash": 0,
+                      "Walkin Card": 0,
+                      "Walkin UPI": 0,
+                      "Walkin Wallet": 0,
+                      "Membership Cash": 0,
+                      "Membership Card": 0,
+                      "Membership UPI": 0,
+                      "Membership Wallet": 0,
+                      "Members": 0,
+                    }, SetOptions(merge: true)).then((value) => {}),
+                  }
+              });
     } catch (e) {
       db
           .collection(years.year.toString())
@@ -176,133 +171,149 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     _panelHeightOpen = MediaQuery.of(context).size.height / 1.5;
     WidgetsBinding.instance.addPostFrameCallback(
-            (_) => Future.delayed(const Duration(seconds: 1), () async {
-          getValues();
-        }));
+        (_) => Future.delayed(const Duration(seconds: 1), () async {
+          if(mounted){
+           await getValues();
+          }
+            }));
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFFe6f0f9),
-      body: Stack(
-        children: <Widget>[
-          SlidingUpPanel(
-            maxHeight: _panelHeightOpen,
-            minHeight: _panelHeightClosed,
-            parallaxEnabled: true,
-            parallaxOffset: .5,
-            body: _body(),
-            onPanelOpened: () {
-              onPanelOpened();
-            },
-            onPanelClosed: () {
-              setState(() {
-                panelLoad = false;
-              });
-            },
-            collapsed: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(30)),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Column(
-                    children: const [
-                      Icon(Icons.bar_chart, color: Colors.green),
-                      Text(
-                        "Month Sale",
-                        style:
-                            TextStyle(fontSize: 18, fontFamily: "Montserrat"),
-                      ),
-                    ],
+      body: Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/home.png"),
+                fit: BoxFit.contain,
+                alignment: Alignment.center)),
+        child: Stack(
+          children: <Widget>[
+            SlidingUpPanel(
+              maxHeight: _panelHeightOpen,
+              minHeight: _panelHeightClosed,
+              parallaxEnabled: true,
+              parallaxOffset: .5,
+              body: _body(),
+              onPanelOpened: () {
+                onPanelOpened();
+              },
+              onPanelClosed: () {
+                setState(() {
+                  panelLoad = false;
+                });
+              },
+              collapsed: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30)),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Column(
+                      children:  [
+                        const Icon(Icons.bar_chart, color: Colors.green),
+                        Text(
+                          "•${Spa.getSpaName} Sale•",
+                          style:
+                              const TextStyle(fontSize: 18, fontFamily: "Montserrat"),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
+              panelBuilder: (sc) => _panel(sc),
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(18.0),
+                  topRight: Radius.circular(18.0)),
+              onPanelSlide: (double pos) => setState(() {
+                _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
+                    _initFabHeight;
+              }),
             ),
-            panelBuilder: (sc) => _panel(sc),
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(18.0),
-                topRight: Radius.circular(18.0)),
-            onPanelSlide: (double pos) => setState(() {
-              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
-                  _initFabHeight;
-            }),
-          ),
-          Positioned(
-              right: 20.0,
-              bottom: _fabHeight - 10,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MembershipBenifits(),
-                      ));
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80),
-                    //set border radius more than 50% of height and width to make circle
-                  ),
-                  child: SizedBox(
-                      height: MediaQuery.of(context).size.width / 8,
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Center(
+            Positioned(
+                right: 20.0,
+                bottom: _fabHeight + 40,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const WalkinClients(),
+                        ));
+                  },
+                  child: Card(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(topRight: Radius.circular(30),bottomRight: Radius.circular(30)),
+                      //set border radius more than 50% of height and width to make circle
+                    ),
+                    child: SizedBox(
+                        height: MediaQuery.of(context).size.width / 6,
+                        width: MediaQuery.of(context).size.width / 2.3,
+                        child: Center(
                           child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Icon(Icons.menu_book, color: Colors.green),
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: const [
+                              Icon(Icons.directions_walk,color: Colors.green),
+                              Padding(
+                                padding: EdgeInsets.only(right: 8),
+                                child: Text(
+                                  "Walkin-Clients",
+                                  style: TextStyle(fontFamily: "Montserrat",fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            "Menu",
-                            style: TextStyle(fontFamily: "Montserrat"),
-                          ),
-                        ],
-                      ))),
-                ),
-              )),
-          Positioned(
-              left: 20.0,
-              bottom: _fabHeight - 10,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AllSale(),
-                      ));
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(80),
-                    //set border radius more than 50% of height and width to make circle
+                        )),
                   ),
-                  child: SizedBox(
-                      height: MediaQuery.of(context).size.width / 8,
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: Center(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child:
-                                Icon(Icons.attach_money, color: Colors.green),
-                          ),
-                          Text(
-                            "Today's",
-                            style: TextStyle(fontFamily: "Montserrat"),
-                          ),
-                        ],
-                      ))),
-                ),
-              )),
-        ],
+                )),
+            Positioned(
+                left: 20.0,
+                bottom: _fabHeight + 40,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MembershipAdd(),
+                        ));
+                  },
+                  child: Card(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),bottomLeft: Radius.circular(30)),
+
+                    ),
+                    child: SizedBox(
+                        height: MediaQuery.of(context).size.width / 6,
+                        width: MediaQuery.of(context).size.width / 2.3,
+                        child: Center(
+                            child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+
+                            Padding(
+                              padding: EdgeInsets.only(left: 8),
+                              child: Text(
+                                "Membership",
+                                style: TextStyle(fontFamily: "Montserrat",fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 5),
+                              child: Icon(Icons.add_card_sharp,color: Colors.green),
+                            ),
+                          ],
+                        ))),
+                  ),
+                )),
+          ],
+        ),
       ),
     );
   }
 
   onPanelOpened() async {
+    Test dd= Test();
+    dd.updateClients();
     setState(() {
       panelLoading = true;
     });
@@ -340,6 +351,7 @@ class HomePageState extends State<HomePage> {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Not found")));
     }
+
   }
 
   Widget _panel(ScrollController sc) {
@@ -366,39 +378,58 @@ class HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  month,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontFamily: "Montserrat",
-                    fontSize: 24.0,
+             GestureDetector(
+               onTap: (){
+                 Navigator.push(context, MaterialPageRoute(builder: (context) => const AllSale(),));
+               },
+               child: Card(
+                color: Colors.black54,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+
+                      Padding(
+                        padding: EdgeInsets.only(top: 5),
+                        child: Text(
+                          "Today's Sale",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.normal,
+                            fontFamily: "Montserrat",
+                            fontSize: 24.0,
+                          ),
+                        ),
+                      ),
+                      Icon(Icons.arrow_forward_ios,color: Colors.white,)
+                    ],
                   ),
                 ),
-              ),
             ),
-              Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8),
+             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                       Spa.getSpaName,
-                      style: const TextStyle(
+                children: [
+                  const Text("Total Sale :  ",
+                      style: TextStyle(
+                        color: Colors.black54,
                         fontWeight: FontWeight.normal,
                         fontFamily: "Montserrat",
-                        fontSize: 24.0,
-                      ),
-                    )
-                  ) ,
-
+                      )),
+                  Text(
+                    month,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                      fontFamily: "Montserrat",
+                      fontSize: 24.0,
+                    ),
+                  ),
                 ],
               ),
-            ) ,
-            const SizedBox(height: 20),
+            ),
             Column(
               children: [
                 panelLoad
@@ -637,8 +668,6 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _body() {
-    double cardHeight = MediaQuery.of(context).size.width / 2.5;
-    double cardWidth = MediaQuery.of(context).size.width / 2.5;
     return SafeArea(
         child: SingleChildScrollView(
       child: Column(children: [
@@ -647,7 +676,11 @@ class HomePageState extends State<HomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-             Text(Spa.getSpaName,style: const TextStyle(fontSize: 18,fontFamily: "Montserrat")),
+              Text(Spa.getSpaName,
+                  style: const TextStyle(
+                      fontSize: 22,
+                      fontFamily: "Montserrat",
+                      fontWeight: FontWeight.bold)),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -660,7 +693,7 @@ class HomePageState extends State<HomePage> {
                   maxRadius: MediaQuery.of(context).size.width / 18,
                   backgroundColor: Colors.black54,
                   child: const Icon(
-                    Icons.settings,
+                    Icons.account_circle,
                     color: Colors.white,
                   ),
                 ),
@@ -699,9 +732,6 @@ class HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        const SizedBox(
-          height: 10,
-        ),
         DelayedDisplay(
           child: Form(
             key: searchKey,
@@ -723,18 +753,36 @@ class HomePageState extends State<HomePage> {
                   }
                 },
                 decoration: InputDecoration(
-                    suffixIcon: loading
-                        ? const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(
-                                color: Colors.black, strokeWidth: 1),
-                          )
-                        : null,
                     counterText: "",
                     filled: true,
+                    suffixIcon:loading ? const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(strokeWidth: 1),
+                    ):  Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: GestureDetector(
+                          onTap: (){
+                            if (searchKey.currentState!.validate()) {
+                              setState(() {
+                                loading = true;
+                              });
+                              WidgetsBinding.instance.addPostFrameCallback((_) =>
+                                  Future.delayed(const Duration(seconds: 1), () {
+                                    setState(() {
+                                      loading = false;
+                                    });
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                          return Verification(
+                                            number: searchController.value.text.toString(),
+                                          );
+                                        }));
+                                  }));
+                            }
+                          },
+                          child: const CircleAvatar(child: Icon(Icons.search))),
+                    ),
                     hintText: "Search Registered Clients",
-                    prefixIcon: const Icon(Icons.search,
-                        color: Colors.black54, size: 20),
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(40),
@@ -742,98 +790,6 @@ class HomePageState extends State<HomePage> {
                     )),
               ),
             ),
-          ),
-        ),
-        DelayedDisplay(
-          child: Center(
-            child: CupertinoButton(
-                color: Colors.green,
-                borderRadius: BorderRadius.circular(40),
-                onPressed: () {
-                  if (searchKey.currentState!.validate()) {
-                    setState(() {
-                      loading = true;
-                    });
-                    WidgetsBinding.instance.addPostFrameCallback((_) =>
-                        Future.delayed(const Duration(seconds: 1), () {
-                          setState(() {
-                            loading = false;
-                          });
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (BuildContext context) {
-                            return Verification(
-                              number: searchController.value.text.toString(),
-                            );
-                          }));
-                        }));
-                  }
-                },
-                child: const Text("Search")),
-          ),
-        ),
-        Padding(
-          padding:
-              EdgeInsets.only(top: MediaQuery.of(context).size.height / 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              DelayedDisplay(
-                  child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MembershipAdd(),
-                      ));
-                },
-                child: Card(
-                  color: Colors.green[200],
-                  child: SizedBox(
-                      width: cardWidth,
-                      height: cardHeight,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: const [
-                          Icon(Icons.card_giftcard, color: Colors.white),
-                          Text("Add Membership",
-                              style: TextStyle(
-                                  fontFamily: "Montserrat",
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
-                          Icon(Icons.add, color: Colors.white),
-                        ],
-                      )),
-                ),
-              )),
-              DelayedDisplay(
-                  child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const WalkinClients(),
-                      ));
-                },
-                child: Card(
-                  color: Colors.purple[100],
-                  child: SizedBox(
-                      width: cardWidth,
-                      height: cardHeight,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: const [
-                          Icon(Icons.directions_walk, color: Colors.white),
-                          Text("Add Walk-In",
-                              style: TextStyle(
-                                  fontFamily: "Montserrat",
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
-                          Icon(Icons.add, color: Colors.white),
-                        ],
-                      )),
-                ),
-              )),
-            ],
           ),
         ),
       ]),

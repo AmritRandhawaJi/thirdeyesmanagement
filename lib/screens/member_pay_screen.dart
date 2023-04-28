@@ -187,7 +187,7 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
                   .then((value) => {
                         SendMessageCloud.sendPushMessage(
                             value["token"],
-                            "Membership Sold to ${widget.name} paid by $_result in ${Spa.getSpaName}",
+                            "One Membership Sold to ${widget.name} client paid by $_result in ${Spa.getSpaName}",
                             "Membership Sold"),
                       }),
               setState(() {

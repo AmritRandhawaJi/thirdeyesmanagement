@@ -403,7 +403,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
         .then((value) => {
               SendMessageCloud.sendPushMessage(
                   value["token"],
-                  "You got $totalTake Walk-in Clients for massage in ${Spa.getSpaName} paid by $_result",
+                  "You got $totalTake Walk-in Clients for massage in ${Spa.getSpaName} amount paid by $_result",
                   "Walk-in Clients")
             })
         .whenComplete(() => {

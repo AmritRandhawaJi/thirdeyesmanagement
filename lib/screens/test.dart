@@ -18,17 +18,24 @@ class Test {
         .where("pendingMassage", isLessThanOrEqualTo: 2)
         .get()
         .then((value) => {
-              if (value.size != 0) {dataList = value.docs, notifyAll()}
+              if (value.size != 0) {
+
+                dataList = value.docs,
+                notifyAll()
+
+              }
             });
   }
 
   notifyAll() {
     for (var element in dataList) {
+      if(!element["notify"]){
       String number = element["phone"];
       twilioFlutter.sendSMS(
           toNumber: "+91$number",
           messageBody:
-              "Your membership is going to expire soon please visit to renew we have exciting offers for you.");
+          "Your membership is going to expire soon please visit to renew we have exciting offers for you.");
+      }
     }
   }
 }

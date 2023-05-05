@@ -56,7 +56,8 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
 
   bool allSet = false;
 
-late TwilioFlutter twilioFlutter;
+  late TwilioFlutter twilioFlutter;
+
   @override
   void initState() {
     twilioFlutter = TwilioFlutter(
@@ -66,23 +67,21 @@ late TwilioFlutter twilioFlutter;
     sendMessage();
     super.initState();
   }
-  void sendMessage() {
 
+  void sendMessage() {
     try {
       twilioFlutter.sendSMS(
           toNumber: "+91${widget.phoneNumber}",
           messageBody:
-          "Welcome to  ${Spa.getSpaName}, Thanks for choosing our services");
+              "Welcome to  ${Spa.getSpaName}, Thanks for choosing our services");
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
-
   @override
   void dispose() {
-
     db.terminate();
     super.dispose();
   }
@@ -233,28 +232,25 @@ late TwilioFlutter twilioFlutter;
   }
 
   Future<void> createBooking(int index) async {
-
-    await db
-        .collection("clients")
-        .doc(widget.phoneNumber)
-        .update({"pendingMassage": widget.pendingMassage - WalkinClientCartData.list.length})
-        .then((value) => {
-      db.collection("clients").doc(widget.phoneNumber).set({
-        "pastServices": FieldValue.arrayUnion([
-          {
-            "spaName": Spa.getSpaName,
-            "date": DateFormat('dd-MM-yyyy').format(DateTime.now()),
-            "time": DateFormat.jm().format(DateTime.now()),
-            "clientName": nameControl.value.text,
-            "modeOfPayment": widget.modeOfPayment,
-            "massageName": WalkinClientCartData
-                .values[WalkinClientCartData.list[index]]["massageName"],
-            "therapist": therapistControl.value.text,
-          },
-        ])
-      }, SetOptions(merge: true))
-    });
-    await  saleAddMember(index);
+    await db.collection("clients").doc(widget.phoneNumber).update({
+      "pendingMassage": widget.pendingMassage - WalkinClientCartData.list.length
+    }).then((value) => {
+          db.collection("clients").doc(widget.phoneNumber).set({
+            "pastServices": FieldValue.arrayUnion([
+              {
+                "spaName": Spa.getSpaName,
+                "date": DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                "time": DateFormat.jm().format(DateTime.now()),
+                "clientName": nameControl.value.text,
+                "modeOfPayment": widget.modeOfPayment,
+                "massageName": WalkinClientCartData
+                    .values[WalkinClientCartData.list[index]]["massageName"],
+                "therapist": therapistControl.value.text,
+              },
+            ])
+          }, SetOptions(merge: true))
+        });
+    await saleAddMember(index);
   }
 
   _panel(ScrollController sc) {
@@ -360,22 +356,22 @@ late TwilioFlutter twilioFlutter;
                     setState(() {
                       _pc1.close();
                     });
-                   await createBooking(item);
+                    await createBooking(item);
                     therapistControl.clear();
                     nameControl.clear();
                     setState(() {
-                    WalkinClientCartData.list.removeAt(item);
+                      WalkinClientCartData.list.removeAt(item);
                     });
                     if (WalkinClientCartData.list.isEmpty) {
                       WidgetsBinding.instance.addPostFrameCallback(
-                              (_) => Future.delayed(const Duration(seconds: 2), () {
+                          (_) => Future.delayed(const Duration(seconds: 2), () {
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => const Home(),
                                     ),
-                                        (route) => false);
-                          }));
+                                    (route) => false);
+                              }));
                       setState(() {
                         allSet = true;
                         listEmpty = true;
@@ -415,54 +411,57 @@ late TwilioFlutter twilioFlutter;
           .collection(years.year.toString())
           .doc(Spa.getSpaName)
           .collection(month)
-          .doc("till Sale").get().then((value) => {
-        tillMembers = value["Members"],
-        print(tillMembers)
-      }).whenComplete(() async => {
+          .doc("till Sale")
+          .get()
+          .then((value) => {tillMembers = value["Members"], })
+          .whenComplete(() async => {
+                await db
+                    .collection(years.year.toString())
+                    .doc(Spa.getSpaName)
+                    .collection(month)
+                    .doc("till Sale")
+                    .update({"Members": tillMembers + totalTake})
+              });
+
       await db
           .collection(years.year.toString())
           .doc(Spa.getSpaName)
           .collection(month)
-          .doc("till Sale")
-          .update({
-      "Members": tillMembers + totalTake
-      })
-      });
-
-        await db
-            .collection(years.year.toString())
-            .doc(Spa.getSpaName)
-            .collection(month)
-            .doc(currentDate)
-            .collection("today")
-            .doc("Members")
-            .set({
-          "all": FieldValue.arrayUnion([
-            {
-              "clientId": widget.phoneNumber,
-              "clientType": "Membership",
-              "totalMassages": totalTake,
-              "therapistName": therapistControl.value.text,
-              "serviceClientName": nameControl.value.text,
-              "massageName": WalkinClientCartData
-                  .values[WalkinClientCartData.list[index]]["massageName"],
-              "date": DateFormat('dd-MM-yyyy').format(DateTime.now()),
-              "time": DateFormat.jm().format(DateTime.now()),
-              "manager": FirebaseAuth.instance.currentUser!.email.toString(),
-            }
-          ]),
-        }, SetOptions(merge: true)).then((value) async => {
-        await  db.collection("accounts").doc("support@3rdeyesmanagement.in").get().then((value) => {
-            SendMessageCloud.sendPushMessage(value["token"], "You got $totalTake visitor for massage in ${Spa.getSpaName}", "Member Visit")
-          })
-
-        });
+          .doc(currentDate)
+          .collection("today")
+          .doc("Members")
+          .set({
+        "all": FieldValue.arrayUnion([
+          {
+            "clientId": widget.phoneNumber,
+            "clientType": "Membership",
+            "totalMassages": totalTake,
+            "therapistName": therapistControl.value.text,
+            "serviceClientName": nameControl.value.text,
+            "massageName": WalkinClientCartData
+                .values[WalkinClientCartData.list[index]]["massageName"],
+            "date": DateFormat('dd-MM-yyyy').format(DateTime.now()),
+            "time": DateFormat.jm().format(DateTime.now()),
+            "manager": FirebaseAuth.instance.currentUser!.email.toString(),
+          }
+        ]),
+      }, SetOptions(merge: true)).then((value) async => {
+                await db
+                    .collection("accounts")
+                    .doc("support@3rdeyesmanagement.in")
+                    .get()
+                    .then((value) => {
+                          SendMessageCloud.sendPushMessage(
+                              value["token"],
+                              "$totalTake people took massages in ${Spa.getSpaName} we deducted service from membership",
+                              "Member Visiting")
+                        })
+              });
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Error")));
     }
   }
-
 }
 
 class ClipPathClass extends CustomClipper<Path> {

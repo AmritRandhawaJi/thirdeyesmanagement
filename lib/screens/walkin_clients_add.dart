@@ -162,8 +162,7 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
                                       Text(
                                         values[index]["massageName"],
                                         style: const TextStyle(
-                                            fontFamily: "Montserrat",
-                                            fontWeight: FontWeight.bold,
+                                             fontWeight: FontWeight.bold,
                                             fontSize: 18),
                                       ),
                                       const Text("Price",
@@ -375,7 +374,8 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
   Future<void> calculate() async {
     List<int> array = [];
     for (int i = 0; i < list.length; i++) {
-      array.add(values[list[i]]["price"]);
+      int data = values[list[i]]["price"];
+      array.add(data);
     }
     int sum = array.fold(0, (p, c) => p + c);
     if (sum == 0) {

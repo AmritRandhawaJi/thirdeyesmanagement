@@ -14,7 +14,7 @@ class Cash extends StatefulWidget {
 class _CashState extends State<Cash> {
   bool loaded = false;
 
-  int total = 0;
+  double total = 0.0;
 
   bool loading = true;
 
@@ -62,7 +62,7 @@ class _CashState extends State<Cash> {
                   const Text("Till Sale : ",
                       style: TextStyle(color: Colors.black38)),
                   Text(
-                    "Rs.$total",
+                    "Rs.${total.toString()}",
                     style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
@@ -213,10 +213,8 @@ class _CashState extends State<Cash> {
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
-        try {
           cashListed = await documentSnapshot.get("Cash");
           calculate();
-        } catch (e) {
           if (mounted) {
             setState(() {
               total = 0;
@@ -225,7 +223,7 @@ class _CashState extends State<Cash> {
               loading = false;
             });
           }
-        }
+
       } else {
         if (mounted) {
           setState(() {
@@ -248,8 +246,9 @@ class _CashState extends State<Cash> {
   }
 
   calculate() {
-    List<int> array = [];
+    List<double> array = [];
     for (int i = 0; i < cashListed.length; i++) {
+
       array.add(cashListed[i]["amountPaid"]);
     }
     total = array.fold(0, (p, c) => p + c);

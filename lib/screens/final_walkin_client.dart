@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/send_push_message.dart';
@@ -36,19 +34,25 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
   FirebaseFirestore server = FirebaseFirestore.instance;
   final PanelController _pc1 = PanelController();
   FirebaseFirestore db = FirebaseFirestore.instance;
-  int offer = 0;
   bool loading = false;
+  int afterOffer = 0;
   String _result = "Cash";
   final GlobalKey<FormState> numberKey = GlobalKey<FormState>();
-  final offerController = TextEditingController();
-  final GlobalKey<FormState> offerKey = GlobalKey<FormState>();
+
   bool logoLoad = false;
   DateTime years = DateTime.now();
+
+  bool applied = false;
+
+  @override
+  void initState() {
+    afterOffer = widget.total;
+    super.initState();
+  }
 
   @override
   void dispose() {
     db.terminate();
-    offerController.dispose();
     super.dispose();
   }
 
@@ -112,12 +116,12 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Please Pay RS.${widget.total}/- on the reception.",
+                "Please Pay RS.${applied ? afterOffer : widget.total}/- on the reception.",
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontFamily: "Montserrat",
                     fontSize: 32,
-                    color: CupertinoColors.activeGreen),
+                    color: CupertinoColors.darkBackgroundGray),
               ),
             ),
           ],
@@ -128,7 +132,6 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
 
   _panel(ScrollController sc) {
     return Scaffold(
-      backgroundColor: const Color(0xffedf8ff),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -142,17 +145,13 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                     color: Colors.blueGrey[100]),
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30), color: Colors.white),
-              child: const Padding(
-                padding: EdgeInsets.all(20),
-                child: Text("Choose Mode of Payment",
-                    style: TextStyle(
-                        fontFamily: "Montserrat",
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
-              ),
+
+            const Padding(
+              padding: EdgeInsets.all(20),
+              child: Text("Choose Mode of Payment",
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
             ),
             Padding(
                 padding: const EdgeInsets.all(25),
@@ -161,8 +160,15 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                   children: [
                     RadioListTile(
                         activeColor: Colors.green,
-                        title: const Text('Cash'),
+                        title: Row(
+                          children:  [
+                            const Icon(Icons.attach_money),
+                            SizedBox(width: MediaQuery.of(context).size.width/12),
+                            const Text('Cash',style: TextStyle(fontSize: 18,fontFamily: "Montserrat",)),
+                          ],
+                        ),
                         value: "Cash",
+
                         groupValue: _result,
                         onChanged: (value) {
                           setState(() {
@@ -171,7 +177,13 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                         }),
                     RadioListTile(
                         activeColor: Colors.green,
-                        title: const Text('Card'),
+                        title: Row(
+                          children:  [
+                            const Icon(Icons.credit_card_rounded),
+                            SizedBox(width: MediaQuery.of(context).size.width/12),
+                            const Text('Card',style: TextStyle(fontSize: 18,fontFamily: "Montserrat",)),
+                          ],
+                        ),
                         value: 'Card',
                         groupValue: _result,
                         onChanged: (value) {
@@ -181,7 +193,13 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                         }),
                     RadioListTile(
                         activeColor: Colors.green,
-                        title: const Text('UPI'),
+                        title: Row(
+                          children:  [
+                            const Icon(Icons.account_balance),
+                            SizedBox(width: MediaQuery.of(context).size.width/12),
+                            const Text('UPI',style: TextStyle(fontSize: 18,fontFamily: "Montserrat",)),
+                          ],
+                        ),
                         value: 'UPI',
                         groupValue: _result,
                         onChanged: (value) {
@@ -191,7 +209,13 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                         }),
                     RadioListTile(
                         activeColor: Colors.green,
-                        title: const Text('Wallet'),
+                        title: Row(
+                          children:  [
+                            const Icon(Icons.payments_rounded),
+                            SizedBox(width: MediaQuery.of(context).size.width/12),
+                            const Text('Wallet',style: TextStyle(fontSize: 18,fontFamily: "Montserrat",)),
+                          ],
+                        ),
                         value: "Wallet",
                         groupValue: _result,
                         onChanged: (value) {
@@ -333,7 +357,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
-        saleAddingToServer();
+        moveForBooking();
       } else {
         await server.collection("clients").doc(widget.number).set({
           "name": widget.name.trim(),
@@ -344,85 +368,48 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
           "registration": widget.registration,
         });
         SetOptions(merge: true);
-        saleAddingToServer();
+        moveForBooking();
       }
     });
   }
 
   int totalTake = WalkinClientCartData.list.length;
 
-  Future<void> saleAddingToServer() async {
-    String month = DateFormat.MMMM().format(DateTime.now());
-    String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-    try {
-      for (int i = 0; i < WalkinClientCartData.list.length; i++) {
-        await db
-            .collection(years.year.toString())
-            .doc(Spa.getSpaName)
-            .collection(month)
-            .doc("till Sale")
-            .update({
-          "Walkin $_result":
-              WalkinClientCartData.values[WalkinClientCartData.list[i]]["price"]
-        });
-        await db
-            .collection(years.year.toString())
-            .doc(Spa.getSpaName)
-            .collection(month)
-            .doc(currentDate)
-            .collection("today")
-            .doc("Walkin Clients")
-            .set({
-          _result: FieldValue.arrayUnion([
-            {
-              "clientId": widget.number,
-              "clientName": widget.name,
-              "massageName": WalkinClientCartData
-                  .values[WalkinClientCartData.list[i]]["massageName"],
-              "time": DateFormat.jm().format(DateTime.now()),
-              "date": currentDate,
-              "modeOfPayment": _result,
-              "manager": FirebaseAuth.instance.currentUser!.email.toString(),
-              "amountPaid": WalkinClientCartData
-                  .values[WalkinClientCartData.list[i]]["price"],
-            }
-          ]),
-        }, SetOptions(merge: true));
-      }
-    } catch (e) {
-      error();
-    }
-    moveForBooking();
-  }
-
   Future<void> moveForBooking() async {
-    await db
-        .collection("accounts")
-        .doc("support@3rdeyesmanagement.in")
-        .get()
-        .then((value) => {
-              SendMessageCloud.sendPushMessage(
-                  value["token"],
-                  "You got $totalTake Walk-in Clients for massage in ${Spa.getSpaName} amount paid by $_result",
-                  "Walk-in Clients")
-            })
-        .whenComplete(() => {
-              WidgetsBinding.instance.addPostFrameCallback(
-                  (_) => Future.delayed(const Duration(seconds: 2), () {
-                        if (mounted) {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BookSession(
-                                  name: widget.name,
-                                  phoneNumber: widget.number.toString(),
-                                  modeOfPayment: _result,
+    try {
+      await db
+          .collection("accounts")
+          .doc("support@3rdeyesmanagement.in")
+          .get()
+          .then((value) => {
+                SendMessageCloud.sendPushMessage(
+                    value["token"],
+                    "You got $totalTake Walk-in Clients for massage in ${Spa.getSpaName} paid by $_result",
+                    "Walk-in Clients")
+              })
+          .whenComplete(() => {
+                WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => Future.delayed(const Duration(seconds: 2), () {
+                          if (mounted) {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BookSession(
+                                    total: widget.total,
+                                    name: widget.name,
+                                    phoneNumber: widget.number.toString(),
+                                    modeOfPayment: _result,
+                                    result: _result,
+                                  ),
                                 ),
-                              ),
-                              (route) => false);
-                        }
-                      })),
-            });
+                                (route) => false);
+                          }
+                        })),
+              });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Something Wrong in cloud")));
+    }
   }
 
   void error() {

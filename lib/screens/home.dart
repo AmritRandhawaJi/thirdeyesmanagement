@@ -40,36 +40,35 @@ class HomePageState extends State<HomePage> {
   final double _initFabHeight = 120.0;
   double _fabHeight = 0;
   double _panelHeightOpen = 0;
+  final GlobalKey<FormState> searchKey = GlobalKey<FormState>();
   final double _panelHeightClosed = 95.0;
   final searchController = TextEditingController();
-  final GlobalKey<FormState> searchKey = GlobalKey<FormState>();
   final db = FirebaseFirestore.instance;
 
   late DocumentSnapshot databaseData;
   String paymentType = "Cash";
-  String spaName = "";
-  bool walkin = false;
-  bool membership = false;
-  bool member = false;
 
   List<dynamic> listed = [];
   List<dynamic> panelData = [];
   String month = DateFormat.MMMM().format(DateTime.now());
 
   bool panelLoad = false;
+  bool draggable = false;
 
   bool panelLoading = false;
-  int walkinCash = 0;
-  int walkinCard = 0;
-  int walkinUPI = 0;
-  int walkinWallet = 0;
-  int membershipCash = 0;
-  int memberShipCard = 0;
-  int memberShipUPI = 0;
-  int memberShipWallet = 0;
-  int members = 0;
+  dynamic walkinCash = 0;
+  dynamic walkinCard = 0;
+  dynamic walkinUPI = 0;
+  dynamic walkinWallet = 0;
+  dynamic membershipCash = 0;
+  dynamic memberShipCard = 0;
+  dynamic memberShipUPI = 0;
+  dynamic memberShipWallet = 0;
+  dynamic members = 0;
 
   bool loading = false;
+
+  bool notSet = true;
 
   @override
   void initState() {
@@ -97,24 +96,26 @@ class HomePageState extends State<HomePage> {
 
   Future<void> getValues() async {
 
-      FirebaseFirestore.instance
-          .collection("accounts")
-          .doc(FirebaseAuth.instance.currentUser!.email)
-          .get()
-          .then((DocumentSnapshot documentSnapshot) async {
-        if (documentSnapshot.exists) {
-          Spa.setSpaName = await documentSnapshot.get("assignedSpa");
-          setState(() {
-            if(mounted){
+    FirebaseFirestore.instance
+        .collection("accounts")
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+      if (documentSnapshot.exists) {
+        Spa.setSpaName = await documentSnapshot.get("assignedSpa");
+        setState(() {
+          notSet = false;
+          draggable = true;
+          if (mounted) {
             setValues();
-
-            }
-          });
-        }
-      });
+          }
+        });
+      }
+    });
   }
 
   setValues() async {
+
     String month = DateFormat.MMMM().format(DateTime.now());
 
     try {
@@ -125,57 +126,59 @@ class HomePageState extends State<HomePage> {
           .doc("till Sale")
           .get()
           .then((value) => {
-                if (value.exists)
-                  {}
-                else
+                if (!value.exists)
                   {
-                    db
+
+      db
                         .collection(years.year.toString())
                         .doc(Spa.getSpaName)
                         .collection(month)
                         .doc("till Sale")
                         .set({
-                      "Walkin Cash": 0,
-                      "Walkin Card": 0,
-                      "Walkin UPI": 0,
-                      "Walkin Wallet": 0,
-                      "Membership Cash": 0,
-                      "Membership Card": 0,
-                      "Membership UPI": 0,
-                      "Membership Wallet": 0,
-                      "Members": 0,
-                    }, SetOptions(merge: true)).then((value) => {}),
+                      "Walkin Cash": walkinCash,
+                      "Walkin Card": walkinCard,
+                      "Walkin UPI": walkinUPI,
+                      "Walkin Wallet": walkinWallet,
+                      "Membership Cash": membershipCash,
+                      "Membership Card": memberShipCard,
+                      "Membership UPI": memberShipUPI,
+                      "Membership Wallet": memberShipWallet,
+                      "Members": members,
+                    }, SetOptions(merge: true)),
                   }
               });
     } catch (e) {
+
       db
           .collection(years.year.toString())
           .doc(Spa.getSpaName)
           .collection(month)
           .doc("till Sale")
           .set({
-        "Walkin Cash": 0,
-        "Walkin Card": 0,
-        "Walkin UPI": 0,
-        "Walkin Wallet": 0,
-        "Membership Cash": 0,
-        "Membership Card": 0,
-        "Membership UPI": 0,
-        "Membership Wallet": 0,
-        "Members": 0,
-      }, SetOptions(merge: true)).then((value) => {});
+        "Walkin Cash": walkinCash,
+        "Walkin Card": walkinCard,
+        "Walkin UPI": walkinUPI,
+        "Walkin Wallet": walkinWallet,
+        "Membership Cash": membershipCash,
+        "Membership Card": memberShipCard,
+        "Membership UPI": memberShipUPI,
+        "Membership Wallet": memberShipWallet,
+        "Members": members,
+      }, SetOptions(merge: true));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     _panelHeightOpen = MediaQuery.of(context).size.height / 1.5;
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => Future.delayed(const Duration(seconds: 1), () async {
-          if(mounted){
-           await getValues();
-          }
-            }));
+   if(notSet){
+     WidgetsBinding.instance.addPostFrameCallback(
+             (_) => Future.delayed(const Duration(seconds: 1), () async {
+           if (mounted) {
+             await getValues();
+           }
+         }));
+   }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFFe6f0f9),
@@ -201,6 +204,7 @@ class HomePageState extends State<HomePage> {
                   panelLoad = false;
                 });
               },
+              isDraggable: draggable,
               collapsed: Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -209,12 +213,12 @@ class HomePageState extends State<HomePage> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 20),
                     child: Column(
-                      children:  [
+                      children: [
                         const Icon(Icons.bar_chart, color: Colors.green),
                         Text(
                           "•${Spa.getSpaName} Sale•",
-                          style:
-                              const TextStyle(fontSize: 18, fontFamily: "Montserrat"),
+                          style: const TextStyle(
+                              fontSize: 18, fontFamily: "Montserrat"),
                         ),
                       ],
                     ),
@@ -243,7 +247,9 @@ class HomePageState extends State<HomePage> {
                   },
                   child: Card(
                     shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(topRight: Radius.circular(30),bottomRight: Radius.circular(30)),
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(30),
+                          bottomRight: Radius.circular(30)),
                       //set border radius more than 50% of height and width to make circle
                     ),
                     child: SizedBox(
@@ -253,12 +259,14 @@ class HomePageState extends State<HomePage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: const [
-                              Icon(Icons.directions_walk,color: Colors.green),
+                              Icon(Icons.directions_walk, color: Colors.green),
                               Padding(
                                 padding: EdgeInsets.only(right: 8),
                                 child: Text(
                                   "Walkin-Clients",
-                                  style: TextStyle(fontFamily: "Montserrat",fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontFamily: "Montserrat",
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
@@ -279,8 +287,9 @@ class HomePageState extends State<HomePage> {
                   },
                   child: Card(
                     shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),bottomLeft: Radius.circular(30)),
-
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          bottomLeft: Radius.circular(30)),
                     ),
                     child: SizedBox(
                         height: MediaQuery.of(context).size.width / 6,
@@ -289,17 +298,19 @@ class HomePageState extends State<HomePage> {
                             child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: const [
-
                             Padding(
                               padding: EdgeInsets.only(left: 8),
                               child: Text(
                                 "Membership",
-                                style: TextStyle(fontFamily: "Montserrat",fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontFamily: "Montserrat",
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                             Padding(
                               padding: EdgeInsets.only(left: 5),
-                              child: Icon(Icons.add_card_sharp,color: Colors.green),
+                              child: Icon(Icons.add_card_sharp,
+                                  color: Colors.green),
                             ),
                           ],
                         ))),
@@ -312,46 +323,35 @@ class HomePageState extends State<HomePage> {
   }
 
   onPanelOpened() async {
-    Test dd= Test();
-    dd.updateClients();
+    Test test = Test();
+    test.updateClients();
     setState(() {
       panelLoading = true;
     });
 
-    try {
-      await db
-          .collection(years.year.toString())
-          .doc(Spa.getSpaName)
-          .collection(month)
-          .doc("till Sale")
-          .get()
-          .then((DocumentSnapshot documentSnapshot) async {
-        if (documentSnapshot.exists) {
-          walkinCash = documentSnapshot.get("Walkin Cash");
-          walkinCard = documentSnapshot.get("Walkin Card");
-          walkinUPI = documentSnapshot.get("Walkin UPI");
-          walkinWallet = documentSnapshot.get("Walkin Wallet");
-          membershipCash = documentSnapshot.get("Membership Cash");
-          memberShipCard = documentSnapshot.get("Membership Card");
-          memberShipUPI = documentSnapshot.get("Membership UPI");
-          memberShipWallet = documentSnapshot.get("Membership Wallet");
-          members = documentSnapshot.get("Members");
-          setState(() {
-            panelLoad = true;
-            panelLoading = false;
-          });
-        }
-      });
-    } catch (e) {
-      setState(() {
-        panelLoad = false;
-        panelLoading = true;
-      });
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Not found")));
-    }
-
+    await db
+        .collection(years.year.toString())
+        .doc(Spa.getSpaName)
+        .collection(month)
+        .doc("till Sale")
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+      if (documentSnapshot.exists) {
+        walkinCash = documentSnapshot.get("Walkin Cash");
+        walkinCard = documentSnapshot.get("Walkin Card");
+        walkinUPI = documentSnapshot.get("Walkin UPI");
+        walkinWallet = documentSnapshot.get("Walkin Wallet");
+        membershipCash = documentSnapshot.get("Membership Cash");
+        memberShipCard = documentSnapshot.get("Membership Card");
+        memberShipUPI = documentSnapshot.get("Membership UPI");
+        memberShipWallet = documentSnapshot.get("Membership Wallet");
+        members = documentSnapshot.get("Members");
+        setState(() {
+          panelLoad = true;
+          panelLoading = false;
+        });
+      }
+    });
   }
 
   Widget _panel(ScrollController sc) {
@@ -378,18 +378,21 @@ class HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-             GestureDetector(
-               onTap: (){
-                 Navigator.push(context, MaterialPageRoute(builder: (context) => const AllSale(),));
-               },
-               child: Card(
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AllSale(),
+                    ));
+              },
+              child: Card(
                 color: Colors.black54,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: const [
-
                       Padding(
                         padding: EdgeInsets.only(top: 5),
                         child: Text(
@@ -402,12 +405,15 @@ class HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                      Icon(Icons.arrow_forward_ios,color: Colors.white,)
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                      )
                     ],
                   ),
                 ),
+              ),
             ),
-             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -660,7 +666,11 @@ class HomePageState extends State<HomePage> {
                         ),
                       )
                     : Container(),
-                panelLoading ? const CircularProgressIndicator() : Container()
+                panelLoading
+                    ? const CircularProgressIndicator(
+                        strokeWidth: 2,
+                      )
+                    : Container()
               ],
             ),
           ],
@@ -755,33 +765,41 @@ class HomePageState extends State<HomePage> {
                 decoration: InputDecoration(
                     counterText: "",
                     filled: true,
-                    suffixIcon:loading ? const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CircularProgressIndicator(strokeWidth: 1),
-                    ):  Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: GestureDetector(
-                          onTap: (){
-                            if (searchKey.currentState!.validate()) {
-                              setState(() {
-                                loading = true;
-                              });
-                              WidgetsBinding.instance.addPostFrameCallback((_) =>
-                                  Future.delayed(const Duration(seconds: 1), () {
+                    suffixIcon: loading
+                        ? const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: CircularProgressIndicator(strokeWidth: 1),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: GestureDetector(
+                                onTap: () {
+                                  if (searchKey.currentState!.validate()) {
                                     setState(() {
-                                      loading = false;
+                                      loading = true;
                                     });
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (BuildContext context) {
-                                          return Verification(
-                                            number: searchController.value.text.toString(),
-                                          );
-                                        }));
-                                  }));
-                            }
-                          },
-                          child: const CircleAvatar(child: Icon(Icons.search))),
-                    ),
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) =>
+                                            Future.delayed(
+                                                const Duration(seconds: 1), () {
+                                              setState(() {
+                                                loading = false;
+                                              });
+                                              Navigator.push(context,
+                                                  MaterialPageRoute(builder:
+                                                      (BuildContext context) {
+                                                return Verification(
+                                                  number: searchController
+                                                      .value.text
+                                                      .toString(),
+                                                );
+                                              }));
+                                            }));
+                                  }
+                                },
+                                child: const CircleAvatar(
+                                    child: Icon(Icons.search))),
+                          ),
                     hintText: "Search Registered Clients",
                     fillColor: Colors.white,
                     border: OutlineInputBorder(

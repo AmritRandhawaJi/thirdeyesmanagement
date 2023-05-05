@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,6 +38,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final double _initFabHeight = 120.0;
   double _fabHeight = 0;
   double _panelHeightOpen = 0;
@@ -72,6 +74,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    analytics.app.setAutomaticDataCollectionEnabled(true);
     _fabHeight = _initFabHeight;
     super.initState();
   }
@@ -95,7 +98,6 @@ class HomePageState extends State<HomePage> {
   }
 
   Future<void> getValues() async {
-
     FirebaseFirestore.instance
         .collection("accounts")
         .doc(FirebaseAuth.instance.currentUser!.email)
@@ -115,7 +117,6 @@ class HomePageState extends State<HomePage> {
   }
 
   setValues() async {
-
     String month = DateFormat.MMMM().format(DateTime.now());
 
     try {
@@ -128,8 +129,7 @@ class HomePageState extends State<HomePage> {
           .then((value) => {
                 if (!value.exists)
                   {
-
-      db
+                    db
                         .collection(years.year.toString())
                         .doc(Spa.getSpaName)
                         .collection(month)
@@ -148,7 +148,6 @@ class HomePageState extends State<HomePage> {
                   }
               });
     } catch (e) {
-
       db
           .collection(years.year.toString())
           .doc(Spa.getSpaName)
@@ -171,14 +170,14 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     _panelHeightOpen = MediaQuery.of(context).size.height / 1.5;
-   if(notSet){
-     WidgetsBinding.instance.addPostFrameCallback(
-             (_) => Future.delayed(const Duration(seconds: 1), () async {
-           if (mounted) {
-             await getValues();
-           }
-         }));
-   }
+    if (notSet) {
+      WidgetsBinding.instance.addPostFrameCallback(
+          (_) => Future.delayed(const Duration(seconds: 1), () async {
+                if (mounted) {
+                  await getValues();
+                }
+              }));
+    }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFFe6f0f9),
@@ -701,7 +700,7 @@ class HomePageState extends State<HomePage> {
                 },
                 child: CircleAvatar(
                   maxRadius: MediaQuery.of(context).size.width / 18,
-                  backgroundColor: Colors.black54,
+                  backgroundColor: Colors.blueAccent,
                   child: const Icon(
                     Icons.account_circle,
                     color: Colors.white,
@@ -798,7 +797,11 @@ class HomePageState extends State<HomePage> {
                                   }
                                 },
                                 child: const CircleAvatar(
-                                    child: Icon(Icons.search))),
+                                    backgroundColor: Colors.blueAccent,
+                                    child: Icon(
+                                      Icons.search,
+                                      color: Colors.white,
+                                    ))),
                           ),
                     hintText: "Search Registered Clients",
                     fillColor: Colors.white,

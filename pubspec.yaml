@@ -52,6 +52,7 @@ dependencies:
   flutter_local_notifications: ^13.0.0
   http: ^0.13.5
   month_picker_dialog: ^1.2.0
+  firebase_analytics: ^10.3.0
 
 dev_dependencies:
   flutter_test:

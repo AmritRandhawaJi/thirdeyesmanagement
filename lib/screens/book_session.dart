@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class BookSession extends StatefulWidget {
 }
 
 class _BookSessionState extends State<BookSession> {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   late List<dynamic> values;
   List<dynamic> finalize = [];
   final offerCreateController = TextEditingController();
@@ -71,6 +73,7 @@ class _BookSessionState extends State<BookSession> {
   @override
   void dispose() {
     db.terminate();
+    db.terminate();
     super.dispose();
   }
 
@@ -89,7 +92,7 @@ class _BookSessionState extends State<BookSession> {
       twilioFlutter.sendSMS(
           toNumber: "+91${widget.phoneNumber}",
           messageBody:
-              "Welcome to  ${Spa.getSpaName}, Thanks for choosing our services");
+          "Welcome to  ${Spa.getSpaName}, Thanks for choosing our services");
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
@@ -154,8 +157,14 @@ class _BookSessionState extends State<BookSession> {
               child: ClipPath(
                 clipper: ClipPathClass(),
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  height: MediaQuery.of(context).size.width / 1.5,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width / 1.5,
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .width / 1.5,
                   child: DelayedDisplay(
                     child: Image.asset(
                       "assets/booking.png",
@@ -168,8 +177,10 @@ class _BookSessionState extends State<BookSession> {
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(applied ? afterOffer.toString() : widget.total.toString(),
-                    style: const TextStyle(fontSize: 18,fontFamily: "Montserrat")),
+                child: Text(
+                    applied ? afterOffer.toString() : widget.total.toString(),
+                    style: const TextStyle(
+                        fontSize: 18, fontFamily: "Montserrat")),
               ),
             ),
             Padding(
@@ -207,20 +218,20 @@ class _BookSessionState extends State<BookSession> {
                             },
                             child: applied
                                 ? GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        applied = false;
-                                        offerController.clear();
-                                      });
-                                    },
-                                    child: const Text(
-                                      "Remove",
-                                      style: TextStyle(color: Colors.red),
-                                    ))
+                                onTap: () {
+                                  setState(() {
+                                    applied = false;
+                                    offerController.clear();
+                                  });
+                                },
+                                child: const Text(
+                                  "Remove",
+                                  style: TextStyle(color: Colors.red),
+                                ))
                                 : const Text(
-                                    "Apply",
-                                    style: TextStyle(color: Colors.green),
-                                  )),
+                              "Apply",
+                              style: TextStyle(color: Colors.green),
+                            )),
                       ),
                       counterText: "",
                       filled: true,
@@ -247,8 +258,8 @@ class _BookSessionState extends State<BookSession> {
                                   fontSize: 18, color: Colors.black38)),
                           Text(
                               WalkinClientCartData
-                                      .values[WalkinClientCartData.list[index]]
-                                  ["massageName"],
+                                  .values[WalkinClientCartData.list[index]]
+                              ["massageName"],
                               style: const TextStyle(
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 18)),
@@ -257,9 +268,15 @@ class _BookSessionState extends State<BookSession> {
                       TextButton(
                           onPressed: () {
                             panelHeightOpen =
-                                MediaQuery.of(context).size.height - 100;
+                                MediaQuery
+                                    .of(context)
+                                    .size
+                                    .height - 100;
                             panelHeightClosed =
-                                MediaQuery.of(context).size.height / 3;
+                                MediaQuery
+                                    .of(context)
+                                    .size
+                                    .height / 3;
                             setState(() {
                               _pc1.open();
                               item = index;
@@ -282,21 +299,30 @@ class _BookSessionState extends State<BookSession> {
             ),
             allSet
                 ? Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Image.asset(
-                        "assets/checkMark.png",
-                        width: MediaQuery.of(context).size.width / 2,
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.width - 100,
-                          width: MediaQuery.of(context).size.width - 100,
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.green,
-                          ))
-                    ],
-                  )
+              alignment: Alignment.center,
+              children: [
+                Image.asset(
+                  "assets/checkMark.png",
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width / 2,
+                ),
+                SizedBox(
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .width - 100,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width - 100,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.green,
+                    ))
+              ],
+            )
                 : Container(),
           ]),
         ),
@@ -345,15 +371,15 @@ class _BookSessionState extends State<BookSession> {
             listEmpty
                 ? Container()
                 : Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                        WalkinClientCartData.values[item]["massageName"],
-                        style: const TextStyle(
-                            fontFamily: "Montserrat",
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white)),
-                  ),
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                  WalkinClientCartData.values[item]["massageName"],
+                  style: const TextStyle(
+                      fontFamily: "Montserrat",
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
+            ),
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: Form(
@@ -417,7 +443,7 @@ class _BookSessionState extends State<BookSession> {
                 child: const Text("Start"),
                 onPressed: () {
                   if (!nameKey.currentState!.validate() |
-                      !therapistKey.currentState!.validate()) {
+                  !therapistKey.currentState!.validate()) {
                     ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Field required")));
                   } else {
@@ -432,13 +458,14 @@ class _BookSessionState extends State<BookSession> {
 
                     if (WalkinClientCartData.list.isEmpty) {
                       WidgetsBinding.instance.addPostFrameCallback(
-                          (_) => Future.delayed(const Duration(seconds: 2), () {
+                              (_) =>
+                              Future.delayed(const Duration(seconds: 2), () {
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => const Home(),
                                     ),
-                                    (route) => false);
+                                        (route) => false);
                               }));
 
                       setState(() {
@@ -469,6 +496,23 @@ class _BookSessionState extends State<BookSession> {
   }
 
   Future<void> serverCall(int index) async {
+    String value = WalkinClientCartData.values[item]["price"].toString();
+    double discount = int.parse(offerController.value.text) /
+        WalkinClientCartData.list.length;
+    analytics.logBeginCheckout(
+        value: double.parse(value),
+        currency: 'USD',
+        items: [
+          AnalyticsEventItem(
+              itemName: 'Massages',
+              itemId: WalkinClientCartData.values[item]["massageName"],
+              price: applied
+                  ? WalkinClientCartData.values[item]["price"] -
+                  int.parse(offerController.value.text) /
+                      WalkinClientCartData.list.length
+                  : WalkinClientCartData.values[item]["price"]),
+        ],
+        coupon: offerController.value.text);
     await db
         .collection(years.year.toString())
         .doc(Spa.getSpaName)
@@ -476,39 +520,43 @@ class _BookSessionState extends State<BookSession> {
         .doc("till Sale")
         .update({
       "Walkin ${widget.result}": applied
-          ? WalkinClientCartData.values[item]["price"] -
-              int.parse(offerController.value.text)
+          ? double.parse(WalkinClientCartData.values[item]["price"]) -
+          discount
           : WalkinClientCartData.values[item]["price"]
     });
-    await db
-        .collection(years.year.toString())
-        .doc(Spa.getSpaName)
-        .collection(month)
-        .doc(currentDate)
-        .collection("today")
-        .doc("Walkin Clients")
-        .set({
-      widget.result: FieldValue.arrayUnion([
+
+
+
+        await db
+            .collection(years.year.toString())
+            .doc(Spa.getSpaName)
+            .collection(month)
+            .doc(currentDate)
+            .collection("today")
+            .doc("Walkin Clients")
+            .set({
+          widget.result: FieldValue.arrayUnion([
+            {
+              "clientId": widget.phoneNumber,
+              "clientName": widget.name,
+              "massageName": WalkinClientCartData.values[item]["massageName"],
+              "time": DateFormat.jm().format(DateTime.now()),
+              "date": currentDate,
+              "modeOfPayment": widget.result,
+              "manager": FirebaseAuth.instance.currentUser!.email.toString(),
+              "amountPaid": applied
+                  ? double.parse(WalkinClientCartData.values[item]["price"]) -
+                  discount
+                  : WalkinClientCartData.values[item]["price"]
+            }
+          ]),
+        }, SetOptions(merge: true)).whenComplete(() =>
         {
-          "clientId": widget.phoneNumber,
-          "clientName": widget.name,
-          "massageName": WalkinClientCartData.values[item]["massageName"],
-          "time": DateFormat.jm().format(DateTime.now()),
-          "date": currentDate,
-          "modeOfPayment": widget.result,
-          "manager": FirebaseAuth.instance.currentUser!.email.toString(),
-          "amountPaid": applied
-              ? WalkinClientCartData.values[item]["price"] -
-                  int.parse(offerController.value.text)
-              : WalkinClientCartData.values[item]["price"],
-        }
-      ]),
-    }, SetOptions(merge: true)).whenComplete(() => {
-              setState(() {
-                WalkinClientCartData.list.removeAt(item);
-              })
-            });
-  }
+          setState(() {
+            WalkinClientCartData.list.removeAt(item);
+          })
+        });
+    }
 }
 
 class ClipPathClass extends CustomClipper<Path> {

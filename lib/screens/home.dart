@@ -115,10 +115,7 @@ class HomePageState extends State<HomePage> {
       }
     });
   }
-
   setValues() async {
-    String month = DateFormat.MMMM().format(DateTime.now());
-
     try {
       FirebaseFirestore.instance
           .collection(years.year.toString())
@@ -205,20 +202,27 @@ class HomePageState extends State<HomePage> {
               },
               isDraggable: draggable,
               collapsed: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30)),
+                decoration: const BoxDecoration(
+                    color: Color(0xfffffff3),
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(30),
+                        topLeft: Radius.circular(30))),
                 child: Center(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 20),
                     child: Column(
                       children: [
                         const Icon(Icons.bar_chart, color: Colors.green),
-                        Text(
+                       notSet ?  SizedBox(
+                           height: MediaQuery.of(context).size.width/12,
+                           width: MediaQuery.of(context).size.width/12,
+                           child: const CircularProgressIndicator(strokeWidth: 1,)) : DelayedDisplay(
+                             child: Text(
                           "•${Spa.getSpaName} Sale•",
                           style: const TextStyle(
-                              fontSize: 18, fontFamily: "Montserrat"),
+                                fontSize: 18, fontFamily: "Montserrat",fontWeight: FontWeight.bold),
                         ),
+                           ),
                       ],
                     ),
                   ),
@@ -685,11 +689,16 @@ class HomePageState extends State<HomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(Spa.getSpaName,
-                  style: const TextStyle(
-                      fontSize: 22,
-                      fontFamily: "Montserrat",
-                      fontWeight: FontWeight.bold)),
+             notSet ? SizedBox(
+                 height: MediaQuery.of(context).size.width/12,
+                 width: MediaQuery.of(context).size.width/12,
+                 child: const CircularProgressIndicator(strokeWidth: 1,)): DelayedDisplay(
+                   child: Text(Spa.getSpaName,
+                    style: const TextStyle(
+                        fontSize: 22,
+                        fontFamily: "Montserrat",
+                        fontWeight: FontWeight.bold)),
+                 ),
               GestureDetector(
                 onTap: () {
                   Navigator.push(

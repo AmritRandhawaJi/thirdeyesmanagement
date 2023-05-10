@@ -35,6 +35,8 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
   late int selectedIndex = 100;
   bool panelReady = false;
 
+  bool uiLoad = false;
+
   @override
   void dispose() {
     _server.terminate();
@@ -88,7 +90,7 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
           });
         },
       ),
-      body: SingleChildScrollView(
+      body: uiLoad ?  SingleChildScrollView(
           child: SafeArea(
               child: fetching
                   ? Column(
@@ -195,7 +197,7 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
                         ),
                       ],
                     )
-                  : Container())),
+                  : Container())): const Center(child: CircularProgressIndicator(value: 1)),
     );
   }
 
@@ -403,6 +405,7 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
       address = documentSnapshot.get("address");
       description = documentSnapshot.get("description");
       setState(() {
+        uiLoad = true;
         fetching = true;
       });
     });

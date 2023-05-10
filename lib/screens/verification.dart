@@ -49,6 +49,7 @@ class _VerificationState extends State<Verification> {
     int number = random.nextInt(999);
     randomNumber = number + 1000;
     String otp = randomNumber.toString();
+    print(randomNumber);
 
     try {
       twilioFlutter.sendSMS(

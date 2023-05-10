@@ -40,14 +40,14 @@ dependencies:
   shared_preferences: ^2.1.0
   delayed_display: ^2.0.0
   email_validator: ^2.1.17
-  cloud_firestore: ^4.5.2
+  cloud_firestore: ^4.6.0
   intl: ^0.17.0
   sliding_up_panel: ^2.0.0+1
   visibility_detector: ^0.3.3
   pin_code_fields: ^7.3.0
-  firebase_app_check: ^0.1.2+2
+  firebase_app_check: ^0.1.3
   twilio_flutter: ^0.0.9
-  firebase_messaging: ^14.4.1
+  firebase_messaging: ^14.5.0
   animated_text_kit: ^4.2.2
   flutter_local_notifications: ^13.0.0
   http: ^0.13.5

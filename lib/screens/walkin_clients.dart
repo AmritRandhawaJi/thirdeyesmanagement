@@ -138,6 +138,7 @@ class _WalkinClientsState extends State<WalkinClients> {
     int number = random.nextInt(999);
     randomNumber = number + 1000;
     String otp = randomNumber.toString();
+    print(otp);
 
     try {
       twilioFlutter.sendSMS(

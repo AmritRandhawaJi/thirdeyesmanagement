@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/screens/walkin_clients_add.dart';
 
@@ -202,32 +201,7 @@ class _WalkingDetailsPageState extends State<WalkingDetailsPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  loader
-                      ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: const [
-                              CircularProgressIndicator(
-                                strokeWidth: 1,
-                              ),
-                            ],
-                          ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                              TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      loader = true;
-                                    });
-                                    checkOffer();
-                                  },
-                                  child: const Text("Offers",
-                                      style: TextStyle(color: Colors.black)))
-                            ]),
+
                   const Text("You haven't taken any service yet",
                       style: TextStyle(fontSize: 16, fontFamily: "Montserrat")),
                   Padding(
@@ -248,33 +222,7 @@ class _WalkingDetailsPageState extends State<WalkingDetailsPage> {
                           borderRadius:
                               BorderRadius.all(Radius.circular(12.0))),
                     ),
-                    loader
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: const [
-                                CircularProgressIndicator(
-                                  strokeWidth: 1,
-                                ),
-                              ],
-                            ),
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                                TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        loader = true;
-                                      });
-                                      checkOffer();
-                                    },
-                                    child: const Text(
-                                      "Offers",
-                                      style: TextStyle(color: Colors.black),
-                                    ))
-                              ]),
+
                     ListView.builder(
                       itemCount: widget.pastServices.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -398,90 +346,5 @@ class _WalkingDetailsPageState extends State<WalkingDetailsPage> {
               ));
   }
 
-  void checkOffer() {
-    List<dynamic> list = [];
-    db.collection("clients").doc(widget.phone).get().then((value) async => {
-          list = await value.get("offers"),
-          if (list.isEmpty)
-            {
-              setState(() {
-                loader = false;
-              }),
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(const SnackBar(content: Text("No Offers")))
-            }
-          else
-            {
-              setState(() {
-                loader = false;
-              }),
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return Card(
-                      child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          GestureDetector(
-                              onTap: () {},
-                              child: const Icon(
-                                Icons.close,
-                                size: 35,
-                              ))
-                        ],
-                      ),
-                      ListView.separated(
-                        shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    const Text("Your Offers",style: TextStyle(fontSize: 18,fontFamily: "Montserrat")),
-                                    Card(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(children: [
 
-                                          Row(
-                                            children: [
-                                              const Text("Offer Code : "),
-                                              Text(list[index]["offerCode"],style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
-                                            ],
-                                          ),
-
-                                          Row(children: [
-                                            const Text("Offer Amount : "),
-                                            Text("Rs.${list[index]["offerAmount"]}",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
-                                          ],),
-                                          Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                TextButton(onPressed: (){
-                                                  Clipboard.setData( ClipboardData(text: list[index]["offerCode"]));
-                                                  Navigator.of(context).pop();
-                                                }, child: const Text("Copy Code"))
-                                              ]),
-                                        ],),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          itemCount: list.length, separatorBuilder: (BuildContext context, int index) {
-                          return const Divider();
-                      },)
-                    ],
-                  ));
-                },
-              )
-            }
-        });
-  }
 }

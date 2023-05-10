@@ -1,4 +1,4 @@
-import 'dart:async';
+import'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/twilio.dart';
-
 import 'package:thirdeyesmanagement/modal/walkin_client_cart_data.dart';
 import 'package:thirdeyesmanagement/screens/home.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
@@ -20,7 +19,6 @@ class BookSession extends StatefulWidget {
   final String modeOfPayment;
   final String name;
   final int total;
-
   final String result;
 
   const BookSession({
@@ -45,11 +43,8 @@ class _BookSessionState extends State<BookSession> {
   final db = FirebaseFirestore.instance;
   String month = DateFormat.MMMM().format(DateTime.now());
   String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-
   bool fetched = false;
-
   final PanelController _pc1 = PanelController();
-
   double panelHeightClosed = 0;
   double panelHeightOpen = 0;
   bool loaded = false;
@@ -60,25 +55,38 @@ class _BookSessionState extends State<BookSession> {
   final GlobalKey<FormState> therapistKey = GlobalKey<FormState>();
   final offerController = TextEditingController();
   int item = 0;
-  int afterOffer = 0;
   bool listEmpty = false;
   DateTime years = DateTime.now();
   bool allSet = false;
-
   bool loading = false;
   late TwilioFlutter twilioFlutter;
-
   bool applied = false;
+
+  bool updating = false;
 
   @override
   void dispose() {
     db.terminate();
-    db.terminate();
     super.dispose();
+  }
+
+  late int _tillSale;
+
+  Future<void> getValues() async {
+    await db
+        .collection(years.year.toString())
+        .doc(Spa.getSpaName)
+        .collection(month)
+        .doc("till Sale")
+        .get()
+        .then((value) async =>
+            {_tillSale = await value.get("Walkin ${widget.modeOfPayment}")});
   }
 
   @override
   void initState() {
+    getValues();
+    server();
     twilioFlutter = TwilioFlutter(
         accountSid: Twilio.accountSID,
         authToken: Twilio.authToken,
@@ -92,7 +100,7 @@ class _BookSessionState extends State<BookSession> {
       twilioFlutter.sendSMS(
           toNumber: "+91${widget.phoneNumber}",
           messageBody:
-          "Welcome to  ${Spa.getSpaName}, Thanks for choosing our services");
+              "Welcome to  ${Spa.getSpaName}, Thanks for choosing our services");
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
@@ -157,14 +165,8 @@ class _BookSessionState extends State<BookSession> {
               child: ClipPath(
                 clipper: ClipPathClass(),
                 child: SizedBox(
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width / 1.5,
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .width / 1.5,
+                  width: MediaQuery.of(context).size.width / 1.5,
+                  height: MediaQuery.of(context).size.width / 1.5,
                   child: DelayedDisplay(
                     child: Image.asset(
                       "assets/booking.png",
@@ -174,76 +176,59 @@ class _BookSessionState extends State<BookSession> {
                 ),
               ),
             ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                    applied ? afterOffer.toString() : widget.total.toString(),
-                    style: const TextStyle(
-                        fontSize: 18, fontFamily: "Montserrat")),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(30),
-              child: Form(
-                key: offerKey,
-                child: TextFormField(
-                  showCursor: false,
-                  maxLength: 10,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  controller: offerController,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "Enter discount amount";
-                    } else if (WalkinClientCartData.values[item]["price"] <=
-                        int.parse(offerController.value.text)) {
-                      return "Not a valid discount";
-                    } else {
-                      return null;
-                    }
-                  },
-                  decoration: InputDecoration(
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextButton(
-                            onPressed: () {
-                              if (offerKey.currentState!.validate()) {
-                                setState(() {
-                                  applied = true;
-                                  afterOffer = widget.total -
-                                      int.parse(offerController.value.text);
-                                });
-                              }
-                            },
-                            child: applied
-                                ? GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    applied = false;
-                                    offerController.clear();
-                                  });
+            applied
+                ? Text("Rs.${offerController.value.text} is applied.")
+                : Container(),
+            applied
+                ? Container()
+                : Padding(
+                    padding: const EdgeInsets.all(30),
+                    child: Form(
+                      key: offerKey,
+                      child: TextFormField(
+                        showCursor: false,
+                        maxLength: 10,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        controller: offerController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Enter discount amount";
+                          } else if (WalkinClientCartData.values[item]
+                                  ["price"] <=
+                              int.parse(offerController.value.text)) {
+                            return "Not a valid discount";
+                          } else {
+                            return null;
+                          }
+                        },
+                        decoration: InputDecoration(
+                            suffixIcon: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextButton(
+                                onPressed: () {
+                                  if (offerKey.currentState!.validate()) {
+                                    setState(() {
+                                      applied = true;
+                                    });
+                                  }
                                 },
-                                child: const Text(
-                                  "Remove",
-                                  style: TextStyle(color: Colors.red),
-                                ))
-                                : const Text(
-                              "Apply",
-                              style: TextStyle(color: Colors.green),
+                                child: const Text("Apply"),
+                              ),
+                            ),
+                            counterText: "",
+                            filled: true,
+                            hintText: "Discount",
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(40),
+                              borderSide: BorderSide.none,
                             )),
                       ),
-                      counterText: "",
-                      filled: true,
-                      hintText: "Discount",
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40),
-                        borderSide: BorderSide.none,
-                      )),
-                ),
-              ),
-            ),
+                    ),
+                  ),
             ListView.builder(
               itemCount: WalkinClientCartData.list.length,
               itemBuilder: (BuildContext context, int index) {
@@ -258,8 +243,8 @@ class _BookSessionState extends State<BookSession> {
                                   fontSize: 18, color: Colors.black38)),
                           Text(
                               WalkinClientCartData
-                                  .values[WalkinClientCartData.list[index]]
-                              ["massageName"],
+                                      .values[WalkinClientCartData.list[index]]
+                                  ["massageName"],
                               style: const TextStyle(
                                   overflow: TextOverflow.ellipsis,
                                   fontSize: 18)),
@@ -268,15 +253,9 @@ class _BookSessionState extends State<BookSession> {
                       TextButton(
                           onPressed: () {
                             panelHeightOpen =
-                                MediaQuery
-                                    .of(context)
-                                    .size
-                                    .height - 100;
+                                MediaQuery.of(context).size.height - 100;
                             panelHeightClosed =
-                                MediaQuery
-                                    .of(context)
-                                    .size
-                                    .height / 3;
+                                MediaQuery.of(context).size.height / 3;
                             setState(() {
                               _pc1.open();
                               item = index;
@@ -299,30 +278,21 @@ class _BookSessionState extends State<BookSession> {
             ),
             allSet
                 ? Stack(
-              alignment: Alignment.center,
-              children: [
-                Image.asset(
-                  "assets/checkMark.png",
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width / 2,
-                ),
-                SizedBox(
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .width - 100,
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width - 100,
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.green,
-                    ))
-              ],
-            )
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/checkMark.png",
+                        width: MediaQuery.of(context).size.width / 2,
+                      ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.width - 100,
+                          width: MediaQuery.of(context).size.width - 100,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.green,
+                          ))
+                    ],
+                  )
                 : Container(),
           ]),
         ),
@@ -331,24 +301,19 @@ class _BookSessionState extends State<BookSession> {
   }
 
   Future<void> createBooking(int index) async {
-    try {
-      db.collection("clients").doc(widget.phoneNumber).set({
-        "pastServices": FieldValue.arrayUnion([
-          {
-            "spaName": Spa.getSpaName,
-            "date": DateFormat('dd-MM-yyyy').format(DateTime.now()),
-            "time": DateFormat.jm().format(DateTime.now()),
-            "clientName": nameControl.value.text,
-            "modeOfPayment": widget.modeOfPayment,
-            "massageName": WalkinClientCartData.values[index]["massageName"],
-            "therapist": therapistControl.value.text,
-          }
-        ])
-      }, SetOptions(merge: true)).whenComplete(() => {serverCall(item)});
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Server Error")));
-    }
+    db.collection("clients").doc(widget.phoneNumber).update({
+      "pastServices": FieldValue.arrayUnion([
+        {
+          "spaName": Spa.getSpaName,
+          "date": DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          "time": DateFormat.jm().format(DateTime.now()),
+          "clientName": nameControl.value.text,
+          "modeOfPayment": widget.modeOfPayment,
+          "massageName": WalkinClientCartData.values[index]["massageName"],
+          "therapist": therapistControl.value.text,
+        }
+      ])
+    }).whenComplete(() => {serverCall(index)});
   }
 
   _panel(ScrollController sc) {
@@ -371,15 +336,15 @@ class _BookSessionState extends State<BookSession> {
             listEmpty
                 ? Container()
                 : Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                  WalkinClientCartData.values[item]["massageName"],
-                  style: const TextStyle(
-                      fontFamily: "Montserrat",
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white)),
-            ),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                        WalkinClientCartData.values[item]["massageName"],
+                        style: const TextStyle(
+                            fontFamily: "Montserrat",
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white)),
+                  ),
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: Form(
@@ -438,43 +403,25 @@ class _BookSessionState extends State<BookSession> {
                 ),
               ),
             ),
-            CupertinoButton(
-                color: CupertinoColors.activeGreen,
-                child: const Text("Start"),
-                onPressed: () {
-                  if (!nameKey.currentState!.validate() |
-                  !therapistKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Field required")));
-                  } else {
-                    panelHeightClosed = 0;
-                    panelHeightOpen = 0;
-                    setState(() {
-                      _pc1.close();
-                    });
-                    createBooking(item);
-                    therapistControl.clear();
-                    nameControl.clear();
-
-                    if (WalkinClientCartData.list.isEmpty) {
-                      WidgetsBinding.instance.addPostFrameCallback(
-                              (_) =>
-                              Future.delayed(const Duration(seconds: 2), () {
-                                Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const Home(),
-                                    ),
-                                        (route) => false);
-                              }));
-
-                      setState(() {
-                        allSet = true;
-                        listEmpty = true;
-                      });
-                    }
-                  }
-                }),
+            updating
+                ? const CircularProgressIndicator(
+                    strokeWidth: 1,
+                  )
+                : CupertinoButton(
+                    color: CupertinoColors.activeGreen,
+                    child: const Text("Start"),
+                    onPressed: () async {
+                      if (nameKey.currentState!.validate() |
+                          therapistKey.currentState!.validate()) {
+                        setState(() {
+                          updating = true;
+                        });
+                        await createBooking(item);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Field required")));
+                      }
+                    }),
             DelayedDisplay(child: Image.asset("assets/bookSessionFinal.png")),
             Padding(
               padding: const EdgeInsets.only(top: 20, bottom: 20),
@@ -495,68 +442,106 @@ class _BookSessionState extends State<BookSession> {
     );
   }
 
+  late int _newAmount;
+
   Future<void> serverCall(int index) async {
-    String value = WalkinClientCartData.values[item]["price"].toString();
-    double discount = int.parse(offerController.value.text) /
-        WalkinClientCartData.list.length;
-    analytics.logBeginCheckout(
-        value: double.parse(value),
-        currency: 'USD',
-        items: [
-          AnalyticsEventItem(
-              itemName: 'Massages',
-              itemId: WalkinClientCartData.values[item]["massageName"],
-              price: applied
-                  ? WalkinClientCartData.values[item]["price"] -
-                  int.parse(offerController.value.text) /
-                      WalkinClientCartData.list.length
-                  : WalkinClientCartData.values[item]["price"]),
-        ],
-        coupon: offerController.value.text);
+    if (applied) {
+      double discount = double.parse(offerController.value.text) /
+          WalkinClientCartData.list.length;
+      offerController.text = discount.toString();
+      _newAmount =
+          WalkinClientCartData.values[item]["price"] - discount.toInt();
+
+      _tillSale = _tillSale + _newAmount;
+    } else {
+      _tillSale = WalkinClientCartData.values[item]["price"] + _tillSale;
+    }
+
     await db
         .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
-        .doc("till Sale")
-        .update({
-      "Walkin ${widget.result}": applied
-          ? double.parse(WalkinClientCartData.values[item]["price"]) -
-          discount
-          : WalkinClientCartData.values[item]["price"]
-    });
+        .doc(currentDate)
+        .collection("walkin clients")
+        .doc(widget.modeOfPayment)
+        .update(
+      {
+        widget.result: FieldValue.arrayUnion([
+          {
+            "clientId": widget.phoneNumber,
+            "clientName": widget.name,
+            "massageName": WalkinClientCartData.values[item]["massageName"],
+            "time": DateFormat.jm().format(DateTime.now()),
+            "date": currentDate,
+            "modeOfPayment": widget.result,
+            "manager": FirebaseAuth.instance.currentUser!.email.toString(),
+            "amountPaid": applied
+                ? _newAmount
+                : WalkinClientCartData.values[item]["price"]
+          }
+        ]),
+      },
+    ).whenComplete(() async => {
+              setState(() {
+                panelHeightClosed = 0;
+                panelHeightOpen = 0;
+                _pc1.close();
+                updating = false;
+                WalkinClientCartData.list.removeAt(item);
+              }),
+              if (WalkinClientCartData.list.isEmpty)
+                {
+                  await db
+                      .collection(years.year.toString())
+                      .doc(Spa.getSpaName)
+                      .collection(month)
+                      .doc("till Sale")
+                      .update({"Walkin ${widget.result}": _tillSale}),
+                  {
+                    setState(() {
+                      allSet = true;
+                      listEmpty = true;
+                    }),
+                    WidgetsBinding.instance.addPostFrameCallback(
+                        (_) => Future.delayed(const Duration(seconds: 2), () {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Home(),
+                                  ),
+                                  (route) => false);
+                            })),
+                  }
+                }
+            });
+  }
 
-
-
-        await db
-            .collection(years.year.toString())
-            .doc(Spa.getSpaName)
-            .collection(month)
-            .doc(currentDate)
-            .collection("today")
-            .doc("Walkin Clients")
-            .set({
-          widget.result: FieldValue.arrayUnion([
-            {
-              "clientId": widget.phoneNumber,
-              "clientName": widget.name,
-              "massageName": WalkinClientCartData.values[item]["massageName"],
-              "time": DateFormat.jm().format(DateTime.now()),
-              "date": currentDate,
-              "modeOfPayment": widget.result,
-              "manager": FirebaseAuth.instance.currentUser!.email.toString(),
-              "amountPaid": applied
-                  ? double.parse(WalkinClientCartData.values[item]["price"]) -
-                  discount
-                  : WalkinClientCartData.values[item]["price"]
-            }
-          ]),
-        }, SetOptions(merge: true)).whenComplete(() =>
+  Future<void> server() async {
+    await db
+        .collection(years.year.toString())
+        .doc(Spa.getSpaName)
+        .collection(month)
+        .doc(currentDate)
+        .collection("walkin clients")
+        .doc(widget.modeOfPayment)
+        .get()
+        .then((data) async => {
+      if (!data.exists)
         {
-          setState(() {
-            WalkinClientCartData.list.removeAt(item);
+
+          await db
+              .collection(years.year.toString())
+              .doc(Spa.getSpaName)
+              .collection(month)
+              .doc(currentDate)
+              .collection("walkin clients")
+              .doc(widget.modeOfPayment)
+              .set({
+            widget.modeOfPayment: [],
           })
-        });
-    }
+        }
+    });
+  }
 }
 
 class ClipPathClass extends CustomClipper<Path> {

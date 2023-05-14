@@ -14,7 +14,15 @@ class Cash extends StatefulWidget {
 class _CashState extends State<Cash> {
   bool loaded = false;
 
-  double total = 0.0;
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+            (_) => Future.delayed(const Duration(seconds: 2), () {
+          todayCash();
+        }));
+    super.initState();
+  }
+  int total = 0;
 
   bool loading = true;
 
@@ -26,10 +34,7 @@ class _CashState extends State<Cash> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => Future.delayed(const Duration(seconds: 2), () {
-              todayCash();
-            }));
+
     return Scaffold(
       body: SingleChildScrollView(
           child: SafeArea(
@@ -208,21 +213,12 @@ class _CashState extends State<Cash> {
         .doc(Spa.getSpaName)
         .collection(month)
         .doc(currentDate)
-        .collection("today")
-        .doc("Walkin Clients")
+        .collection("walkin clients").doc("Cash")
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
-          cashListed = await documentSnapshot.get("Cash");
-          calculate();
-          if (mounted) {
-            setState(() {
-              total = 0;
-              image = true;
-              loaded = false;
-              loading = false;
-            });
-          }
+        cashListed = await documentSnapshot.get("Cash");
+        calculate();
 
       } else {
         if (mounted) {
@@ -246,9 +242,8 @@ class _CashState extends State<Cash> {
   }
 
   calculate() {
-    List<double> array = [];
+    List<int> array = [];
     for (int i = 0; i < cashListed.length; i++) {
-
       array.add(cashListed[i]["amountPaid"]);
     }
     total = array.fold(0, (p, c) => p + c);

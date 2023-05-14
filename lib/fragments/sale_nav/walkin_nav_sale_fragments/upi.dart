@@ -15,7 +15,14 @@ class UPI extends StatefulWidget {
 
 class _UPIState extends State<UPI> {
   bool loaded = false;
-
+@override
+  void initState() {
+  WidgetsBinding.instance.addPostFrameCallback(
+          (_) => Future.delayed(const Duration(seconds: 2), () {
+        todayUPI();
+      }));
+    super.initState();
+  }
   int total = 0;
 
   bool loading = true;
@@ -28,10 +35,7 @@ class _UPIState extends State<UPI> {
   List<dynamic> upiListed = [];
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback(
-            (_) => Future.delayed(const Duration(seconds: 2), () {
-          todayUPI();
-        }));
+
     return Scaffold(
       body: SingleChildScrollView(child: SafeArea(child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -204,7 +208,7 @@ class _UPIState extends State<UPI> {
         .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
-        .doc(currentDate).collection("today").doc("Walkin Clients")
+        .doc(currentDate).collection("walkin clients").doc("UPI")
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {

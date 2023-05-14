@@ -24,7 +24,7 @@ class _MembershipWalletState extends State<MembershipWallet> {
 
   bool image = false;
   FirebaseFirestore db = FirebaseFirestore.instance;
-  List<dynamic> cashListed = [];
+  List<dynamic> walletListed = [];
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback(
@@ -93,10 +93,10 @@ class _MembershipWalletState extends State<MembershipWallet> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(cashListed[index]["date"],
+                              Text(walletListed[index]["date"],
                                   style: const TextStyle(
                                       fontSize: 18, fontWeight: FontWeight.w400)),
-                              Text(cashListed[index]["time"],
+                              Text(walletListed[index]["time"],
                                   style: const TextStyle(
                                       fontSize: 18, fontWeight: FontWeight.w400)),
                             ],
@@ -111,14 +111,14 @@ class _MembershipWalletState extends State<MembershipWallet> {
                                 children: [
                                   Text("$sNo.",
                                       style: const TextStyle(fontSize: 16)),
-                                  Text("${cashListed[index]["clientName"]}",
+                                  Text("${walletListed[index]["clientName"]}",
                                       style: const TextStyle(
                                           fontSize: 18,
                                           fontFamily: "Montserrat",
                                           fontWeight: FontWeight.bold)),
                                 ],
                               ),
-                              Text(cashListed[index]["clientId"],
+                              Text(walletListed[index]["clientId"],
                                   style: const TextStyle(
                                       fontSize: 18, fontFamily: "Montserrat")),
                             ],
@@ -128,13 +128,13 @@ class _MembershipWalletState extends State<MembershipWallet> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(cashListed[index]["package"],
+                              child: Text(walletListed[index]["package"],
                                   style: TextStyle(
                                       fontSize: 22,
                                       fontFamily: "Montserrat",
                                       fontWeight: FontWeight.bold,
                                       color:
-                                      cashListed[index]["package"] == "Platinum"
+                                      walletListed[index]["package"] == "Platinum"
                                           ? Colors.purple
                                           : Colors.amber)),
                             ),
@@ -145,7 +145,7 @@ class _MembershipWalletState extends State<MembershipWallet> {
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
                               child: Text(
-                                  "Rs.${cashListed[index]["amountPaid"].toString()}/-",
+                                  "Rs.${walletListed[index]["amountPaid"].toString()}/-",
                                   style: const TextStyle(
                                       fontSize: 22, color: Colors.green)),
                             ),
@@ -163,7 +163,7 @@ class _MembershipWalletState extends State<MembershipWallet> {
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
                               child: Text(
-                                cashListed[index]["massages"].toString(),
+                                walletListed[index]["massages"].toString(),
                                 style: const TextStyle(fontSize: 18),
                               ),
                             )
@@ -176,7 +176,7 @@ class _MembershipWalletState extends State<MembershipWallet> {
                               child: Text("Mode of payment:  ",
                                   style: TextStyle(fontSize: 16)),
                             ),
-                            Text(cashListed[index]["paymentMode"],
+                            Text(walletListed[index]["paymentMode"],
                                 style: const TextStyle(fontSize: 22)),
                           ],
                         ),
@@ -196,7 +196,7 @@ class _MembershipWalletState extends State<MembershipWallet> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
-                              child: Text(cashListed[index]["manager"],
+                              child: Text(walletListed[index]["manager"],
                                   style:
                                   const TextStyle(fontFamily: "Montserrat")),
                             ),
@@ -205,7 +205,7 @@ class _MembershipWalletState extends State<MembershipWallet> {
                       ],
                     );
                   },
-                  itemCount: cashListed.length,
+                  itemCount: walletListed.length,
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   separatorBuilder: (context, index) => const Divider(),
@@ -241,12 +241,12 @@ class _MembershipWalletState extends State<MembershipWallet> {
         .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
-        .doc(currentDate).collection("today").doc("Membership Sold")
+        .doc(currentDate).collection("Membership Sold").doc("Membership Sold")
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
         try{
-          cashListed = await documentSnapshot.get("Cash");
+          walletListed = await documentSnapshot.get("Wallet");
           calculate();
         }
         catch(e){
@@ -282,8 +282,8 @@ class _MembershipWalletState extends State<MembershipWallet> {
   }
   calculate() {
     List<int> array = [];
-    for (int i = 0; i < cashListed.length; i++) {
-      array.add(cashListed[i]["amountPaid"]);
+    for (int i = 0; i < walletListed.length; i++) {
+      array.add(walletListed[i]["amountPaid"]);
     }
     total = array.fold(0, (p, c) => p + c);
     refresh();

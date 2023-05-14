@@ -14,6 +14,14 @@ class Wallet extends StatefulWidget {
 class _WalletState extends State<Wallet> {
   bool loaded = false;
 
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+            (_) => Future.delayed(const Duration(seconds: 2), () {
+          todayWallet();
+        }));
+    super.initState();
+  }
   int total = 0;
   DateTime years = DateTime.now();
 
@@ -26,10 +34,7 @@ class _WalletState extends State<Wallet> {
   List<dynamic> walletListed = [];
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback(
-            (_) => Future.delayed(const Duration(seconds: 2), () {
-          todayWallet();
-        }));
+
     return Scaffold(
       body: SingleChildScrollView(child: SafeArea(child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -196,6 +201,7 @@ class _WalletState extends State<Wallet> {
     );
   }
   Future<void> todayWallet() async {
+
     String month = DateFormat.MMMM().format(DateTime.now());
     String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
@@ -203,27 +209,13 @@ class _WalletState extends State<Wallet> {
         .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
-        .doc(currentDate).collection("today").doc("Walkin Clients")
+        .doc(currentDate).collection("walkin clients").doc("Wallet")
 
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
-        try{
         walletListed = await documentSnapshot.get("Wallet");
         calculate();
-        }
-        catch(e){
-          if(mounted)
-            {
-              setState(() {
-                total = 0;
-                image = true;
-                loaded = false;
-                loading = false;
-              });
-            }
-
-        }
 
       } else {
         if (mounted) {

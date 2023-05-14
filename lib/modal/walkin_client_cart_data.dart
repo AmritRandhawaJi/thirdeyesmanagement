@@ -1,4 +1,4 @@
 class WalkinClientCartData{
  static List<dynamic> values = [];
- static  List<int> list = [];
+ static  List<dynamic> list = [];
 }

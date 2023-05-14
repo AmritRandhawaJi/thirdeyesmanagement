@@ -1,4 +1,4 @@
-import'dart:async';
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -85,12 +85,16 @@ class _BookSessionState extends State<BookSession> {
 
   @override
   void initState() {
-    getValues();
-    server();
     twilioFlutter = TwilioFlutter(
         accountSid: Twilio.accountSID,
         authToken: Twilio.authToken,
         twilioNumber: Twilio.number);
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => Future.delayed(const Duration(seconds: 2), () {
+              getValues();
+              server();
+            }));
+
     sendMessage();
     super.initState();
   }
@@ -300,7 +304,7 @@ class _BookSessionState extends State<BookSession> {
     );
   }
 
-  Future<void> createBooking(int index) async {
+  Future<void> createBooking() async {
     db.collection("clients").doc(widget.phoneNumber).update({
       "pastServices": FieldValue.arrayUnion([
         {
@@ -309,11 +313,11 @@ class _BookSessionState extends State<BookSession> {
           "time": DateFormat.jm().format(DateTime.now()),
           "clientName": nameControl.value.text,
           "modeOfPayment": widget.modeOfPayment,
-          "massageName": WalkinClientCartData.values[index]["massageName"],
+          "massageName": WalkinClientCartData.list[item],
           "therapist": therapistControl.value.text,
         }
       ])
-    }).whenComplete(() => {serverCall(index)});
+    }).whenComplete(() => {serverCall(item)});
   }
 
   _panel(ScrollController sc) {
@@ -416,7 +420,7 @@ class _BookSessionState extends State<BookSession> {
                         setState(() {
                           updating = true;
                         });
-                        await createBooking(item);
+                        await createBooking();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text("Field required")));
@@ -444,7 +448,7 @@ class _BookSessionState extends State<BookSession> {
 
   late int _newAmount;
 
-  Future<void> serverCall(int index) async {
+  Future<void> serverCall(int item) async {
     if (applied) {
       double discount = double.parse(offerController.value.text) /
           WalkinClientCartData.list.length;
@@ -454,7 +458,7 @@ class _BookSessionState extends State<BookSession> {
 
       _tillSale = _tillSale + _newAmount;
     } else {
-      _tillSale = WalkinClientCartData.values[item]["price"] + _tillSale;
+      _tillSale = WalkinClientCartData.list[item]["price"] + _tillSale;
     }
 
     await db
@@ -470,14 +474,14 @@ class _BookSessionState extends State<BookSession> {
           {
             "clientId": widget.phoneNumber,
             "clientName": widget.name,
-            "massageName": WalkinClientCartData.values[item]["massageName"],
+            "massageName": WalkinClientCartData.list[item]["price"],
             "time": DateFormat.jm().format(DateTime.now()),
             "date": currentDate,
             "modeOfPayment": widget.result,
             "manager": FirebaseAuth.instance.currentUser!.email.toString(),
             "amountPaid": applied
                 ? _newAmount
-                : WalkinClientCartData.values[item]["price"]
+                : WalkinClientCartData.list[item]["price"],
           }
         ]),
       },
@@ -526,21 +530,20 @@ class _BookSessionState extends State<BookSession> {
         .doc(widget.modeOfPayment)
         .get()
         .then((data) async => {
-      if (!data.exists)
-        {
-
-          await db
-              .collection(years.year.toString())
-              .doc(Spa.getSpaName)
-              .collection(month)
-              .doc(currentDate)
-              .collection("walkin clients")
-              .doc(widget.modeOfPayment)
-              .set({
-            widget.modeOfPayment: [],
-          })
-        }
-    });
+              if (!data.exists)
+                {
+                  await db
+                      .collection(years.year.toString())
+                      .doc(Spa.getSpaName)
+                      .collection(month)
+                      .doc(currentDate)
+                      .collection("walkin clients")
+                      .doc(widget.modeOfPayment)
+                      .set({
+                    widget.modeOfPayment: [],
+                  })
+                }
+            });
   }
 }
 

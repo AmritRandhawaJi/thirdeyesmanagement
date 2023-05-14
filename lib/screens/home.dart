@@ -237,7 +237,9 @@ class HomePageState extends State<HomePage> {
                     _initFabHeight;
               }),
             ),
-            Positioned(
+
+
+            notSet ? Container() :    Positioned(
                 right: 20.0,
                 bottom: _fabHeight + 40,
                 child: GestureDetector(
@@ -248,36 +250,38 @@ class HomePageState extends State<HomePage> {
                           builder: (context) => const WalkinClients(),
                         ));
                   },
-                  child: Card(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(30),
-                          bottomRight: Radius.circular(30)),
-                      //set border radius more than 50% of height and width to make circle
-                    ),
-                    child: SizedBox(
-                        height: MediaQuery.of(context).size.width / 6,
-                        width: MediaQuery.of(context).size.width / 2.3,
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: const [
-                              Icon(Icons.directions_walk, color: Colors.green),
-                              Padding(
-                                padding: EdgeInsets.only(right: 8),
-                                child: Text(
-                                  "Walkin-Clients",
-                                  style: TextStyle(
-                                      fontFamily: "Montserrat",
-                                      fontWeight: FontWeight.bold),
+                  child: DelayedDisplay(
+                    child: Card(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(30),
+                            bottomRight: Radius.circular(30)),
+                        //set border radius more than 50% of height and width to make circle
+                      ),
+                      child: SizedBox(
+                          height: MediaQuery.of(context).size.width / 6,
+                          width: MediaQuery.of(context).size.width / 2.3,
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: const [
+                                Icon(Icons.directions_walk, color: Colors.green),
+                                Padding(
+                                  padding: EdgeInsets.only(right: 8),
+                                  child: Text(
+                                    "Walkin-Clients",
+                                    style: TextStyle(
+                                        fontFamily: "Montserrat",
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )),
+                              ],
+                            ),
+                          )),
+                    ),
                   ),
                 )),
-            Positioned(
+            notSet ? Container() :  Positioned(
                 left: 20.0,
                 bottom: _fabHeight + 40,
                 child: GestureDetector(
@@ -288,35 +292,37 @@ class HomePageState extends State<HomePage> {
                           builder: (context) => const MembershipAdd(),
                         ));
                   },
-                  child: Card(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          bottomLeft: Radius.circular(30)),
-                    ),
-                    child: SizedBox(
-                        height: MediaQuery.of(context).size.width / 6,
-                        width: MediaQuery.of(context).size.width / 2.3,
-                        child: Center(
-                            child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Padding(
-                              padding: EdgeInsets.only(left: 8),
-                              child: Text(
-                                "Membership",
-                                style: TextStyle(
-                                    fontFamily: "Montserrat",
-                                    fontWeight: FontWeight.bold),
+                  child: DelayedDisplay(
+                    child: Card(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            bottomLeft: Radius.circular(30)),
+                      ),
+                      child: SizedBox(
+                          height: MediaQuery.of(context).size.width / 6,
+                          width: MediaQuery.of(context).size.width / 2.3,
+                          child: Center(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: const [
+                              Padding(
+                                padding: EdgeInsets.only(left: 8),
+                                child: Text(
+                                  "Membership",
+                                  style: TextStyle(
+                                      fontFamily: "Montserrat",
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 5),
-                              child: Icon(Icons.add_card_sharp,
-                                  color: Colors.green),
-                            ),
-                          ],
-                        ))),
+                              Padding(
+                                padding: EdgeInsets.only(left: 5),
+                                child: Icon(Icons.add_card_sharp,
+                                    color: Colors.green),
+                              ),
+                            ],
+                          ))),
+                    ),
                   ),
                 )),
           ],

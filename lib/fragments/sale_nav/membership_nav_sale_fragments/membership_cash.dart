@@ -240,7 +240,7 @@ class _MembershipCashState extends State<MembershipCash> {
         .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
-        .doc(currentDate).collection("today").doc("Membership Sold")
+        .doc(currentDate).collection("Membership Sold").doc("Membership Sold")
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {

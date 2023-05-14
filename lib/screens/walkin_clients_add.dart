@@ -7,6 +7,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/walkin_client_cart_data.dart';
 import 'package:thirdeyesmanagement/screens/final_walkin_client.dart';
+import 'package:shimmer/shimmer.dart';
 
 class WalkinClientsAdd extends StatefulWidget {
   final String name;
@@ -49,8 +50,6 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
     super.initState();
   }
 
-
-
   bool loading = false;
   double panelHeightClosed = 0;
   double panelHeightOpen = 0;
@@ -79,126 +78,142 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
 
   Widget _body() {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        child: const Icon(Icons.shopping_bag),
-        onPressed: () {
-          panelHeightOpen = MediaQuery.of(context).size.height;
-          panelHeightClosed = MediaQuery.of(context).size.height / 1.5;
-          setState(() {
-            _pc1.open();
-          });
-        },
-      ),
-      body: uiLoad ?  SingleChildScrollView(
-          child: SafeArea(
-              child: fetching
-                  ? Column(
-                      children: [
-                        Text(
-                          Spa.getSpaName,
-                          style: const TextStyle(
-                              fontFamily: "Montserrat",
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          description,
-                          style: const TextStyle(
-                            fontFamily: "Montserrat",
-                            fontSize: 14,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(address,
-                              style: const TextStyle(
-                                  fontFamily: "Montserrat", fontSize: 10),
-                              textAlign: TextAlign.center),
-                        ),
-                        ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: values.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedIndex = index;
-                                  panelHeightOpen =
-                                      MediaQuery.of(context).size.height;
-                                  panelHeightClosed =
-                                      MediaQuery.of(context).size.height / 1.5;
-                                  list.add(index);
-                                  _pc1.open();
-                                });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        duration: const Duration(seconds: 1),
-                                        backgroundColor: Colors.green,
-                                        content: Text(
-                                            values[index]["massageName"])));
-                              },
-                              child: Card(
-                                color: Colors.green.shade50,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      selectedIndex == index
-                                          ? Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: const [
-                                                Icon(
-                                                  Icons.check,
-                                                  color: Colors.green,
-                                                )
-                                              ],
-                                            )
-                                          : Container(),
-                                      const Text("Massage Name",
-                                          style:
-                                              TextStyle(color: Colors.black45)),
-                                      Text(
-                                        values[index]["massageName"],
-                                        style: const TextStyle(
-                                             fontWeight: FontWeight.bold,
-                                            fontSize: 18),
-                                      ),
-                                      const Text("Price",
-                                          style:
-                                              TextStyle(color: Colors.black45)),
-                                      Text(
-                                        "Rs.${values[index]["price"]}",
-                                        style: const TextStyle(
-                                            fontFamily: "Montserrat",
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18),
-                                      ),
-                                      const Text("Room Type",
-                                          style:
-                                              TextStyle(color: Colors.black45)),
-                                      Text(
-                                        values[index]["roomType"],
-                                        style: const TextStyle(
-                                            fontFamily: "Montserrat",
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18),
-                                      )
-                                    ],
-                                  ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.green,
+          child: const Icon(Icons.shopping_bag),
+          onPressed: () {
+            panelHeightOpen = MediaQuery.of(context).size.height;
+            panelHeightClosed = MediaQuery.of(context).size.height / 1.5;
+            setState(() {
+              _pc1.open();
+            });
+          },
+        ),
+        body: uiLoad
+            ? SingleChildScrollView(
+                child: SafeArea(
+                    child: fetching
+                        ? Column(
+                            children: [
+                              Text(
+                                Spa.getSpaName,
+                                style: const TextStyle(
+                                    fontFamily: "Montserrat",
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                description,
+                                style: const TextStyle(
+                                  fontFamily: "Montserrat",
+                                  fontSize: 14,
                                 ),
                               ),
-                            );
-                          },
-                          shrinkWrap: true,
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(address,
+                                    style: const TextStyle(
+                                        fontFamily: "Montserrat", fontSize: 10),
+                                    textAlign: TextAlign.center),
+                              ),
+                              ListView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: values.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedIndex = index;
+                                        panelHeightOpen =
+                                            MediaQuery.of(context).size.height;
+                                        panelHeightClosed =
+                                            MediaQuery.of(context).size.height /
+                                                1.5;
+                                        list.add(index);
+                                        _pc1.open();
+                                      });
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              duration:
+                                                  const Duration(seconds: 1),
+                                              backgroundColor: Colors.green,
+                                              content: Text(values[index]
+                                                  ["massageName"])));
+                                    },
+                                    child: Card(
+                                      color: Colors.green.shade50,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            selectedIndex == index
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: const [
+                                                      Icon(
+                                                        Icons.check,
+                                                        color: Colors.green,
+                                                      )
+                                                    ],
+                                                  )
+                                                : Container(),
+                                            const Text("Massage Name",
+                                                style: TextStyle(
+                                                    color: Colors.black45)),
+                                            Text(
+                                              values[index]["massageName"],
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18),
+                                            ),
+                                            const Text("Price",
+                                                style: TextStyle(
+                                                    color: Colors.black45)),
+                                            Text(
+                                              "Rs.${values[index]["price"]}",
+                                              style: const TextStyle(
+                                                  fontFamily: "Montserrat",
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18),
+                                            ),
+                                            const Text("Room Type",
+                                                style: TextStyle(
+                                                    color: Colors.black45)),
+                                            Text(
+                                              values[index]["roomType"],
+                                              style: const TextStyle(
+                                                  fontFamily: "Montserrat",
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                shrinkWrap: true,
+                              ),
+                            ],
+                          )
+                        : Container()))
+            : Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: ListView.builder(
+                    itemCount: 6,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        elevation: 1.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                      ],
-                    )
-                  : Container())): const Center(child: CircularProgressIndicator(value: 1)),
-    );
+                        child: const SizedBox(height: 80),
+                      );
+                    })));
   }
 
   Widget _panel(ScrollController sc) {

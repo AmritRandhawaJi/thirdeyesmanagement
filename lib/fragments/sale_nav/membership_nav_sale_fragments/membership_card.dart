@@ -24,7 +24,7 @@ class _MembershipCardState extends State<MembershipCard> {
 
   bool image = false;
   FirebaseFirestore db = FirebaseFirestore.instance;
-  List<dynamic> cashListed = [];
+  List<dynamic> cardListed = [];
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback(
@@ -92,10 +92,10 @@ class _MembershipCardState extends State<MembershipCard> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(cashListed[index]["date"],
+                              Text(cardListed[index]["date"],
                                   style: const TextStyle(
                                       fontSize: 18, fontWeight: FontWeight.w400)),
-                              Text(cashListed[index]["time"],
+                              Text(cardListed[index]["time"],
                                   style: const TextStyle(
                                       fontSize: 18, fontWeight: FontWeight.w400)),
                             ],
@@ -110,14 +110,14 @@ class _MembershipCardState extends State<MembershipCard> {
                                 children: [
                                   Text("$sNo.",
                                       style: const TextStyle(fontSize: 16)),
-                                  Text("${cashListed[index]["clientName"]}",
+                                  Text("${cardListed[index]["clientName"]}",
                                       style: const TextStyle(
                                           fontSize: 18,
                                           fontFamily: "Montserrat",
                                           fontWeight: FontWeight.bold)),
                                 ],
                               ),
-                              Text(cashListed[index]["clientId"],
+                              Text(cardListed[index]["clientId"],
                                   style: const TextStyle(
                                       fontSize: 18, fontFamily: "Montserrat")),
                             ],
@@ -127,13 +127,13 @@ class _MembershipCardState extends State<MembershipCard> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(cashListed[index]["package"],
+                              child: Text(cardListed[index]["package"],
                                   style: TextStyle(
                                       fontSize: 22,
                                       fontFamily: "Montserrat",
                                       fontWeight: FontWeight.bold,
                                       color:
-                                      cashListed[index]["package"] == "Platinum"
+                                      cardListed[index]["package"] == "Platinum"
                                           ? Colors.purple
                                           : Colors.amber)),
                             ),
@@ -144,7 +144,7 @@ class _MembershipCardState extends State<MembershipCard> {
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
                               child: Text(
-                                  "Rs.${cashListed[index]["amountPaid"].toString()}/-",
+                                  "Rs.${cardListed[index]["amountPaid"].toString()}/-",
                                   style: const TextStyle(
                                       fontSize: 22, color: Colors.green)),
                             ),
@@ -162,7 +162,7 @@ class _MembershipCardState extends State<MembershipCard> {
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
                               child: Text(
-                                cashListed[index]["massages"].toString(),
+                                cardListed[index]["massages"].toString(),
                                 style: const TextStyle(fontSize: 18),
                               ),
                             )
@@ -175,7 +175,7 @@ class _MembershipCardState extends State<MembershipCard> {
                               child: Text("Mode of payment:  ",
                                   style: TextStyle(fontSize: 16)),
                             ),
-                            Text(cashListed[index]["paymentMode"],
+                            Text(cardListed[index]["paymentMode"],
                                 style: const TextStyle(fontSize: 22)),
                           ],
                         ),
@@ -195,7 +195,7 @@ class _MembershipCardState extends State<MembershipCard> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
-                              child: Text(cashListed[index]["manager"],
+                              child: Text(cardListed[index]["manager"],
                                   style:
                                   const TextStyle(fontFamily: "Montserrat")),
                             ),
@@ -204,7 +204,7 @@ class _MembershipCardState extends State<MembershipCard> {
                       ],
                     );
                   },
-                  itemCount: cashListed.length,
+                  itemCount: cardListed.length,
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   separatorBuilder: (context, index) => const Divider(),
@@ -240,11 +240,11 @@ class _MembershipCardState extends State<MembershipCard> {
         .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
-        .doc(currentDate).collection("today").doc("Membership Sold").get()
+        .doc(currentDate).collection("Membership Sold").doc("Membership Sold").get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
         try{
-          cashListed = await documentSnapshot.get("Cash");
+          cardListed = await documentSnapshot.get("Card");
           calculate();
         }
         catch(e){
@@ -280,8 +280,8 @@ class _MembershipCardState extends State<MembershipCard> {
   }
   calculate() {
     List<int> array = [];
-    for (int i = 0; i < cashListed.length; i++) {
-      array.add(cashListed[i]["amountPaid"]);
+    for (int i = 0; i < cardListed.length; i++) {
+      array.add(cardListed[i]["amountPaid"]);
     }
     total = array.fold(0, (p, c) => p + c);
     refresh();

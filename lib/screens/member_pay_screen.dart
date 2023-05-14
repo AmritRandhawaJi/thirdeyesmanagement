@@ -162,7 +162,7 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
         .doc(Spa.getSpaName)
         .collection(month)
         .doc(currentDate)
-        .collection("today")
+        .collection("Membership Sold")
         .doc("Membership Sold")
         .set({
       _result: FieldValue.arrayUnion([

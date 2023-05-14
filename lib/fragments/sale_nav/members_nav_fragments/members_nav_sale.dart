@@ -227,7 +227,7 @@ class _WalkinNavSaleState extends State<MembersNavSale> {
         .doc(Spa.getSpaName)
         .collection(month)
         .doc(currentDate)
-        .collection("today")
+        .collection("Members")
         .doc("Members")
         .get()
         .then((DocumentSnapshot documentSnapshot) async {

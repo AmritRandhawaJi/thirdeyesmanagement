@@ -13,6 +13,14 @@ class CardSale extends StatefulWidget {
 class _CardState extends State<CardSale> {
   bool loaded = false;
 
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+            (_) => Future.delayed(const Duration(seconds: 2), () {
+          todayCard();
+        }));
+    super.initState();
+  }
   int total = 0;
 
   bool loading = true;
@@ -25,10 +33,7 @@ class _CardState extends State<CardSale> {
   List<dynamic> cardListed = [];
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback(
-            (_) => Future.delayed(const Duration(seconds: 2), () {
-          todayCard();
-        }));
+
     return Scaffold(
       body: SingleChildScrollView(child: SafeArea(child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -200,23 +205,12 @@ class _CardState extends State<CardSale> {
         .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
-        .doc(currentDate).collection("today").doc("Walkin Clients")
+        .doc(currentDate).collection("walkin clients").doc("Card")
         .get()
         .then((DocumentSnapshot documentSnapshot) async {
       if (documentSnapshot.exists) {
-        try{
-          cardListed = await documentSnapshot.get("Card");
-          calculate();
-        }catch(e){
-          if (mounted) {
-            setState(() {
-              total = 0;
-              image = true;
-              loaded = false;
-              loading = false;
-            });
-          }
-        }
+        cardListed = await documentSnapshot.get("Card");
+        calculate();
 
       } else {
         if (mounted) {

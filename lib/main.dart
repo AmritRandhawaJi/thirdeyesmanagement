@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/screens/decision.dart';
 import 'package:thirdeyesmanagement/screens/getting_started_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -13,7 +14,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseAppCheck.instance
-      .activate(androidProvider: AndroidProvider.playIntegrity);
+      .activate(
+      webRecaptchaSiteKey: "6LcyEQMlAAAAAEnTIRZQiFDyeUzHJFVMYxFzIJ1l",
+      androidProvider: AndroidProvider.playIntegrity);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MaterialApp(home: MyApp()));
@@ -42,8 +45,16 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => Future.delayed(const Duration(seconds: 2), () async {
-
+        (_) => Future.delayed(const Duration(seconds: 1), () async {
+          await FirebaseFirestore.instance
+              .collection("accounts")
+              .doc(FirebaseAuth.instance.currentUser!.email)
+              .get()
+              .then((DocumentSnapshot documentSnapshot) async {
+            if (documentSnapshot.exists) {
+              Spa.setSpaName = await documentSnapshot.get("assignedSpa");
+            }
+          });
               userState();
             }));
     return Scaffold(

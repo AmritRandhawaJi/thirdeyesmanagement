@@ -26,14 +26,14 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
   final PanelController _pc1 = PanelController();
 
   List<dynamic> values = [];
-  List<int> list = [];
+  List<dynamic> list = [];
   bool fetching = false;
   late int total = 1;
   late String description;
   late String address;
   bool loader = false;
   bool selectMassage = false;
-  late int selectedIndex = 100;
+
   bool panelReady = false;
 
   bool uiLoad = false;
@@ -123,13 +123,12 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
                                   return GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        selectedIndex = index;
                                         panelHeightOpen =
                                             MediaQuery.of(context).size.height;
                                         panelHeightClosed =
                                             MediaQuery.of(context).size.height /
                                                 1.5;
-                                        list.add(index);
+                                        list.add(values[index]);
                                         _pc1.open();
                                       });
                                       ScaffoldMessenger.of(context)
@@ -148,18 +147,7 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            selectedIndex == index
-                                                ? Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: const [
-                                                      Icon(
-                                                        Icons.check,
-                                                        color: Colors.green,
-                                                      )
-                                                    ],
-                                                  )
-                                                : Container(),
+
                                             const Text("Massage Name",
                                                 style: TextStyle(
                                                     color: Colors.black45)),
@@ -268,7 +256,7 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
                   const Text("Massage Name",
                       style: TextStyle(color: Colors.black45)),
                   Text(
-                    values[list[index]]["massageName"],
+                    list[index]["massageName"],
                     style: const TextStyle(
                         fontFamily: "Montserrat",
                         fontWeight: FontWeight.bold,
@@ -279,7 +267,7 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Rs.${values[list[index]]["price"]}",
+                        "Rs.${list[index]["price"]}",
                         style: const TextStyle(
                             fontFamily: "Montserrat",
                             fontWeight: FontWeight.bold,
@@ -340,7 +328,7 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
                   const Text("Room Type",
                       style: TextStyle(color: Colors.black45)),
                   Text(
-                    values[list[index]]["roomType"],
+                    list[index]["roomType"],
                     style: const TextStyle(
                         fontFamily: "Montserrat",
                         fontWeight: FontWeight.bold,
@@ -391,7 +379,7 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
   Future<void> calculate() async {
     List<int> array = [];
     for (int i = 0; i < list.length; i++) {
-      int data = values[list[i]]["price"];
+      int data = list[i]["price"];
       array.add(data);
     }
     int sum = array.fold(0, (p, c) => p + c);

@@ -8,13 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
-import 'package:thirdeyesmanagement/modal/book_session_membership.dart';
 import 'package:thirdeyesmanagement/modal/send_push_message.dart';
-import 'package:thirdeyesmanagement/modal/twilio.dart';
 import 'package:thirdeyesmanagement/screens/home.dart';
-import 'package:twilio_flutter/twilio_flutter.dart';
 
-class MemberPayScreen extends StatefulWidget {
+import 'book_session_membership.dart';
+
+class MoveToMemberPay extends StatefulWidget {
   final String name;
   final int amount;
   final bool age;
@@ -24,23 +23,22 @@ class MemberPayScreen extends StatefulWidget {
   final String validity;
   final String number;
 
-  const MemberPayScreen({
-    super.key,
-    required this.name,
-    required this.number,
-    required this.amount,
-    required this.package,
-    required this.validity,
-    required this.massages,
-    required this.age,
-    required this.member,
-  });
+  const MoveToMemberPay(
+      {super.key,
+      required this.name,
+      required this.amount,
+      required this.age,
+      required this.member,
+      required this.package,
+      required this.massages,
+      required this.validity,
+      required this.number});
 
   @override
-  State<MemberPayScreen> createState() => _MemberPayScreenState();
+  State<MoveToMemberPay> createState() => _MoveToMemberPayState();
 }
 
-class _MemberPayScreenState extends State<MemberPayScreen> {
+class _MoveToMemberPayState extends State<MoveToMemberPay> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   PanelController pc = PanelController();
   bool loading = false;
@@ -55,23 +53,15 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
   bool applied = false;
 
   late Timer timer;
-  late TwilioFlutter twilioFlutter;
 
   bool logoLoad = false;
+
+  var pastServices = [];
 
   @override
   void dispose() {
     db.terminate();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    twilioFlutter = TwilioFlutter(
-        accountSid: Twilio.accountSID,
-        authToken: Twilio.authToken,
-        twilioNumber: Twilio.number);
-    super.initState();
   }
 
   @override
@@ -99,52 +89,35 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
   }
 
   Future<void> createClient() async {
-    await db.collection("clients").doc(widget.number).get().then((value) async {
-      if (value.exists) {
-        setState(() {
-          loading = false;
-        });
-        showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-                  title: const Text(
-                    "Already Registered",
-                    style: TextStyle(color: Colors.green),
-                  ),
-                  content: const Text("Client is already registered with us."),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pop(ctx);
-                        },
-                        child: const Text("Ok")),
+    final today = DateTime.now();
 
-                  ],
-                ));
-      } else {
-        final today = DateTime.now();
-        await db.collection("clients").doc(widget.number).set({
-          "name": widget.name,
-          "age": widget.age ? "Eligible" : "Not Eligible",
-          "member": true,
-          "phone": widget.number,
-          "registration": DateFormat.yMMMd().add_jm().format(today),
-          "package": widget.package,
-          "notify": false,
-          "paymentMode": _result,
-          "paid": widget.amount,
-          "validity": widget.validity,
-          "massages": widget.massages,
-          "pendingMassage": widget.massages,
-          "pastServices": [],
-        }, SetOptions(merge: true)).then((value) => {
-              setState(() {
-                loading = false;
-              }),
-              saleAddingToServer()
+    await db
+        .collection("clients")
+        .doc(widget.number)
+        .get()
+        .then((value) => {pastServices = value.get("pastServices")})
+        .whenComplete(() async => {
+              await db.collection("clients").doc(widget.number).set({
+                "name": widget.name,
+                "age": widget.age ? "Eligible" : "Not Eligible",
+                "member": true,
+                "phone": widget.number,
+                "registration": DateFormat.yMMMd().add_jm().format(today),
+                "package": widget.package,
+                "notify": false,
+                "paymentMode": _result,
+                "paid": widget.amount,
+                "validity": widget.validity,
+                "massages": widget.massages,
+                "pendingMassage": widget.massages,
+                "pastServices": pastServices
+              }, SetOptions(merge: true)).then((value) => {
+                    setState(() {
+                      loading = false;
+                    }),
+                    saleAddingToServer()
+                  })
             });
-      }
-    });
   }
 
   saleAddingToServer() async {
@@ -246,6 +219,9 @@ class _MemberPayScreenState extends State<MemberPayScreen> {
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: CupertinoColors.activeGreen)),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 3,
               )
             ],
           ),

@@ -40,7 +40,6 @@ class _BookSessionState extends State<BookSession> {
   List<dynamic> finalize = [];
   final offerCreateController = TextEditingController();
   String manager = FirebaseAuth.instance.currentUser!.email.toString();
-  final db = FirebaseFirestore.instance;
   String month = DateFormat.MMMM().format(DateTime.now());
   String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   bool fetched = false;
@@ -55,7 +54,6 @@ class _BookSessionState extends State<BookSession> {
   final GlobalKey<FormState> therapistKey = GlobalKey<FormState>();
   final offerController = TextEditingController();
   int item = 0;
-  bool listEmpty = false;
   DateTime years = DateTime.now();
   bool allSet = false;
   bool loading = false;
@@ -66,14 +64,15 @@ class _BookSessionState extends State<BookSession> {
 
   @override
   void dispose() {
-    db.terminate();
+    therapistControl.dispose();
+    nameControl.dispose();
     super.dispose();
   }
 
   late int _tillSale;
 
   Future<void> getValues() async {
-    await db
+    await FirebaseFirestore.instance
         .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
@@ -90,8 +89,7 @@ class _BookSessionState extends State<BookSession> {
         authToken: Twilio.authToken,
         twilioNumber: Twilio.number);
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => Future.delayed(const Duration(seconds: 2), () {
-              getValues();
+        (_) => Future.delayed(const Duration(seconds: 1), () {
               server();
             }));
 
@@ -246,8 +244,7 @@ class _BookSessionState extends State<BookSession> {
                               style: const TextStyle(
                                   fontSize: 18, color: Colors.black38)),
                           Text(
-                              WalkinClientCartData
-                                      .values[WalkinClientCartData.list[index]]
+                             WalkinClientCartData.list[index]
                                   ["massageName"],
                               style: const TextStyle(
                                   overflow: TextOverflow.ellipsis,
@@ -305,7 +302,7 @@ class _BookSessionState extends State<BookSession> {
   }
 
   Future<void> createBooking() async {
-    db.collection("clients").doc(widget.phoneNumber).update({
+    FirebaseFirestore.instance.collection("clients").doc(widget.phoneNumber).update({
       "pastServices": FieldValue.arrayUnion([
         {
           "spaName": Spa.getSpaName,
@@ -313,7 +310,7 @@ class _BookSessionState extends State<BookSession> {
           "time": DateFormat.jm().format(DateTime.now()),
           "clientName": nameControl.value.text,
           "modeOfPayment": widget.modeOfPayment,
-          "massageName": WalkinClientCartData.list[item],
+          "massageName": WalkinClientCartData.list[item]["massageName"],
           "therapist": therapistControl.value.text,
         }
       ])
@@ -337,12 +334,12 @@ class _BookSessionState extends State<BookSession> {
                     color: Colors.white),
               ),
             ),
-            listEmpty
+            WalkinClientCartData.list.isEmpty
                 ? Container()
                 : Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                        WalkinClientCartData.values[item]["massageName"],
+                        WalkinClientCartData.list[item]["massageName"],
                         style: const TextStyle(
                             fontFamily: "Montserrat",
                             fontSize: 28,
@@ -454,14 +451,14 @@ class _BookSessionState extends State<BookSession> {
           WalkinClientCartData.list.length;
       offerController.text = discount.toString();
       _newAmount =
-          WalkinClientCartData.values[item]["price"] - discount.toInt();
+          WalkinClientCartData.list[item]["price"] - discount.toInt();
 
       _tillSale = _tillSale + _newAmount;
     } else {
       _tillSale = WalkinClientCartData.list[item]["price"] + _tillSale;
     }
 
-    await db
+    await FirebaseFirestore.instance
         .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
@@ -474,7 +471,7 @@ class _BookSessionState extends State<BookSession> {
           {
             "clientId": widget.phoneNumber,
             "clientName": widget.name,
-            "massageName": WalkinClientCartData.list[item]["price"],
+            "massageName": WalkinClientCartData.list[item]["massageName"],
             "time": DateFormat.jm().format(DateTime.now()),
             "date": currentDate,
             "modeOfPayment": widget.result,
@@ -492,10 +489,12 @@ class _BookSessionState extends State<BookSession> {
                 _pc1.close();
                 updating = false;
                 WalkinClientCartData.list.removeAt(item);
+                nameControl.clear();
+                therapistControl.clear();
               }),
               if (WalkinClientCartData.list.isEmpty)
                 {
-                  await db
+                  await FirebaseFirestore.instance
                       .collection(years.year.toString())
                       .doc(Spa.getSpaName)
                       .collection(month)
@@ -504,7 +503,6 @@ class _BookSessionState extends State<BookSession> {
                   {
                     setState(() {
                       allSet = true;
-                      listEmpty = true;
                     }),
                     WidgetsBinding.instance.addPostFrameCallback(
                         (_) => Future.delayed(const Duration(seconds: 2), () {
@@ -518,10 +516,11 @@ class _BookSessionState extends State<BookSession> {
                   }
                 }
             });
+
   }
 
   Future<void> server() async {
-    await db
+    await FirebaseFirestore.instance
         .collection(years.year.toString())
         .doc(Spa.getSpaName)
         .collection(month)
@@ -532,7 +531,7 @@ class _BookSessionState extends State<BookSession> {
         .then((data) async => {
               if (!data.exists)
                 {
-                  await db
+                  await FirebaseFirestore.instance
                       .collection(years.year.toString())
                       .doc(Spa.getSpaName)
                       .collection(month)
@@ -544,6 +543,7 @@ class _BookSessionState extends State<BookSession> {
                   })
                 }
             });
+    getValues();
   }
 }
 

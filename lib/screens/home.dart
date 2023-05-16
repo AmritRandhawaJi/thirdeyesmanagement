@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -55,7 +54,6 @@ class HomePageState extends State<HomePage> {
   String month = DateFormat.MMMM().format(DateTime.now());
 
   bool panelLoad = false;
-  bool draggable = false;
 
   bool panelLoading = false;
   dynamic walkinCash = 0;
@@ -70,11 +68,8 @@ class HomePageState extends State<HomePage> {
 
   bool loading = false;
 
-  bool notSet = true;
-
   @override
   void initState() {
-    analytics.app.setAutomaticDataCollectionEnabled(true);
     _fabHeight = _initFabHeight;
     super.initState();
   }
@@ -85,8 +80,6 @@ class HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    db.clearPersistence();
-    db.terminate();
     _pageController.dispose();
     super.dispose();
   }
@@ -97,24 +90,6 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> getValues() async {
-    FirebaseFirestore.instance
-        .collection("accounts")
-        .doc(FirebaseAuth.instance.currentUser!.email)
-        .get()
-        .then((DocumentSnapshot documentSnapshot) async {
-      if (documentSnapshot.exists) {
-        Spa.setSpaName = await documentSnapshot.get("assignedSpa");
-        setState(() {
-          notSet = false;
-          draggable = true;
-          if (mounted) {
-            setValues();
-          }
-        });
-      }
-    });
-  }
   setValues() async {
     try {
       FirebaseFirestore.instance
@@ -167,14 +142,10 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     _panelHeightOpen = MediaQuery.of(context).size.height / 1.5;
-    if (notSet) {
-      WidgetsBinding.instance.addPostFrameCallback(
-          (_) => Future.delayed(const Duration(seconds: 1), () async {
-                if (mounted) {
-                  await getValues();
-                }
-              }));
-    }
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => Future.delayed(const Duration(seconds: 1), () async {
+              await setValues();
+            }));
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFFe6f0f9),
@@ -200,7 +171,6 @@ class HomePageState extends State<HomePage> {
                   panelLoad = false;
                 });
               },
-              isDraggable: draggable,
               collapsed: Container(
                 decoration: const BoxDecoration(
                     color: Color(0xfffffff3),
@@ -213,16 +183,15 @@ class HomePageState extends State<HomePage> {
                     child: Column(
                       children: [
                         const Icon(Icons.bar_chart, color: Colors.green),
-                       notSet ?  SizedBox(
-                           height: MediaQuery.of(context).size.width/12,
-                           width: MediaQuery.of(context).size.width/12,
-                           child: const CircularProgressIndicator(strokeWidth: 1,)) : DelayedDisplay(
-                             child: Text(
-                          "•${Spa.getSpaName} Sale•",
-                          style: const TextStyle(
-                                fontSize: 18, fontFamily: "Montserrat",fontWeight: FontWeight.bold),
+                        DelayedDisplay(
+                          child: Text(
+                            "•${Spa.getSpaName} Sale•",
+                            style: const TextStyle(
+                                fontSize: 18,
+                                fontFamily: "Montserrat",
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
-                           ),
                       ],
                     ),
                   ),
@@ -237,9 +206,7 @@ class HomePageState extends State<HomePage> {
                     _initFabHeight;
               }),
             ),
-
-
-            notSet ? Container() :    Positioned(
+            Positioned(
                 right: 20.0,
                 bottom: _fabHeight + 40,
                 child: GestureDetector(
@@ -265,7 +232,8 @@ class HomePageState extends State<HomePage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: const [
-                                Icon(Icons.directions_walk, color: Colors.green),
+                                Icon(Icons.directions_walk,
+                                    color: Colors.green),
                                 Padding(
                                   padding: EdgeInsets.only(right: 8),
                                   child: Text(
@@ -281,7 +249,7 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                 )),
-            notSet ? Container() :  Positioned(
+            Positioned(
                 left: 20.0,
                 bottom: _fabHeight + 40,
                 child: GestureDetector(
@@ -695,16 +663,13 @@ class HomePageState extends State<HomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-             notSet ? SizedBox(
-                 height: MediaQuery.of(context).size.width/12,
-                 width: MediaQuery.of(context).size.width/12,
-                 child: const CircularProgressIndicator(strokeWidth: 1,)): DelayedDisplay(
-                   child: Text(Spa.getSpaName,
+              DelayedDisplay(
+                child: Text(Spa.getSpaName,
                     style: const TextStyle(
                         fontSize: 22,
                         fontFamily: "Montserrat",
                         fontWeight: FontWeight.bold)),
-                 ),
+              ),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -713,36 +678,24 @@ class HomePageState extends State<HomePage> {
                         builder: (context) => const AccountSetting(),
                       ));
                 },
-                child: CircleAvatar(
-                  maxRadius: MediaQuery.of(context).size.width / 18,
-                  backgroundColor: Colors.blueAccent,
-                  child: const Icon(
-                    Icons.account_circle,
-                    color: Colors.white,
-                  ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.account_circle,
+                      size: MediaQuery.of(context).size.width / 10,
+                      color: Colors.black87,
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10, left: 10),
-          child: Row(
-            children: const [
-              DelayedDisplay(
-                child: Text("Hey!",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "Montserrat",
-                        color: Colors.black87,
-                        fontSize: 24)),
-              ),
-            ],
-          ),
-        ),
+
         Padding(
           padding: const EdgeInsets.only(left: 10, top: 10),
           child: Row(
+
             children: const [
               DelayedDisplay(
                 child: Text("How you feeling\nToday?",
@@ -812,7 +765,7 @@ class HomePageState extends State<HomePage> {
                                   }
                                 },
                                 child: const CircleAvatar(
-                                    backgroundColor: Colors.blueAccent,
+                                    backgroundColor: Colors.green,
                                     child: Icon(
                                       Icons.search,
                                       color: Colors.white,

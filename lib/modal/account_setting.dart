@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:thirdeyesmanagement/main.dart';
-import 'package:thirdeyesmanagement/modal/offers.dart';
 import 'package:thirdeyesmanagement/screens/password_reset.dart';
 
 class AccountSetting extends StatefulWidget {
@@ -22,25 +21,36 @@ class _AccountSettingState extends State<AccountSetting> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfffcf0ff),
-      body: SingleChildScrollView(
-        child: SafeArea(
+      body: SafeArea(
+        child: DelayedDisplay(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(height: 30),
-                const Text(
-                  "Welcome",
+                const Padding(
+                  padding: EdgeInsets.only(top: 18.0),
+                  child: Text(
+                    "Welcome",
+                    style: TextStyle(
+                      fontFamily: "Montserrat",
+                      fontSize: 20,
+                    ),
+                  ),
+                ),const Text(
+                  "Manager's",
                   style: TextStyle(
                     fontFamily: "Montserrat",
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  FirebaseAuth.instance.currentUser!.email.toString(),
-                  style:
-                      const TextStyle(fontFamily: "Montserrat"),
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                   FirebaseAuth.instance.currentUser!.email.toString(),
+                    style:
+                        const TextStyle(fontFamily: "Montserrat",fontWeight: FontWeight.bold),
+                  ),
                 ),
 
 
@@ -56,7 +66,7 @@ class _AccountSettingState extends State<AccountSetting> {
                   ],
                 ),
                 CupertinoButton(
-                    color: Colors.purple[300],
+                    color: Colors.green,
                     onPressed: () async {
                       try {
                         await FirebaseAuth.instance.signOut();
@@ -69,7 +79,7 @@ class _AccountSettingState extends State<AccountSetting> {
                     child: const Text("Sign-Out")),
                 const SizedBox(height: 30),
                 CupertinoButton(
-                    color: Colors.redAccent[200],
+
                     onPressed: () {
                       Navigator.push(
                           context,
@@ -77,32 +87,22 @@ class _AccountSettingState extends State<AccountSetting> {
                             builder: (context) => const PasswordReset(),
                           ));
                     },
-                    child: const Text("Change Password")),
-                const SizedBox(height: 30),
-                SizedBox(
-                  height: MediaQuery.of(context).size.width/2.5,
-                  width: MediaQuery.of(context).size.width/2.5,
-                  child: GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const Offers(),));
-                    },
-                    child: DelayedDisplay(
-                      child: Card(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: const [
-                              Padding(
-                                padding: EdgeInsets.all(15.0),
-                                child: Text("Add Offers",style:
-                                TextStyle(fontFamily: "Montserrat",fontWeight: FontWeight.bold,color: Colors.green)),
-                              ),
-                              Icon(Icons.local_offer,color: Colors.green
-                              ),
+                    child: Column(
+                      children:  [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text("Change Password",style: TextStyle(color: Colors.black),),
+                         Icon(Icons.arrow_forward_ios)
+                          ],
+                        ),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text("would you like to change password?",style: TextStyle(color: Colors.black54),),
+                )
+                      ],
+                    )),
 
-                            ],)),
-                    ),
-                  ),
-                ),
               ]),
         ),
       ),

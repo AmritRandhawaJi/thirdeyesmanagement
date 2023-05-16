@@ -391,7 +391,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                 WidgetsBinding.instance.addPostFrameCallback(
                     (_) => Future.delayed(const Duration(seconds: 2), () {
                           if (mounted) {
-                            Navigator.pushAndRemoveUntil(
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => BookSession(
@@ -402,7 +402,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                                     result: _result,
                                   ),
                                 ),
-                                (route) => false);
+                               );
                           }
                         })),
               });

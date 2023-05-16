@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/book_session_membership.dart';
 import 'package:thirdeyesmanagement/modal/renew.dart';
+import 'package:thirdeyesmanagement/screens/home.dart';
 
 class MemberDetailsPage extends StatefulWidget {
   const MemberDetailsPage({
@@ -42,12 +44,20 @@ class MemberDetailsPage extends StatefulWidget {
 class _MemberDetailsPageState extends State<MemberDetailsPage> {
   bool loaded = false;
   final pc = PanelController();
+  final db = FirebaseFirestore.instance;
 
+  @override
+  void initState() {
+    db.clearPersistence();
+    db.terminate();
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final double panelHeightClosed = MediaQuery.of(context).size.height / 4.5;
 
-    var panelHeightOpen = MediaQuery.of(context).size.height/1.3;
+    var panelHeightOpen = MediaQuery.of(context).size.height / 1.3;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xff2b6747),
@@ -246,8 +256,8 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
   }
 
   Widget _body() {
-    return SafeArea(
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: SafeArea(
         child: Column(
           children: [
             Padding(
@@ -306,7 +316,6 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
               style: const TextStyle(color: Colors.white),
             ),
             const SizedBox(height: 30),
-
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -315,7 +324,10 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
                   child: Row(
                     children: const [
                       Text("Membership",
-                          style: TextStyle(fontSize: 18, color: Colors.white,fontFamily: "Montserrat")),
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontFamily: "Montserrat")),
                     ],
                   ),
                 ),
@@ -360,7 +372,8 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
                                     MaterialPageRoute(
                                       builder: (context) => RenewClient(
                                         pendingMassage: widget.pendingMassage,
-                                        number: widget.phoneNumber, name: widget.name,
+                                        number: widget.phoneNumber,
+                                        name: widget.name,
                                       ),
                                     ));
                               },
@@ -381,13 +394,11 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
                       Text("${widget.paid}/-",
                           style: const TextStyle(
                               color: Colors.white, fontSize: 18)),
-
                       const Text("Massages:",
                           style: TextStyle(color: Colors.white)),
                       Text(widget.massages.toString(),
                           style: const TextStyle(
                               fontSize: 22, color: Colors.white)),
-
                     ],
                   ),
                 )
@@ -407,7 +418,6 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
                             fontSize: 22,
                             color: Colors.white,
                           )),
-
                       const Text("Massages Left: ",
                           style: TextStyle(color: Colors.white)),
                       Text(widget.pendingMassage.toString(),
@@ -456,6 +466,63 @@ class _MemberDetailsPageState extends State<MemberDetailsPage> {
                       },
                       child: const Text("Book Session"),
                     ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 4,
+                  ),
+                  CupertinoButton(
+                      color: Colors.white,
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                              title: const Text("Delete Membership",
+                                  style: TextStyle(color: Colors.red)),
+                              content: const Text(
+                                  "Would you like to delete membership?"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () async {
+                                      await db
+                                          .collection("clients")
+                                          .doc(widget.phoneNumber)
+                                          .delete()
+                                          .then((value) => {
+                                        Navigator.pop(ctx),
+                                        ScaffoldMessenger.of(context)
+                                                    .showSnackBar(const SnackBar(
+                                                        content: Text(
+                                                            "Membership suspended"))),
+                                                Navigator.pushAndRemoveUntil(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const Home(),
+                                                    ),
+                                                    (route) => false)
+                                              });
+                                    },
+                                    child: const Text(
+                                      "Yes",
+                                      style: TextStyle(color: Colors.red),
+                                    )),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text(
+                                      "No",
+                                      style: TextStyle(color: Colors.green),
+                                    ))
+                              ]),
+                        );
+                      },
+                      child: const Text(
+                        "Suspend Membership",
+                        style: TextStyle(color: Colors.red),
+                      )),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 3,
                   ),
                 ],
               ),

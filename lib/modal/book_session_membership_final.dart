@@ -6,11 +6,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:thirdeyesmanagement/modal/analytics.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/send_push_message.dart';
 import 'package:thirdeyesmanagement/modal/twilio.dart';
 import 'package:thirdeyesmanagement/modal/walkin_client_cart_data.dart';
-import 'package:thirdeyesmanagement/screens/home.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 
 class BookMembershipFinal extends StatefulWidget {
@@ -368,7 +368,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const Home(),
+                                      builder: (context) => const Analytics(),
                                     ),
                                     (route) => false);
                               }));

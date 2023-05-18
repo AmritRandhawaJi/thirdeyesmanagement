@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:thirdeyesmanagement/modal/analytics.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/twilio.dart';
 import 'package:thirdeyesmanagement/modal/walkin_client_cart_data.dart';
-import 'package:thirdeyesmanagement/screens/home.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 
 class BookSession extends StatefulWidget {
@@ -505,11 +505,11 @@ class _BookSessionState extends State<BookSession> {
                       allSet = true;
                     }),
                     WidgetsBinding.instance.addPostFrameCallback(
-                        (_) => Future.delayed(const Duration(seconds: 2), () {
+                        (_) => Future.delayed(const Duration(seconds: 1), () {
                               Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const Home(),
+                                    builder: (context) => const Analytics(),
                                   ),
                                   (route) => false);
                             })),

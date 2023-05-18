@@ -16,7 +16,7 @@ Future<void> main() async {
   await FirebaseAppCheck.instance
       .activate(
       webRecaptchaSiteKey: "6LcyEQMlAAAAAEnTIRZQiFDyeUzHJFVMYxFzIJ1l",
-      androidProvider: AndroidProvider.playIntegrity);
+      androidProvider: AndroidProvider.debug);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MaterialApp(home: MyApp()));

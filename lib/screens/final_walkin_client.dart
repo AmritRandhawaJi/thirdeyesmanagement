@@ -389,7 +389,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
               })
           .whenComplete(() => {
                 WidgetsBinding.instance.addPostFrameCallback(
-                    (_) => Future.delayed(const Duration(seconds: 2), () {
+                    (_) => Future.delayed(const Duration(seconds: 1), () {
                           if (mounted) {
                             Navigator.push(
                                 context,

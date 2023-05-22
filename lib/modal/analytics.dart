@@ -81,6 +81,7 @@ class _AnalyticsState extends State<Analytics> {
       ),
     );
   }
+
   sendToServer() async {
     await FirebaseAnalytics.instance.logEvent(
       name: "Spa Clients",

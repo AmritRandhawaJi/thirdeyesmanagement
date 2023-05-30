@@ -40,22 +40,25 @@ class MyAppState extends State<MyApp> {
     db2.terminate();
     super.dispose();
   }
-
-
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => Future.delayed(const Duration(seconds: 1), () async {
-          await FirebaseFirestore.instance
-              .collection("accounts")
-              .doc(FirebaseAuth.instance.currentUser!.email)
-              .get()
-              .then((DocumentSnapshot documentSnapshot) async {
-            if (documentSnapshot.exists) {
-              Spa.setSpaName = await documentSnapshot.get("assignedSpa");
-            }
-          });
-              userState();
+          try{
+            FirebaseAuth.instance.currentUser!.reload();
+            await FirebaseFirestore.instance
+                .collection("accounts")
+                .doc(FirebaseAuth.instance.currentUser!.email)
+                .get()
+                .then((DocumentSnapshot documentSnapshot) async {
+              if (documentSnapshot.exists) {
+                Spa.setSpaName = await documentSnapshot.get("assignedSpa");
+                goManagerHome();
+              }
+            });
+          }catch(e){
+            await userStateSave();
+          }
             }));
     return Scaffold(
       body: Column(
@@ -88,40 +91,7 @@ class MyAppState extends State<MyApp> {
     ); // widget tree
   }
 
-  Future<void> userState() async {
-    try {
-      await FirebaseAuth.instance.currentUser?.reload();
-      if (FirebaseAuth.instance.currentUser != null) {
-        if (mounted) {
-          goManagerHome();
-        }
-      } else {
-        await userStateSave();
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == "user-disabled") {
-        showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-                  title: const Text("Account is disabled",
-                      style: TextStyle(color: Colors.red)),
-                  content: const Text(
-                      "Your account is disabled by admin or something went wrong?",
-                      style: TextStyle(fontFamily: "Montserrat")),
-                  actions: <Widget>[
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pop(ctx);
-                        },
-                        child: const Text(
-                          "Try again",
-                          style: TextStyle(color: Colors.green),
-                        ))
-                  ],
-                ));
-      }
-    }
-  }
+
 
   moveToDecision() async {
     if (mounted) {
@@ -140,8 +110,10 @@ class MyAppState extends State<MyApp> {
   Future<void> userStateSave() async {
     final value = await SharedPreferences.getInstance();
     if (value.getInt("userState") != 1) {
+
       moveToGettingStart();
     } else {
+
       moveToDecision();
     }
   }

@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/screens/home.dart';
 import 'package:thirdeyesmanagement/screens/password_reset.dart';
 
@@ -284,7 +286,37 @@ class _ManagerLoginState extends State<ManagerLogin> {
             ));
   }
 
-  void _loggedIn() {
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const Home(),), (route) => false);
+  Future<void> _loggedIn() async {
+    await FirebaseFirestore.instance
+        .collection("accounts")
+        .doc(emailController.value.text.trim())
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+      if (documentSnapshot.exists) {
+        Spa.setSpaName = await documentSnapshot.get("assignedSpa");
+      } else {
+        showDialog(
+          context: context,
+          builder: (ctx) =>  AlertDialog(
+            content: const Text("You are not the part of association"),
+          title: const Text("Error",style: TextStyle(color: Colors.red)),
+            actions: [
+              TextButton(onPressed: (){
+                Navigator.pop(ctx);
+              }, child: const Text("Ok"))
+            ],
+          ),
+        );
+      }
+    });
+  }
+
+  void move() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Home(),
+        ),
+        (route) => false);
   }
 }

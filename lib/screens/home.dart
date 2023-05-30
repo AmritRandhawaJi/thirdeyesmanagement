@@ -228,10 +228,10 @@ class HomePageState extends State<HomePage> {
                       child: SizedBox(
                           height: MediaQuery.of(context).size.width / 6,
                           width: MediaQuery.of(context).size.width / 2.3,
-                          child: Center(
+                          child: const Center(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
-                              children: const [
+                              children: [
                                 Icon(Icons.directions_walk,
                                     color: Colors.green),
                                 Padding(
@@ -270,10 +270,10 @@ class HomePageState extends State<HomePage> {
                       child: SizedBox(
                           height: MediaQuery.of(context).size.width / 6,
                           width: MediaQuery.of(context).size.width / 2.3,
-                          child: Center(
+                          child: const Center(
                               child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
-                            children: const [
+                            children: [
                               Padding(
                                 padding: EdgeInsets.only(left: 8),
                                 child: Text(
@@ -363,13 +363,13 @@ class HomePageState extends State<HomePage> {
                       builder: (context) => const AllSale(),
                     ));
               },
-              child: Card(
+              child: const Card(
                 color: Colors.black54,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       Padding(
                         padding: EdgeInsets.only(top: 5),
                         child: Text(
@@ -422,8 +422,8 @@ class HomePageState extends State<HomePage> {
                             Card(
                               child: Column(
                                 children: [
-                                  Row(
-                                    children: const [
+                                  const Row(
+                                    children: [
                                       Text(
                                         "Walkin Clients",
                                         style: TextStyle(
@@ -509,8 +509,8 @@ class HomePageState extends State<HomePage> {
                             Card(
                               child: Column(
                                 children: [
-                                  Row(
-                                    children: const [
+                                  const Row(
+                                    children: [
                                       Text(
                                         "Membership Sold",
                                         style: TextStyle(
@@ -598,8 +598,8 @@ class HomePageState extends State<HomePage> {
                             Card(
                               child: Column(
                                 children: [
-                                  Row(
-                                    children: const [
+                                  const Row(
+                                    children: [
                                       Text(
                                         "Members Visit",
                                         style: TextStyle(
@@ -692,11 +692,11 @@ class HomePageState extends State<HomePage> {
           ),
         ),
 
-        Padding(
-          padding: const EdgeInsets.only(left: 10, top: 10),
+        const Padding(
+          padding: EdgeInsets.only(left: 10, top: 10),
           child: Row(
 
-            children: const [
+            children: [
               DelayedDisplay(
                 child: Text("How you feeling\nToday?",
                     textAlign: TextAlign.start,

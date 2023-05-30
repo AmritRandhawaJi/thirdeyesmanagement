@@ -227,9 +227,9 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                       height: 50,
                     ),
                     loading
-                        ? Row(
+                        ? const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Padding(
                                 padding: EdgeInsets.all(8.0),
                                 child: CircularProgressIndicator(
@@ -387,8 +387,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                     "You got $totalTake Walk-in Clients for massage in ${Spa.getSpaName} paid by $_result",
                     "Walk-in Clients")
               })
-          .whenComplete(() => {
-                WidgetsBinding.instance.addPostFrameCallback(
+          .whenComplete(() => WidgetsBinding.instance.addPostFrameCallback(
                     (_) => Future.delayed(const Duration(seconds: 1), () {
                           if (mounted) {
                             Navigator.push(
@@ -404,8 +403,7 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                                 ),
                                );
                           }
-                        })),
-              });
+                        })),);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Something Wrong in cloud")));

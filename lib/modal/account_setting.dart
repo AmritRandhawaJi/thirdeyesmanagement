@@ -87,16 +87,16 @@ class _AccountSettingState extends State<AccountSetting> {
                             builder: (context) => const PasswordReset(),
                           ));
                     },
-                    child: Column(
+                    child: const Column(
                       children:  [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text("Change Password",style: TextStyle(color: Colors.black),),
                          Icon(Icons.arrow_forward_ios)
                           ],
                         ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text("would you like to change password?",style: TextStyle(color: Colors.black54),),
                 )

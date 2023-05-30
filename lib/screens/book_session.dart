@@ -314,7 +314,7 @@ class _BookSessionState extends State<BookSession> {
           "therapist": therapistControl.value.text,
         }
       ])
-    }).whenComplete(() => {serverCall(item)});
+    }).whenComplete(() => serverCall(item));
   }
 
   _panel(ScrollController sc) {

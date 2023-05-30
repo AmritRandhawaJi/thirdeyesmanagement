@@ -55,8 +55,8 @@ class _MembershipServicesState extends State<MembershipServices> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: const [
+                            const Row(
+                              children: [
                                 Text(
                                   "We offer",
                                   style: TextStyle(

@@ -220,9 +220,9 @@ class _MembershipAddState extends State<MembershipAdd> {
               ),
               CupertinoButton(
                   color: Colors.blueGrey,
-                  child: Row(
+                  child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [Icon(Icons.card_giftcard),   Text("Membership benifits?",
+                      children: [Icon(Icons.card_giftcard),   Text("Membership benifits?",
                       style: TextStyle(
                           fontFamily: "Montserrat",
 
@@ -238,10 +238,10 @@ class _MembershipAddState extends State<MembershipAdd> {
                   child: Column(
                     children: [
                       Image.asset("assets/checkMark.png",width: MediaQuery.of(context).size.width/5,height: MediaQuery.of(context).size.width/5),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Row(
-                          children: const [
+                          children: [
                             Text("New Registration",
                                 style: TextStyle(
                                     fontFamily: "Montserrat",
@@ -329,9 +329,9 @@ class _MembershipAddState extends State<MembershipAdd> {
                               fontFamily: "Montserrat"),
                         ),
                       ),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: const [
+                        children: [
                           Text("•",
                               style: TextStyle(
                                   fontSize: 32, color: Colors.amberAccent)),

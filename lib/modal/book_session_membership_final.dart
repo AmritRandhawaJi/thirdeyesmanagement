@@ -414,14 +414,13 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
           .doc("till Sale")
           .get()
           .then((value) => {tillMembers = value["Members"], })
-          .whenComplete(() async => {
-                await db
+          .whenComplete(() async => await db
                     .collection(years.year.toString())
                     .doc(Spa.getSpaName)
                     .collection(month)
                     .doc("till Sale")
                     .update({"Members": tillMembers + totalTake})
-              });
+              );
 
       await db
           .collection(years.year.toString())

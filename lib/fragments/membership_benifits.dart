@@ -152,10 +152,10 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                         shrinkWrap: true,
                         physics: const BouncingScrollPhysics(),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Row(
-                          children: const [
+                          children: [
                             Text("Facility",
                                 style: TextStyle(
                                     fontFamily: "Montserrat",
@@ -191,10 +191,10 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                         shrinkWrap: true,
                         physics: const BouncingScrollPhysics(),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Row(
-                          children: const [
+                          children: [
                             Text(
                               "Note :",
                               style: TextStyle(
@@ -299,10 +299,10 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                         shrinkWrap: true,
                         physics: const BouncingScrollPhysics(),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Row(
-                          children: const [
+                          children: [
                             Text("Facility",
                                 style: TextStyle(
                                     fontFamily: "Montserrat",
@@ -339,10 +339,10 @@ class _MembershipBenifitsState extends State<MembershipBenifits> {
                         shrinkWrap: true,
                         physics: const BouncingScrollPhysics(),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Row(
-                          children: const [
+                          children: [
                             Text(
                               "Note :",
                               style: TextStyle(

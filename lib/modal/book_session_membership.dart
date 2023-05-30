@@ -154,10 +154,10 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       selectedIndex == index
-                                          ? Row(
+                                          ? const Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.end,
-                                              children: const [
+                                              children: [
                                                 Icon(
                                                   Icons.check,
                                                   color: Colors.green,
@@ -233,12 +233,12 @@ class _BookSessionMembershipState extends State<BookSessionMembership> {
                 _pc1.close();
               });
             },
-            child: Row(
+            child: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(),
+                  SizedBox(),
                   Row(
-                    children: const [
+                    children: [
                       Text("Add More"),
                       Icon(
                         Icons.add,

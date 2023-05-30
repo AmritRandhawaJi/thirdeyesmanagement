@@ -18,6 +18,8 @@ class _AnalyticsState extends State<Analytics> {
 
   var clientType = ["Walk-in", "Google Ads", "Reference", "SMS"];
 
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,6 +46,10 @@ class _AnalyticsState extends State<Analytics> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Flexible(child: Image.asset("assets/saleSlider.png")),
+          ),
+           Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: loading ? const CircularProgressIndicator(strokeWidth: 1,): Container(),
           ),
           Wrap(
             spacing: 5.0,
@@ -83,6 +89,9 @@ class _AnalyticsState extends State<Analytics> {
   }
 
   sendToServer() async {
+    setState(() {
+      loading = true;
+    });
     await FirebaseAnalytics.instance.logEvent(
       name: "Spa Clients",
       parameters: {

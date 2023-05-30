@@ -453,8 +453,8 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
                     .then((value) => {
                           SendMessageCloud.sendPushMessage(
                               value["token"],
-                              "$totalTake people took massages in ${Spa.getSpaName} we deducted service from membership",
-                              "Member Visiting")
+                              "$totalTake people took massage in ${Spa.getSpaName} we deducted from membership",
+                              "Member Visit")
                         })
               });
     } catch (e) {

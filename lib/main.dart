@@ -5,18 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
-import 'package:thirdeyesmanagement/screens/decision.dart';
 import 'package:thirdeyesmanagement/screens/getting_started_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:thirdeyesmanagement/screens/home.dart';
+import 'package:thirdeyesmanagement/screens/manager_login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseAppCheck.instance
-      .activate(
+  await FirebaseAppCheck.instance.activate(
       webRecaptchaSiteKey: "6LcyEQMlAAAAAEnTIRZQiFDyeUzHJFVMYxFzIJ1l",
-      androidProvider: AndroidProvider.debug);
+      androidProvider: AndroidProvider.playIntegrity);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MaterialApp(home: MyApp()));
@@ -40,25 +39,25 @@ class MyAppState extends State<MyApp> {
     db2.terminate();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => Future.delayed(const Duration(seconds: 1), () async {
-          try{
-            FirebaseAuth.instance.currentUser!.reload();
-            await FirebaseFirestore.instance
-                .collection("accounts")
-                .doc(FirebaseAuth.instance.currentUser!.email)
-                .get()
-                .then((DocumentSnapshot documentSnapshot) async {
-              if (documentSnapshot.exists) {
-                Spa.setSpaName = await documentSnapshot.get("assignedSpa");
-                goManagerHome();
+              if (FirebaseAuth.instance.currentUser != null) {
+                await FirebaseFirestore.instance
+                    .collection("accounts")
+                    .doc(FirebaseAuth.instance.currentUser!.email)
+                    .get()
+                    .then((DocumentSnapshot documentSnapshot) async {
+                  if (documentSnapshot.exists) {
+                    Spa.setSpaName = await documentSnapshot.get("assignedSpa");
+                    goManagerHome();
+                  }
+                });
+              } else {
+                await userStateSave();
               }
-            });
-          }catch(e){
-            await userStateSave();
-          }
             }));
     return Scaffold(
       body: Column(
@@ -91,12 +90,10 @@ class MyAppState extends State<MyApp> {
     ); // widget tree
   }
 
-
-
   moveToDecision() async {
     if (mounted) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const Decision(),
+        builder: (context) => const ManagerLogin(),
       ));
     }
   }
@@ -110,10 +107,8 @@ class MyAppState extends State<MyApp> {
   Future<void> userStateSave() async {
     final value = await SharedPreferences.getInstance();
     if (value.getInt("userState") != 1) {
-
       moveToGettingStart();
     } else {
-
       moveToDecision();
     }
   }

@@ -81,9 +81,9 @@ class _MoveToMemberState extends State<MoveToMember> {
                 ),
                 CupertinoButton(
                     color: Colors.blueGrey,
-                    child: const Row(
+                    child:  Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
+                        children: const [
                           Icon(Icons.card_giftcard),
                           Text("Membership benifits?",
                               style: TextStyle(
@@ -111,10 +111,10 @@ class _MoveToMemberState extends State<MoveToMember> {
                                 .of(context)
                                 .size
                                 .width / 5),
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
+                         Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Row(
-                            children: [
+                            children: const [
                               Text("New Registration",
                                   style: TextStyle(
                                       fontFamily: "Montserrat",
@@ -180,9 +180,9 @@ class _MoveToMemberState extends State<MoveToMember> {
                                 fontFamily: "Montserrat"),
                           ),
                         ),
-                        const Row(
+                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
+                          children: const [
                             Text("•",
                                 style: TextStyle(
                                     fontSize: 32, color: Colors.amberAccent)),

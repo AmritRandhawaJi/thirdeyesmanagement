@@ -227,9 +227,9 @@ class _FinalWalkinClientState extends State<FinalWalkinClient> {
                       height: 50,
                     ),
                     loading
-                        ? const Row(
+                        ?  Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                            children: const [
                               Padding(
                                 padding: EdgeInsets.all(8.0),
                                 child: CircularProgressIndicator(

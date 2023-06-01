@@ -22,9 +22,9 @@ class _WalkinNavSaleState extends State<MembershipNavSale> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Colors.black,
-          flexibleSpace: const Column(
+          flexibleSpace:  Column(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: [
+            children: const [
               TabBar(
                 indicatorColor: Colors.white,
                 physics: BouncingScrollPhysics(),

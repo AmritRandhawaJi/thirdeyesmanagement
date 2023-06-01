@@ -16,7 +16,6 @@ class AccountSetting extends StatefulWidget {
 class _AccountSettingState extends State<AccountSetting> {
   final db = FirebaseFirestore.instance;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,8 +23,22 @@ class _AccountSettingState extends State<AccountSetting> {
       body: SafeArea(
         child: DelayedDisplay(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Row(
+                  children: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Row(
+                          children: const [
+                           Icon(Icons.arrow_back_ios),
+                            Text("Back"),
+                          ],
+                        )),
+                  ],
+                ),
                 const Padding(
                   padding: EdgeInsets.only(top: 18.0),
                   child: Text(
@@ -35,7 +48,8 @@ class _AccountSettingState extends State<AccountSetting> {
                       fontSize: 20,
                     ),
                   ),
-                ),const Text(
+                ),
+                const Text(
                   "Manager's",
                   style: TextStyle(
                     fontFamily: "Montserrat",
@@ -43,17 +57,14 @@ class _AccountSettingState extends State<AccountSetting> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                   FirebaseAuth.instance.currentUser!.email.toString(),
-                    style:
-                        const TextStyle(fontFamily: "Montserrat",fontWeight: FontWeight.bold),
+                    FirebaseAuth.instance.currentUser!.email.toString(),
+                    style: const TextStyle(
+                        fontFamily: "Montserrat", fontWeight: FontWeight.bold),
                   ),
                 ),
-
-
                 Row(
                   children: [
                     Expanded(
@@ -79,7 +90,6 @@ class _AccountSettingState extends State<AccountSetting> {
                     child: const Text("Sign-Out")),
                 const SizedBox(height: 30),
                 CupertinoButton(
-
                     onPressed: () {
                       Navigator.push(
                           context,
@@ -87,22 +97,27 @@ class _AccountSettingState extends State<AccountSetting> {
                             builder: (context) => const PasswordReset(),
                           ));
                     },
-                    child: const Column(
-                      children:  [
+                    child: Column(
+                      children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Change Password",style: TextStyle(color: Colors.black),),
-                         Icon(Icons.arrow_forward_ios)
+                          children: const [
+                            Text(
+                              "Change Password",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            Icon(Icons.arrow_forward_ios)
                           ],
                         ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text("would you like to change password?",style: TextStyle(color: Colors.black54),),
-                )
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "would you like to change password?",
+                            style: TextStyle(color: Colors.black54),
+                          ),
+                        )
                       ],
                     )),
-
               ]),
         ),
       ),
@@ -116,7 +131,5 @@ class _AccountSettingState extends State<AccountSetting> {
           builder: (context) => const MyApp(),
         ),
         (route) => false);
-
   }
-
 }

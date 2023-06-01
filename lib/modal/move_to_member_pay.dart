@@ -265,9 +265,9 @@ class _MoveToMemberPayState extends State<MoveToMemberPay> {
                             borderRadius: BorderRadius.circular(50)),
                         child: RadioListTile(
                             activeColor: Colors.green,
-                            title: const Row(
+                            title:  Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
+                              children: const [
                                 Text('Cash'),
                                 Icon(
                                   Icons.currency_rupee_outlined,
@@ -292,9 +292,9 @@ class _MoveToMemberPayState extends State<MoveToMemberPay> {
                             borderRadius: BorderRadius.circular(50)),
                         child: RadioListTile(
                             activeColor: Colors.green,
-                            title: const Row(
+                            title:  Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
+                              children: const [
                                 Text('Card'),
                                 Icon(
                                   Icons.credit_card,
@@ -320,9 +320,9 @@ class _MoveToMemberPayState extends State<MoveToMemberPay> {
                             borderRadius: BorderRadius.circular(50)),
                         child: RadioListTile(
                             activeColor: Colors.green,
-                            title: const Row(
+                            title:  Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
+                              children: const [
                                 Text('UPI'),
                                 Icon(
                                   Icons.online_prediction_rounded,
@@ -347,9 +347,9 @@ class _MoveToMemberPayState extends State<MoveToMemberPay> {
                             borderRadius: BorderRadius.circular(50)),
                         child: RadioListTile(
                             activeColor: Colors.green,
-                            title: const Row(
+                            title:  Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
+                              children: const [
                                 Text('Wallet'),
                                 Icon(Icons.wallet),
                               ],
@@ -368,9 +368,9 @@ class _MoveToMemberPayState extends State<MoveToMemberPay> {
                       height: 50,
                     ),
                     loading
-                        ? const Row(
+                        ?  Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                            children: const [
                               Padding(
                                 padding: EdgeInsets.all(8.0),
                                 child: CircularProgressIndicator(

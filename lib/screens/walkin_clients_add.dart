@@ -229,12 +229,11 @@ class _WalkinClientsAddState extends State<WalkinClientsAdd> {
                   _pc1.close();
                 });
               },
-              child: const Row(
+              child:  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(),
                     Row(
-                      children: [
+                      children: const [
                         Text("Add More"),
                         Icon(
                           Icons.add,

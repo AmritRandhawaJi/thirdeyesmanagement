@@ -48,9 +48,9 @@ class _CashState extends State<Cash> {
                       onPressed: () {
                         todayCash();
                       },
-                      child: const Row(
+                      child:  Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
+                        children: const [
                           Icon(
                             Icons.refresh,
                             color: Colors.green,
@@ -154,8 +154,8 @@ class _CashState extends State<Cash> {
                                 style: const TextStyle(fontSize: 22)),
                           ],
                         ),
-                        const Row(
-                          children: [
+                         Row(
+                          children: const [
                             Icon(Icons.account_circle, color: Colors.blue),
                             Padding(
                               padding: EdgeInsets.only(left: 5),

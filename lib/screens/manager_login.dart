@@ -217,8 +217,9 @@ class _ManagerLoginState extends State<ManagerLogin> {
         loading = true;
       });
       await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: emailAddress, password: password);
-      _loggedIn();
+          .signInWithEmailAndPassword(email: emailAddress, password: password).whenComplete(() => {
+      move()
+      });
     } on FirebaseAuthException catch (e) {
       setState(() {
         loading = false;
@@ -286,37 +287,30 @@ class _ManagerLoginState extends State<ManagerLogin> {
             ));
   }
 
-  Future<void> _loggedIn() async {
-    await FirebaseFirestore.instance
-        .collection("accounts")
-        .doc(emailController.value.text.trim())
-        .get()
-        .then((DocumentSnapshot documentSnapshot) async {
-      if (documentSnapshot.exists) {
-        Spa.setSpaName = await documentSnapshot.get("assignedSpa");
-      } else {
-        showDialog(
-          context: context,
-          builder: (ctx) =>  AlertDialog(
-            content: const Text("You are not the part of association"),
-          title: const Text("Error",style: TextStyle(color: Colors.red)),
-            actions: [
-              TextButton(onPressed: (){
-                Navigator.pop(ctx);
-              }, child: const Text("Ok"))
-            ],
-          ),
-        );
-      }
-    });
+  Future<void> move() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("accounts")
+          .doc(emailController.value.text.toString().toLowerCase().trim())
+          .get()
+          .then((DocumentSnapshot documentSnapshot) async {
+        if (documentSnapshot.exists) {
+          Spa.setSpaName = await documentSnapshot.get("assignedSpa");
+          moveNext();
+        }
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Error")));
+    }
+ 
   }
 
-  void move() {
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Home(),
-        ),
-        (route) => false);
+  void moveNext() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const Home(),
+      ),);
   }
 }

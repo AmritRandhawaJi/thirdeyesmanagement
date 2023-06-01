@@ -4,8 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thirdeyesmanagement/modal/page_view_data.dart';
 import 'package:thirdeyesmanagement/modal/slide_item.dart';
-
-import 'package:thirdeyesmanagement/screens/decision.dart';
+import 'package:thirdeyesmanagement/screens/manager_login.dart';
 import 'package:thirdeyesmanagement/widget/slide_dots.dart';
 
 
@@ -74,8 +73,8 @@ class GettingStartedScreenState extends State<GettingStartedScreen> {
                                 duration: const Duration(milliseconds: 250),
                                 curve: Curves.easeIn);
                           },
-                          child: const Row(
-                            children: [
+                          child:  Row(
+                            children: const [
                               Icon(
                                 Icons.arrow_forward_ios,
                                 color: Colors.white,
@@ -94,7 +93,7 @@ class GettingStartedScreenState extends State<GettingStartedScreen> {
                         onPressed: () async {
                           userStateSave();
                           Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => const Decision(),
+                            builder: (context) => const ManagerLogin(),
                           ));
                         },
                         color: const Color(0xff2b6747),

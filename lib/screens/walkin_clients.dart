@@ -189,9 +189,9 @@ class _WalkinClientsState extends State<WalkinClients> {
           loading
               ? const Center(child: CircularProgressIndicator())
               : Container(),
-          const DelayedDisplay(
+           DelayedDisplay(
             child: Column(
-              children: [
+              children: const [
                 Text("Hello,",
                     style: TextStyle(fontSize: 22, fontFamily: "Montserrat")),
                 Text("Nice to see you here",

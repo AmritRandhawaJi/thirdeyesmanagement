@@ -307,10 +307,8 @@ class _ManagerLoginState extends State<ManagerLogin> {
   }
 
   void moveNext() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const Home(),
-      ),);
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) {
+      return const Home();
+    }), (route) => false);
   }
 }

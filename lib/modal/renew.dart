@@ -231,9 +231,9 @@ class _RenewState extends State<Renew> {
                             borderRadius: BorderRadius.circular(50)),
                         child: RadioListTile(
                             activeColor: Colors.green,
-                            title:  Row(
+                            title:  const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: const [
+                              children: [
                                 Text('Cash'),
                                 Icon(
                                   Icons.currency_rupee_outlined,
@@ -258,9 +258,9 @@ class _RenewState extends State<Renew> {
                             borderRadius: BorderRadius.circular(50)),
                         child: RadioListTile(
                             activeColor: Colors.green,
-                            title:  Row(
+                            title:  const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: const [
+                              children: [
                                 Text('Card'),
                                 Icon(
                                   Icons.credit_card,
@@ -286,9 +286,9 @@ class _RenewState extends State<Renew> {
                             borderRadius: BorderRadius.circular(50)),
                         child: RadioListTile(
                             activeColor: Colors.green,
-                            title:  Row(
+                            title:  const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: const [
+                              children: [
                                 Text('UPI'),
                                 Icon(
                                   Icons.online_prediction_rounded,
@@ -313,9 +313,9 @@ class _RenewState extends State<Renew> {
                             borderRadius: BorderRadius.circular(50)),
                         child: RadioListTile(
                             activeColor: Colors.green,
-                            title:  Row(
+                            title:  const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: const [
+                              children: [
                                 Text('Wallet'),
                                 Icon(Icons.wallet),
                               ],
@@ -334,9 +334,9 @@ class _RenewState extends State<Renew> {
                       height: 50,
                     ),
                     loading
-                        ?  Row(
+                        ?  const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Padding(
                                 padding: EdgeInsets.all(8.0),
                                 child: CircularProgressIndicator(
@@ -565,9 +565,9 @@ class _RenewClientState extends State<RenewClient> {
                       fontSize: 22,
                       fontFamily: "Montserrat"),
                 ),
-                 Row(
+                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: const [
+                  children: [
                     Text("•",
                         style: TextStyle(fontSize: 32, color: Colors.amberAccent)),
                     Text("•",

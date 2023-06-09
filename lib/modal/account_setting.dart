@@ -31,8 +31,8 @@ class _AccountSettingState extends State<AccountSetting> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                            Icon(Icons.arrow_back_ios),
                             Text("Back"),
                           ],
@@ -97,11 +97,11 @@ class _AccountSettingState extends State<AccountSetting> {
                             builder: (context) => const PasswordReset(),
                           ));
                     },
-                    child: Column(
+                    child: const Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Text(
                               "Change Password",
                               style: TextStyle(color: Colors.black),
@@ -109,7 +109,7 @@ class _AccountSettingState extends State<AccountSetting> {
                             Icon(Icons.arrow_forward_ios)
                           ],
                         ),
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Text(
                             "would you like to change password?",

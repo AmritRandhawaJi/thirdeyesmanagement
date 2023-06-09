@@ -23,12 +23,13 @@ class _AnalyticsState extends State<Analytics> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [
-          Color(0xffdad299),
-          Color(0xffb0dab9),
-        ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        body: Container(
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(colors: [
+        Color(0xffdad299),
+        Color(0xffb0dab9),
+      ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+      child: SafeArea(
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           const DelayedDisplay(
@@ -47,9 +48,13 @@ class _AnalyticsState extends State<Analytics> {
             padding: const EdgeInsets.all(8.0),
             child: Flexible(child: Image.asset("assets/saleSlider.png")),
           ),
-           Padding(
+          Padding(
             padding: const EdgeInsets.all(8.0),
-            child: loading ? const CircularProgressIndicator(strokeWidth: 1,): Container(),
+            child: loading
+                ? const CircularProgressIndicator(
+                    strokeWidth: 1,
+                  )
+                : Container(),
           ),
           Wrap(
             spacing: 5.0,
@@ -85,7 +90,7 @@ class _AnalyticsState extends State<Analytics> {
           )
         ]),
       ),
-    );
+    ));
   }
 
   sendToServer() async {
@@ -97,16 +102,13 @@ class _AnalyticsState extends State<Analytics> {
       parameters: {
         "Client Visiting Type": clientType[_value],
       },
-    ).whenComplete(() => () {
-
+    ).then((value) => {
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
                 builder: (context) => const Home(),
               ),
-              (route) => false);
-        }).onError((error, stackTrace) => (){
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Check internet connection")));
-    });
+              (route) => false)
+        });
   }
 }

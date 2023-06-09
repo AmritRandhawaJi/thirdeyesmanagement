@@ -57,9 +57,9 @@ class _MembershipWalletState extends State<MembershipWallet> {
                   CupertinoButton(onPressed: (){
                     todayWallet();
 
-                  }, child:  Row(
+                  }, child:  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Icon(Icons.refresh,color: Colors.green,),
                       Text("Refresh",style: TextStyle(color: Colors.green)),
                     ],
@@ -180,8 +180,8 @@ class _MembershipWalletState extends State<MembershipWallet> {
                                 style: const TextStyle(fontSize: 22)),
                           ],
                         ),
-                         Row(
-                          children: const [
+                         const Row(
+                          children: [
                             Icon(Icons.account_circle, color: Colors.blue),
                             Padding(
                               padding: EdgeInsets.only(left: 5),

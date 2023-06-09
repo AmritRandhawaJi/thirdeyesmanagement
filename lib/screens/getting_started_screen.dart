@@ -73,8 +73,8 @@ class GettingStartedScreenState extends State<GettingStartedScreen> {
                                 duration: const Duration(milliseconds: 250),
                                 curve: Curves.easeIn);
                           },
-                          child:  Row(
-                            children: const [
+                          child:  const Row(
+                            children: [
                               Icon(
                                 Icons.arrow_forward_ios,
                                 color: Colors.white,

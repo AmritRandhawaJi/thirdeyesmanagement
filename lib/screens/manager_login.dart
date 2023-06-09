@@ -217,9 +217,8 @@ class _ManagerLoginState extends State<ManagerLogin> {
         loading = true;
       });
       await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: emailAddress, password: password).whenComplete(() => {
-      move()
-      });
+          .signInWithEmailAndPassword(email: emailAddress, password: password).whenComplete(() => move()
+      );
     } on FirebaseAuthException catch (e) {
       setState(() {
         loading = false;

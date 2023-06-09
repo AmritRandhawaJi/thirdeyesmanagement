@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
-import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 
 class LoadingHome extends StatefulWidget {
   const LoadingHome({Key? key}) : super(key: key);

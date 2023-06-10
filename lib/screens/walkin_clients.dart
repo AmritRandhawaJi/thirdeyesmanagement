@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
+import 'package:thirdeyesmanagement/modal/twilio.dart';
 import 'package:thirdeyesmanagement/screens/walkin_clients_add.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 
@@ -49,15 +50,13 @@ class _WalkinClientsState extends State<WalkinClients> {
     super.dispose();
   }
 
-  final String _accountSID = "AC34d1677ab2338063335ffb3944f73760";
-  final String _authToken = "d61804d33ebed647050bf9546813c8c3";
-  final String _number = "+15075435044";
+
   @override
   void initState() {
     twilioFlutter = TwilioFlutter(
-        accountSid: _accountSID,
-        authToken: _authToken,
-        twilioNumber: _number);
+        accountSid: Twilio.accountSID,
+        authToken: Twilio.authToken,
+        twilioNumber: Twilio.accountNumber);
 
     super.initState();
   }

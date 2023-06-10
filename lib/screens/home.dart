@@ -8,6 +8,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/fragments/all_sale.dart';
 import 'package:thirdeyesmanagement/modal/account_setting.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
+import 'package:thirdeyesmanagement/modal/twilio.dart';
 import 'package:thirdeyesmanagement/screens/memebership_add.dart';
 import 'package:thirdeyesmanagement/screens/test.dart';
 import 'package:thirdeyesmanagement/screens/verification.dart';
@@ -67,6 +68,8 @@ class HomePageState extends State<HomePage> {
   dynamic members = 0;
 
   bool loading = false;
+
+  bool server = false;
 
   @override
   void initState() {
@@ -137,6 +140,7 @@ class HomePageState extends State<HomePage> {
         "Members": members,
       }, SetOptions(merge: true));
     }
+    setTokens();
   }
 
   @override
@@ -144,8 +148,12 @@ class HomePageState extends State<HomePage> {
     _panelHeightOpen = MediaQuery.of(context).size.height / 1.5;
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => Future.delayed(const Duration(seconds: 1), () async {
-              await setValues();
-            }));
+          server = true;
+          if(server){
+            await setValues();
+
+          }
+        }));
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFFe6f0f9),
@@ -783,5 +791,15 @@ class HomePageState extends State<HomePage> {
         ),
       ]),
     ));
+  }
+  Future<void> setTokens() async {
+  await  db
+        .collection("twilio")
+        .doc("tokens").get().then((value) async => {
+      Twilio.accountSID = await value.get("accountSID"),
+      Twilio.authToken = await value.get("authToken"),
+      Twilio.accountNumber =await value.get("accountNumber"),
+
+    });
   }
 }

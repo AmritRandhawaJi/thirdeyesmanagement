@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/member_details_page.dart';
-import 'package:thirdeyesmanagement/modal/twilio.dart';
 import 'package:thirdeyesmanagement/screens/walking_details_page.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 
@@ -33,13 +32,15 @@ class _VerificationState extends State<Verification> {
     super.dispose();
   }
 
+  final String _accountSID = "AC34d1677ab2338063335ffb3944f73760";
+  final String _authToken = "d61804d33ebed647050bf9546813c8c3";
+  final String _number = "+15075435044";
   @override
   void initState() {
     twilioFlutter = TwilioFlutter(
-        accountSid: Twilio.accountSID,
-        authToken: Twilio.authToken,
-        twilioNumber: Twilio.number
-        );
+        accountSid: _accountSID,
+        authToken: _authToken,
+        twilioNumber: _number);
     sendMessage();
     super.initState();
   }

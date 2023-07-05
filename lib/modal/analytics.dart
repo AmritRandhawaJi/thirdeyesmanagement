@@ -26,7 +26,7 @@ class _AnalyticsState extends State<Analytics> {
         body: Container(
       decoration: const BoxDecoration(
           gradient: LinearGradient(colors: [
-        Color(0xffdad299),
+        Color(0xffffffff),
         Color(0xffb0dab9),
       ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
       child: SafeArea(

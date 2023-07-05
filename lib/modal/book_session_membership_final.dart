@@ -342,6 +342,7 @@ class _BookMembershipFinalState extends State<BookMembershipFinal> {
                 ),
               ),
             ),
+
             CupertinoButton(
                 color: CupertinoColors.activeGreen,
                 child: const Text("Start"),

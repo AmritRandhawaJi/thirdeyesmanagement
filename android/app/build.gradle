@@ -55,8 +55,8 @@ android {
         applicationId "com.thirdeyesmanagement.thirdeyesmanagement"
         minSdkVersion 22
         targetSdkVersion flutter.targetSdkVersion
-        versionCode = 2.0
-        versionName = 2
+        versionCode = 4.0
+        versionName = 4
     }
 
     signingConfigs {

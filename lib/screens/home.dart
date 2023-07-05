@@ -4,12 +4,12 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/fragments/all_sale.dart';
 import 'package:thirdeyesmanagement/modal/account_setting.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/twilio.dart';
-import 'package:thirdeyesmanagement/screens/memebership_add.dart';
 import 'package:thirdeyesmanagement/screens/test.dart';
 import 'package:thirdeyesmanagement/screens/verification.dart';
 import 'package:thirdeyesmanagement/screens/walkin_clients.dart';
@@ -37,7 +37,9 @@ class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final double _initFabHeight = 120.0;
   double _fabHeight = 0;
@@ -73,6 +75,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    _controller = AnimationController(vsync: this);
     _fabHeight = _initFabHeight;
     super.initState();
   }
@@ -156,153 +159,101 @@ class HomePageState extends State<HomePage> {
         }));
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xFFe6f0f9),
-      body: Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("assets/home.png"),
-                fit: BoxFit.contain,
-                alignment: Alignment.center)),
-        child: Stack(
-          children: <Widget>[
-            SlidingUpPanel(
-              maxHeight: _panelHeightOpen,
-              minHeight: _panelHeightClosed,
-              parallaxEnabled: true,
-              parallaxOffset: .5,
-              body: _body(),
-              onPanelOpened: () {
-                onPanelOpened();
-              },
-              onPanelClosed: () {
-                setState(() {
-                  panelLoad = false;
-                });
-              },
-              collapsed: Container(
-                decoration: const BoxDecoration(
-                    color: Color(0xfffffff3),
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(30),
-                        topLeft: Radius.circular(30))),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: Column(
-                      children: [
-                        const Icon(Icons.bar_chart, color: Colors.green),
-                        DelayedDisplay(
-                          child: Text(
-                            "•${Spa.getSpaName} Sale•",
-                            style: const TextStyle(
-                                fontSize: 18,
-                                fontFamily: "Montserrat",
-                                fontWeight: FontWeight.bold),
-                          ),
+      backgroundColor: const Color(0xFFf5eee6),
+      body: Stack(
+        children: <Widget>[
+          SlidingUpPanel(
+            maxHeight: _panelHeightOpen,
+            minHeight: _panelHeightClosed,
+            parallaxEnabled: true,
+            parallaxOffset: .5,
+            body: _body(),
+            onPanelOpened: () {
+              onPanelOpened();
+            },
+            onPanelClosed: () {
+              setState(() {
+                panelLoad = false;
+              });
+            },
+            collapsed: Container(
+              decoration: const BoxDecoration(
+                  color: Color(0xfffffff3),
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(30),
+                      topLeft: Radius.circular(30))),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Column(
+                    children: [
+                      const Icon(Icons.bar_chart, color: Colors.green),
+                      DelayedDisplay(
+                        child: Text(
+                          "•${Spa.getSpaName} Sale•",
+                          style: const TextStyle(
+                              fontSize: 18,
+                              fontFamily: "Montserrat",
+                              fontWeight: FontWeight.bold),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              panelBuilder: (sc) => _panel(sc),
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(18.0),
-                  topRight: Radius.circular(18.0)),
-              onPanelSlide: (double pos) => setState(() {
-                _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
-                    _initFabHeight;
-              }),
             ),
-            Positioned(
-                right: 20.0,
-                bottom: _fabHeight + 40,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const WalkinClients(),
-                        ));
-                  },
-                  child: DelayedDisplay(
-                    child: Card(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(30),
-                            bottomRight: Radius.circular(30)),
-                        //set border radius more than 50% of height and width to make circle
-                      ),
-                      child: SizedBox(
-                          height: MediaQuery.of(context).size.width / 6,
-                          width: MediaQuery.of(context).size.width / 2.3,
-                          child:  const Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Icon(Icons.directions_walk,
-                                    color: Colors.green),
-                                Padding(
-                                  padding: EdgeInsets.only(right: 8),
-                                  child: Text(
-                                    "Walkin-Clients",
-                                    style: TextStyle(
-                                        fontFamily: "Montserrat",
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
+            panelBuilder: (sc) => _panel(sc),
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(18.0),
+                topRight: Radius.circular(18.0)),
+            onPanelSlide: (double pos) => setState(() {
+              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
+                  _initFabHeight;
+            }),
+          ),
+          Positioned(
+              right: 20.0,
+              left: 20,
+              bottom: _fabHeight,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WalkinClients(),
+                      ));
+                },
+                child: DelayedDisplay(
+                  child: Card(
+
+                    shape:  const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      //set border radius more than 50% of height and width to make circle
+                    ),
+                    child: SizedBox(
+                        height: MediaQuery.of(context).size.width / 6,
+                        width: MediaQuery.of(context).size.width /0.5,
+                        child:  const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add,
+                                color: Colors.green),
+                            Padding(
+                              padding: EdgeInsets.only(right: 8),
+                              child: Text(
+                                "Add-Clients",
+                                style: TextStyle(
+                                    fontFamily: "Montserrat",
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          )),
-                    ),
+                          ],
+                        )),
                   ),
-                )),
-            Positioned(
-                left: 20.0,
-                bottom: _fabHeight + 40,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MembershipAdd(),
-                        ));
-                  },
-                  child: DelayedDisplay(
-                    child: Card(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            bottomLeft: Radius.circular(30)),
-                      ),
-                      child: SizedBox(
-                          height: MediaQuery.of(context).size.width / 6,
-                          width: MediaQuery.of(context).size.width / 2.3,
-                          child:  const Center(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 8),
-                                child: Text(
-                                  "Membership",
-                                  style: TextStyle(
-                                      fontFamily: "Montserrat",
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 5),
-                                child: Icon(Icons.add_card_sharp,
-                                    color: Colors.green),
-                              ),
-                            ],
-                          ))),
-                    ),
-                  ),
-                )),
-          ],
-        ),
+                ),
+              )),
+
+        ],
       ),
     );
   }
@@ -348,7 +299,7 @@ class HomePageState extends State<HomePage> {
           controller: sc,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -665,131 +616,148 @@ class HomePageState extends State<HomePage> {
   Widget _body() {
     return SafeArea(
         child: SingleChildScrollView(
-      child: Column(children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 10.0, left: 10.0, top: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              DelayedDisplay(
-                child: Text(Spa.getSpaName,
-                    style: const TextStyle(
-                        fontSize: 22,
-                        fontFamily: "Montserrat",
-                        fontWeight: FontWeight.bold)),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AccountSetting(),
-                      ));
-                },
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.account_circle,
-                      size: MediaQuery.of(context).size.width / 10,
-                      color: Colors.black87,
-                    ),
-                  ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0, left: 10.0, top: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                DelayedDisplay(
+                  child: Text(Spa.getSpaName,
+                      style: const TextStyle(
+                          fontSize: 22,
+                          fontFamily: "Montserrat",
+                          fontWeight: FontWeight.bold)),
                 ),
-              ),
-            ],
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AccountSetting(),
+                        ));
+                  },
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.account_circle,
+                        size: MediaQuery.of(context).size.width / 10,
+                        color: Colors.black87,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
 
-         const Padding(
-          padding: EdgeInsets.only(left: 10, top: 10),
-          child: Row(
+           const Padding(
+            padding: EdgeInsets.only(left: 10, top: 10),
+            child: Row(
 
-            children: [
-              DelayedDisplay(
-                child: Text("How you feeling\nToday?",
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontFamily: "Montserrat",
-                        color: Colors.black54,
-                        fontSize: 16)),
-              ),
-            ],
+              children: [
+                DelayedDisplay(
+                  child: Text("How you feeling\nToday?",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontFamily: "Montserrat",
+                          color: Colors.black54,
+                          fontSize: 16)),
+                ),
+              ],
+            ),
           ),
-        ),
-        DelayedDisplay(
-          child: Form(
-            key: searchKey,
-            child: Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: TextFormField(
-                showCursor: false,
-                maxLength: 10,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                controller: searchController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Enter number";
-                  } else if (value.length < 10) {
-                    return "Enter 10 digits";
-                  } else {
-                    return null;
-                  }
-                },
-                decoration: InputDecoration(
-                    counterText: "",
-                    filled: true,
-                    suffixIcon: loading
-                        ? const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(strokeWidth: 1),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: GestureDetector(
-                                onTap: () {
-                                  if (searchKey.currentState!.validate()) {
-                                    setState(() {
-                                      loading = true;
-                                    });
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) =>
-                                            Future.delayed(
-                                                const Duration(seconds: 1), () {
-                                              setState(() {
-                                                loading = false;
-                                              });
-                                              Navigator.push(context,
-                                                  MaterialPageRoute(builder:
-                                                      (BuildContext context) {
-                                                return Verification(
-                                                  number: searchController
-                                                      .value.text
-                                                      .toString(),
-                                                );
+          DelayedDisplay(
+            child: Form(
+              key: searchKey,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 50,left: 10,right: 10),
+                child: TextFormField(
+
+                  showCursor: false,
+                  maxLength: 10,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  controller: searchController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Enter number";
+                    } else if (value.length < 10) {
+                      return "Enter 10 digits";
+                    } else {
+                      return null;
+                    }
+                  },
+                  decoration: InputDecoration(
+                      counterText: "",
+                      filled: true,
+                      suffixIcon: loading
+                          ? const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(strokeWidth: 1),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: GestureDetector(
+                                  onTap: () {
+                                    if (searchKey.currentState!.validate()) {
+                                      setState(() {
+                                        loading = true;
+                                      });
+                                      WidgetsBinding.instance
+                                          .addPostFrameCallback((_) =>
+                                              Future.delayed(
+                                                  const Duration(seconds: 1), () {
+                                                setState(() {
+                                                  loading = false;
+                                                });
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(builder:
+                                                        (BuildContext context) {
+                                                  return Verification(
+                                                    number: searchController
+                                                        .value.text
+                                                        .toString(),
+                                                  );
+                                                }));
                                               }));
-                                            }));
-                                  }
-                                },
-                                child: const CircleAvatar(
-                                    backgroundColor: Colors.green,
-                                    child: Icon(
-                                      Icons.search,
-                                      color: Colors.white,
-                                    ))),
-                          ),
-                    hintText: "Search Registered Clients",
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(40),
-                      borderSide: BorderSide.none,
-                    )),
+                                    }
+                                  },
+                                  child: const CircleAvatar(
+                                      backgroundColor: Colors.green,
+                                      child: Icon(
+                                        Icons.search,
+                                        color: Colors.white,
+                                      ))),
+                            ),
+                      hintText: "Search Registered Clients",
+                      fillColor: Colors.white,
+
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(40),
+                        borderSide: BorderSide.none,
+                      )),
+                ),
               ),
             ),
           ),
-        ),
-      ]),
+
+          Lottie.asset(
+            'assets/mindfulness.json',
+            controller: _controller,
+            onLoaded: (composition) {
+              // Configure the AnimationController with the duration of the
+              // Lottie file and start the animation.
+              _controller
+                ..duration = composition.duration
+                ..repeat();
+            },
+          ),
+        ]),
+      ),
     ));
   }
   Future<void> setTokens() async {

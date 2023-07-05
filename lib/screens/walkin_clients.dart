@@ -5,10 +5,12 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:thirdeyesmanagement/modal/assgined_spa.dart';
 import 'package:thirdeyesmanagement/modal/twilio.dart';
+import 'package:thirdeyesmanagement/screens/memebership_add.dart';
 import 'package:thirdeyesmanagement/screens/walkin_clients_add.dart';
 import 'package:twilio_flutter/twilio_flutter.dart';
 
@@ -19,7 +21,7 @@ class WalkinClients extends StatefulWidget {
   State<WalkinClients> createState() => _WalkinClientsState();
 }
 
-class _WalkinClientsState extends State<WalkinClients> {
+class _WalkinClientsState extends State<WalkinClients> with TickerProviderStateMixin {
   final nameController = TextEditingController();
   final textEditing = TextEditingController();
   final numberController = TextEditingController();
@@ -42,14 +44,17 @@ class _WalkinClientsState extends State<WalkinClients> {
 
   bool indicator = false;
 
+  late final AnimationController _controller;
+
+
   @override
   void dispose() {
-    _server.terminate();
+    _controller.dispose();
     nameController.dispose();
     numberController.dispose();
+    _server.terminate();
     super.dispose();
   }
-
 
   @override
   void initState() {
@@ -57,10 +62,10 @@ class _WalkinClientsState extends State<WalkinClients> {
         accountSid: Twilio.accountSID,
         authToken: Twilio.authToken,
         twilioNumber: Twilio.accountNumber);
+    _controller = AnimationController(vsync: this);
 
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +146,8 @@ class _WalkinClientsState extends State<WalkinClients> {
     try {
       twilioFlutter.sendSMS(
           toNumber: "+91${numberController.value.text.toString()}",
-          messageBody: "Welcome to  ${Spa.getSpaName}, Your one time password is $otp");
+          messageBody:
+              "Welcome to  ${Spa.getSpaName}, Your one time password is $otp");
       panelHeightClosed = MediaQuery.of(context).size.height / 2;
       panelHeightOpen = MediaQuery.of(context).size.height - 50;
       serverResponded = true;
@@ -189,7 +195,7 @@ class _WalkinClientsState extends State<WalkinClients> {
           loading
               ? const Center(child: CircularProgressIndicator())
               : Container(),
-           const DelayedDisplay(
+          const DelayedDisplay(
             child: Column(
               children: [
                 Text("Hello,",
@@ -306,10 +312,35 @@ class _WalkinClientsState extends State<WalkinClients> {
                         }
                       }
                     },
-              child: const Text("Register Client")),
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 3,
-          )
+              child: const Text("Register")),
+
+           SizedBox(height: MediaQuery.of(context).size.height/6,),
+const Icon(Icons.celebration_outlined,),
+          const Text("Membership are also benefits",style: TextStyle(fontSize: 22,fontFamily: "Montserrat"),),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircleAvatar(
+                maxRadius: 200, child: Image.asset("assets/saleSlider.png")),
+          ),
+          CupertinoButton(
+              color: Colors.blue,
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const MembershipAdd(),));
+              },
+              child: const Text("looking for Membership?")),
+
+          Lottie.asset(
+            'assets/wallet.json',
+
+            controller: _controller,
+            onLoaded: (composition) {
+              // Configure the AnimationController with the duration of the
+              // Lottie file and start the animation.
+              _controller
+                ..duration = composition.duration
+                ..repeat();
+            },
+          ),
         ]),
       ),
     );
